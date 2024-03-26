@@ -1,0 +1,30 @@
+.content1 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#btn1 {
+    padding: 3px 10px;
+    border: 1px solid green;
+    font-size: 20px;
+    transition: background-color 0.5s, color 0.5s;
+    border-radius: 10px;
+}
+
+#btn2 {
+    padding: 3px 10px;
+    border: 1px solid blue;
+    font-size: 20px;
+    border-radius: 10px;
+    transition: background-color 0.5s, color 0.5s;
+}
+#btn1:hover{
+    background-color: green;
+    color: antiquewhite;
+}
+#btn2:hover{
+    background-color: blue;
+    color: antiquewhite;
+}

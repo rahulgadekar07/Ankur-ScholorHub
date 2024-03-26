@@ -1,0 +1,17 @@
+backend/
+│
+├── controllers/          # Controllers for handling HTTP requests
+│   └── userController.js # Controller for user-related operations
+│ 
+├── routes/               # Route definitions
+│   └── userRoutes.js     # Routes for user-related endpoints
+│
+├── services/             # Business logic services
+│   └── userService.js    # Service for user-related operations
+│
+├── index.js                # Entry point of the application
+│
+└── config/               # Configuration files (e.g., database, environment)
+    └── database.js       # Database configuration (connection, ORM setup, etc.)
+
+  
