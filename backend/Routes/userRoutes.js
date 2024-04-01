@@ -11,6 +11,7 @@ const router = express.Router();
 router.post('/signup', userController.signUp);
 router.post('/signin', userController.signIn);
 router.get('/user', userController.getUserData);
+router.post('/upload-profile-pic', userController.uploadProfilePic);
 
 
 // Export the router

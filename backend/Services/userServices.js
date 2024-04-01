@@ -46,6 +46,7 @@ async function findUserByEmail(email) {
     throw error; // Rethrow the error to be handled by the caller
   }
 }
+
 // Service function for getting user data by ID
 async function getUserById(userId) {
   try {
@@ -62,9 +63,26 @@ async function getUserById(userId) {
   }
 }
 
+// Service function for updating user profile picture path
+async function updateProfilePic(userId, profilePicPath) {
+  try {
+    // Update the user record in the database with the new profile picture path
+    const sql = 'UPDATE users SET profpic = ? WHERE id = ?';
+    const [result] = await db.promise().query(sql, [profilePicPath, userId]);
+    console.log(result); // Log the result for debugging
+
+    // Return the result or handle it as needed
+    return result;
+  } catch (error) {
+    console.error('Error updating profile picture:', error);
+    throw error; // Rethrow the error to be handled by the caller
+  }
+}
+
 // Export service functions
 module.exports = {
   createUser,
   findUserByEmail,
-  getUserById // Add this line to export the getUserById function
+  getUserById,
+  updateProfilePic // Export the updateProfilePic function
 };
