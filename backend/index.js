@@ -1,7 +1,10 @@
+// index.js
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const userRoutes = require('./Routes/userRoutes');
+const scholarshipRoutes=require('./Routes/scholorshipRoutes')
 const cors=require('cors');
 
 const app = express();
@@ -33,6 +36,7 @@ app.use((req, res, next) => {
 
 // Routes
 app.use('/user', userRoutes);
+app.use('/scholarship', scholarshipRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 5000;

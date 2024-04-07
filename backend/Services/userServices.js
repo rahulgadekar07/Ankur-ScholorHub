@@ -49,8 +49,11 @@ async function findUserByEmail(email) {
 
 // Service function for getting user data by ID
 async function getUserById(userId) {
+  console.log("getUserById function called!");
+
   try {
     // Query the database to find the user by ID
+    console.log(userId)
     const [users] = await db.promise().query('SELECT * FROM users WHERE id = ?', [userId]);
     if (users.length === 0) {
       return null;
@@ -66,6 +69,7 @@ async function getUserById(userId) {
 // Service function for updating user profile picture path
 async function updateProfilePic(userId, profilePicPath) {
   try {
+    console.log(userId,profilePicPath)
     // Update the user record in the database with the new profile picture path
     const sql = 'UPDATE users SET profpic = ? WHERE id = ?';
     const [result] = await db.promise().query(sql, [profilePicPath, userId]);

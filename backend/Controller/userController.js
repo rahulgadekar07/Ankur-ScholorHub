@@ -8,18 +8,7 @@ const jwt = require("jsonwebtoken");
 const multer = require("multer");
 const path = require("path");
 
-// Define storage for profile pictures
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, './profile_images'); // Destination folder for storing profile pictures
-  },
-  filename: function (req, file, cb) {
-    cb(null, 'profile_' + Date.now() + path.extname(file.originalname)); // Unique filename for each uploaded picture
-  }
-});
 
-// Initialize multer upload
-const upload = multer({ storage: storage });
 
 // Controller function for user sign-up
 async function signUp(req, res) {
@@ -77,13 +66,15 @@ async function signIn(req, res) {
 }
 
 async function getUserData(req, res) {
+  console.log("upklnwejcnwejn")
   try {
     // Extract user ID from JWT token
     const userId = req.user.userId;
-
+    console.log(userId)
     // Fetch user data from the database using the user ID
-    const userData = await userService.getUserById(userId);
 
+    const userData = await userService.getUserById(userId);
+    console.log(userData)
     res.status(200).json(userData);
   } catch (error) {
     console.error("Error fetching user data:", error);
@@ -92,9 +83,23 @@ async function getUserData(req, res) {
 }
 
 // Controller function for uploading profile picture
+
+// Define storage for profile pictures
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './profile_images'); // Destination folder for storing profile pictures
+  },
+  filename: function (req, file, cb) {
+    cb(null, 'profile_' + Date.now() + path.extname(file.originalname)); // Unique filename for each uploaded picture
+  }
+});
+
+// Initialize multer upload
+const upload = multer({ storage: storage });
 async function uploadProfilePic(req, res) {
   try {
     // Check if a file is uploaded
+    console.log(req.file)
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });
     }

@@ -1,5 +1,6 @@
 import React from "react";
 import "../Styles/Home.css";
+import { Link } from "react-router-dom";
 const Home = () => {
   return (
     <div className="flex my-3 ">
@@ -7,7 +8,7 @@ const Home = () => {
         <h1>Welcome to Ankur Foundation</h1>
         <p>Click below to apply for our scholorships:</p>
         <div className="apl">
-          <button id="btn1">Apply</button>
+          <Link id="btn1" to="/apply">Apply</Link>
         </div>
         <p> Kindly Donate Us to Help more Students:-</p>
         <div className="apl1">
@@ -15,6 +16,7 @@ const Home = () => {
         </div>
       </div>
     </div>
+    
   );
 };
 

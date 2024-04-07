@@ -1,39 +1,48 @@
 // App.js
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './Contexts/authContext';
-import SignInModal from './Components/Modals/SignInModal';
-import SignUpModal from './Components/Modals/SignUpModal';
-import Profile from './Components/Profile';
-import Home from './Components/Home';
-import Contact from './Components/Contact';
-import About from './Components/About';
-import Donate from './Components/Donate';
-import Market from './Components/Market';
-import Navbar from './Components/Navbar';
-import Footer from './Components/Footer';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./Contexts/authContext";
+import SignInModal from "./Components/Modals/SignInModal";
+import SignUpModal from "./Components/Modals/SignUpModal";
+import Profile from "./Components/Profile";
+import Home from "./Components/Home";
+import Contact from "./Components/Contact";
+import About from "./Components/About";
+import Donate from "./Components/Donate";
+import Market from "./Components/Market";
+import Navbar from "./Components/Navbar";
+import Footer from "./Components/Footer";
+import Formpage from "./Components/Scholorship/Formpage";
+import PersonalDetails from "./Components/Scholorship/PersonalDetails";
+import IncomeDetails from "./Components/Scholorship/IncomeDetails";
+import EducationDetails from "./Components/Scholorship/EducationDetails";
+import AddressDetails from "./Components/Scholorship/AddressDetails";
 
 function App() {
   return (
     <AuthProvider>
-  <Router>
-      <Navbar></Navbar>
-    <Routes>
-      <Route path="/signin" element={<SignInModal />} />
-      <Route path="/" element={<Home/>} />
-      <Route path="/signup" element={<SignUpModal />} />
-      <Route path="/profile" element={<Profile/> } />
-      <Route path="/contact" element={<Contact/>} />
-      <Route path="/about" element={<About/>} />
-      <Route path="/donate" element={<Donate />} />
-      <Route path="/market" element={<Market />} />
-      {/* Add other routes as needed
+      <Router>
+        <Navbar></Navbar>
+        <Routes>
+          <Route path="/signin" element={<SignInModal />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/signup" element={<SignUpModal />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/donate" element={<Donate />} />
+          <Route path="/market" element={<Market />} />
+          <Route path="/apply" element={<Formpage />} />
+          <Route path="/personal-details" element={<PersonalDetails />} />
+          <Route path="/address-details" element={<AddressDetails />} />
+          <Route path="/income-details" element={<IncomeDetails />} />
+          <Route path="/education-details" element={<EducationDetails />} />
+          {/* Add other routes as needed
       <Route path="*" element={<NotFound />} /> */}
-    </Routes>
-    <Footer/>
-  </Router>
-</AuthProvider>
-
+        </Routes>
+        <Footer />
+      </Router>
+    </AuthProvider>
   );
 }
 

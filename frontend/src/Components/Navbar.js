@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import SignInModal from "./Modals/SignInModal";
 import SignUpModal from "./Modals/SignUpModal";
 import { useAuth } from "../Contexts/authContext";
+import Formpage from "./Scholorship/Formpage";
+import { decodeToken } from "../Utils/auth";
 
 function Navbar() {
   const [showSignInModal, setShowSignInModal] = useState(false);
@@ -19,10 +21,11 @@ function Navbar() {
     if (token) {
       setAuthenticated(true);
 
-      // const decodedToken = decodeToken(token);
-      // if (decodedToken) {
-      //   setUserName(decodedToken.email); // Assuming the token contains the user's ID
-      // }
+      const decodedToken = decodeToken(token);
+      if (decodedToken) {
+        setUserName(decodedToken.email ?? "");
+         // Assuming the token contains the user's ID
+      }
     }
   }, []);
 
@@ -177,10 +180,12 @@ function Navbar() {
               &times;
             </div>
           </div>
+        
         </div>
       )}
     </>
   );
 }
 
-export default Navbar;
+
+export default Navbar ;

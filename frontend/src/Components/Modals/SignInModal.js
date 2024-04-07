@@ -7,7 +7,7 @@ const SignInModal = (props) => {
     email: "",
     password: "",
   });
-  const { signIn } = useAuth();
+  const { signIn,isAuthenticated } = useAuth();
 
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -34,7 +34,8 @@ const SignInModal = (props) => {
 
         // Store the JWT token securely in the browser's local storage
         localStorage.setItem("token", token);
-        signIn();
+         signIn();
+        console.log(isAuthenticated)
         await props.toggleSignInModal(false);
         props.setAuthenticated(true);
         const decodedToken = decodeToken(token);
