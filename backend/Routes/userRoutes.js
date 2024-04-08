@@ -3,6 +3,7 @@
 // Import necessary modules
 const express = require('express');
 const userController = require('../Controller/userController');
+const upload = userController.upload; // Import the upload middleware
 
 // Create a router
 const router = express.Router();
@@ -10,10 +11,10 @@ const router = express.Router();
 // Define routes for user-related endpoints
 router.post('/signup', userController.signUp);
 router.post('/signin', userController.signIn);
-// router.get('/user', userController.getUserData);
+router.get('/user', userController.getUserData);
 router.get('/getUserData', userController.getUserData); // Corrected route
 
-router.post('/upload-profile-pic', userController.uploadProfilePic);
+router.post('/upload-profile-pic', upload.single('profilePic'), userController.uploadProfilePic);
 
 
 // Export the router
