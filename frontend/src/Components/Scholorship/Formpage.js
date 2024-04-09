@@ -81,7 +81,7 @@ const Formpage = () => {
         <hr />
         {activeSection === "personal-details" ? <PersonalDetails setActiveSection={setActiveSection} bgcolor1={bgcolor1} setbgcolor1={setbgcolor1} /> : null}
         {activeSection === "address-details" ? <AddressDetails setActiveSection={setActiveSection} bgcolor2={bgcolor2} setbgcolor2={setbgcolor2} /> : null}
-        {activeSection === "income-details" ? <IncomeDetails setActiveSection={setActiveSection}/> : null}
+        {activeSection === "income-details" ? <IncomeDetails setActiveSection={setActiveSection} bgcolor3={bgcolor3} setbgcolor3={setbgcolor3}/> : null}
         {activeSection === "education-details" ? <EducationDetails setActiveSection={setActiveSection}/> : null}
       </div>
       

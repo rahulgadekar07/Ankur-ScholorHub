@@ -81,7 +81,7 @@ async function saveAddressDetails(req, res) {
   }
 }
 
-
+// saving income details
 // Configure Multer to store files in a specific directory
 const storage2 = multer.diskStorage({
   destination: function (req, file, cb) {

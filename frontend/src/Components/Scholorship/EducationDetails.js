@@ -39,7 +39,7 @@ const EducationDetails = () => {
         <div className="form-group">
           <label htmlFor="courseName">Course/Degree Name</label>
           <select
-            className="form-control"
+            className="form-select"
             id="courseName"
             name="courseName"
             value={courseName}

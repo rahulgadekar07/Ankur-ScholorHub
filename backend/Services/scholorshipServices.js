@@ -82,7 +82,7 @@ async function saveIncomeDetails({
   );
   try {
     const sql = `
-      INSERT INTO income_details (userId, parentName, parentMobile, jobType, jobDescription, annualIncome, incomeCertificate)
+      INSERT INTO incomedetails (userId, parentName, parentMobile, jobType, jobDescription, annualIncome, incomeCertificate)
       VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
     const values = [userId, parentName, parentMobile, jobType, jobDescription, annualIncome, incomeCertificate];
