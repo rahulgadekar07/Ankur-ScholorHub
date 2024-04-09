@@ -8,6 +8,7 @@ const scholarshipRoutes=require('./Routes/scholorshipRoutes')
 const cors=require('cors');
 
 const app = express();
+app.use(express.json());
 
 // Middleware to parse JSON request bodies
 app.use(bodyParser.json());

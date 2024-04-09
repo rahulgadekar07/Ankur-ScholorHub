@@ -1,6 +1,10 @@
 import React, { useState } from "react";
+import { decodeToken } from "../../Utils/auth";
 
-const AddressDetails = () => {
+const token = localStorage.getItem("token");
+const decodedToken = decodeToken(token);
+
+const AddressDetails = (props) => {
   const [sameAsPermanent, setSameAsPermanent] = useState(false);
   const [currentAddress, setCurrentAddress] = useState({
     address: "",
@@ -15,7 +19,7 @@ const AddressDetails = () => {
     address: "",
     state: "Maharashtra",
     district: "",
-    taluka: " ",
+    taluka: "",
     city: "",
     pincode: "",
   });
@@ -23,12 +27,42 @@ const AddressDetails = () => {
   const maharashtraData = {
     Maharashtra: {
       districts: [
-        "Ahmednagar", "Akola", "Amravati", "Aurangabad", "Beed", "Bhandara", "Buldhana", 
-        "Chandrapur", "Dhule", "Gadchiroli", "Gondia", "Hingoli", "Jalgaon", "Jalna", 
-        "Kolhapur", "Latur", "Mumbai City", "Mumbai Suburban", "Nagpur", "Nanded", 
-        "Nandurbar", "Nashik", "Osmanabad", "Palghar", "Parbhani", "Pune", "Raigad", 
-        "Ratnagiri", "Sangli", "Satara", "Sindhudurg", "Solapur", "Thane", "Wardha", 
-        "Washim", "Yavatmal"
+        "Ahmednagar",
+        "Akola",
+        "Amravati",
+        "Aurangabad",
+        "Beed",
+        "Bhandara",
+        "Buldhana",
+        "Chandrapur",
+        "Dhule",
+        "Gadchiroli",
+        "Gondia",
+        "Hingoli",
+        "Jalgaon",
+        "Jalna",
+        "Kolhapur",
+        "Latur",
+        "Mumbai City",
+        "Mumbai Suburban",
+        "Nagpur",
+        "Nanded",
+        "Nandurbar",
+        "Nashik",
+        "Osmanabad",
+        "Palghar",
+        "Parbhani",
+        "Pune",
+        "Raigad",
+        "Ratnagiri",
+        "Sangli",
+        "Satara",
+        "Sindhudurg",
+        "Solapur",
+        "Thane",
+        "Wardha",
+        "Washim",
+        "Yavatmal",
       ],
       talukas: {
         Ahmednagar: ["Ahmednagar", "Shrirampur", "Rahata"],
@@ -66,13 +100,10 @@ const AddressDetails = () => {
         Thane: ["Thane", "Kalyan", "Ulhasnagar"],
         Wardha: ["Wardha", "Hinganghat", "Arvi"],
         Washim: ["Washim", "Malegaon", "Mangrulpir"],
-        Yavatmal: ["Yavatmal", "Pusad", "Umarkhed"]
+        Yavatmal: ["Yavatmal", "Pusad", "Umarkhed"],
       },
     },
   };
-  
-  // If you have data for talukas, you can update the talukas array accordingly.
-  
 
   const handleCheckboxChange = () => {
     setSameAsPermanent(!sameAsPermanent);
@@ -128,10 +159,43 @@ const AddressDetails = () => {
       taluka: "",
     });
   };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log(currentAddress, permanentAddress);
+    try {
+      const response = await fetch(
+        "http://localhost:5000/scholarship/applyAd",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: decodedToken.userId,
+            permanent_address: permanentAddress,
+            current_address: currentAddress,
+          }),
+        }
+      );
 
+      if (response.ok) {
+        console.log("Address details saved successfully");
+        alert("Personal Details Saved SuccessFully");
+        props.setbgcolor2(true);
+        props.setActiveSection("income-details");
+        // Add logic for successful submission
+      } else {
+        console.error("Failed to save address details");
+        // Add logic for failed submission
+      }
+    } catch (error) {
+      console.error("Error saving address details:", error);
+      // Add logic for error
+    }
+  };
   return (
     <div className="d-flex align-content-center">
-      <form className="row g-3">
+      <form className="row g-3" onSubmit={handleSubmit}>
         <div className="col-12">
           <label htmlFor="inputAddress" className="form-label">
             <b>Permanent Address</b>
@@ -142,6 +206,34 @@ const AddressDetails = () => {
             id="inputAddress"
             name="address"
             value={permanentAddress.address}
+            onChange={handlePermanentChange}
+            required
+          />
+        </div>
+        <div className="col-md-4">
+          <label htmlFor="permanentCity" className="form-label">
+            City/Village
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            id="permanentCity"
+            name="city"
+            value={permanentAddress.city}
+            onChange={handlePermanentChange}
+            required
+          />
+        </div>
+        <div className="col-md-4">
+          <label htmlFor="permanentPincode" className="form-label">
+            Pincode
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            id="permanentPincode"
+            name="pincode"
+            value={permanentAddress.pincode}
             onChange={handlePermanentChange}
             required
           />
@@ -194,13 +286,13 @@ const AddressDetails = () => {
             required
           >
             <option value="">Select Taluka</option>
-            {maharashtraData.Maharashtra.talukas[permanentAddress.district]?.map(
-              (taluka) => (
-                <option key={taluka} value={taluka}>
-                  {taluka}
-                </option>
-              )
-            )}
+            {maharashtraData.Maharashtra.talukas[
+              permanentAddress.district
+            ]?.map((taluka) => (
+              <option key={taluka} value={taluka}>
+                {taluka}
+              </option>
+            ))}
           </select>
         </div>
         {/* Add more permanent address fields here... */}
@@ -227,6 +319,34 @@ const AddressDetails = () => {
             placeholder="Apartment, studio, or floor"
             name="address"
             value={currentAddress.address}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="col-md-4">
+          <label htmlFor="currentCity" className="form-label">
+            City/Village
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            id="currentCity"
+            name="city"
+            value={currentAddress.city}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="col-md-4">
+          <label htmlFor="currentPincode" className="form-label">
+            Pincode
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            id="currentPincode"
+            name="pincode"
+            value={currentAddress.pincode}
             onChange={handleChange}
             required
           />

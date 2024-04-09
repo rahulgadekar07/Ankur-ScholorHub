@@ -80,7 +80,7 @@ const Formpage = () => {
         </div>
         <hr />
         {activeSection === "personal-details" ? <PersonalDetails setActiveSection={setActiveSection} bgcolor1={bgcolor1} setbgcolor1={setbgcolor1} /> : null}
-        {activeSection === "address-details" ? <AddressDetails setActiveSection={setActiveSection} /> : null}
+        {activeSection === "address-details" ? <AddressDetails setActiveSection={setActiveSection} bgcolor2={bgcolor2} setbgcolor2={setbgcolor2} /> : null}
         {activeSection === "income-details" ? <IncomeDetails setActiveSection={setActiveSection}/> : null}
         {activeSection === "education-details" ? <EducationDetails setActiveSection={setActiveSection}/> : null}
       </div>

@@ -59,7 +59,7 @@ const PersonalDetails = (props) => {
     form.append("aadharCard", formData.aadharCard);
     console.log(formData);
     try {
-      const response = await fetch("http://localhost:5000/scholarship/apply", {
+      const response = await fetch("http://localhost:5000/scholarship/applyPd", {
         method: "POST",
         body: form,
       });
