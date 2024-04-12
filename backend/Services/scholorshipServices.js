@@ -93,8 +93,34 @@ async function saveIncomeDetails({
   }
 }
 
+
+// Function to save education details into the database
+async function saveEducationDetails({ userId,qualification, courseName, institute, currentYear, idCard }) {
+  try {
+    // Prepare SQL query to insert education details
+    const sql = `
+      INSERT INTO education_details (userId,qualification, course_name, institute, current_year, id_card_path)
+      VALUES (?, ?, ?, ?, ?,?)
+    `;
+    const values = [userId,qualification, courseName, institute, currentYear, idCard];
+
+    // Execute the SQL query
+    await db.promise().query(sql, values);
+      // Insert record into application_status table
+      const statusSql = `
+      INSERT INTO application_status (userId, status, replyMessage)
+      VALUES (?, ?, ?)
+    `;
+    const statusValues = [userId, 'pending', 'null']; // Set initial status as 'pending' and replyMessage as null
+    await db.promise().query(statusSql, statusValues);
+  } catch (error) {
+    console.error("Error saving education details:", error);
+    throw error;
+  }
+}
 module.exports = {
   savePersonalDetails,
   saveIncomeDetails,
+  saveEducationDetails,
   saveAddressDetails
 };

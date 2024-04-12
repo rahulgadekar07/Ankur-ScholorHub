@@ -1,14 +1,14 @@
 const db = require("../Config/database");
-const multer = require('multer');
+const multer = require("multer");
 
 // Configure Multer to store files in a specific directory
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, './adhaar_uploads/') // Specify the directory where files should be stored
+    cb(null, "./adhaar_uploads/"); // Specify the directory where files should be stored
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname) // Use a unique file name
-  }
+    cb(null, Date.now() + "-" + file.originalname); // Use a unique file name
+  },
 });
 
 // Create multer instance with the configured storage options
@@ -21,26 +21,19 @@ const scholarshipServices = require("../Services/scholorshipServices");
 async function applyForScholarship(req, res) {
   try {
     // Handle file upload
-    upload.single('aadharCard')(req, res, async function (err) {
+    upload.single("aadharCard")(req, res, async function (err) {
       if (err instanceof multer.MulterError) {
         // Multer error occurred
-        console.error('Multer error:', err);
-        return res.status(500).json({ error: 'Error uploading file' });
+        console.error("Multer error:", err);
+        return res.status(500).json({ error: "Error uploading file" });
       } else if (err) {
         // Other error occurred
-        console.error('Error:', err);
-        return res.status(500).json({ error: 'Internal server error' });
+        console.error("Error:", err);
+        return res.status(500).json({ error: "Internal server error" });
       }
 
       // File upload successful, extract form data and file information
-      const {
-        userId,
-        fullname,
-        email,
-        mobile,
-        dob,
-        gender
-      } = req.body;
+      const { userId, fullname, email, mobile, dob, gender } = req.body;
       const aadharCard = req.file ? req.file.path : null; // Store file path in database
 
       // Call service function to insert personal details into the database
@@ -51,33 +44,36 @@ async function applyForScholarship(req, res) {
         mobile,
         dob,
         gender,
-        aadharCard
+        aadharCard,
       });
 
       // Send response
-      res.status(201).json({ message: 'Personal details saved successfully' });
+      res.status(201).json({ message: "Personal details saved successfully" });
     });
   } catch (error) {
-    console.error('Error applying for scholarship:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Error applying for scholarship:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 }
-
 
 // Function to handle saving of address details
 async function saveAddressDetails(req, res) {
   try {
     // Extract address details from request body
-    const { userId, permanent_address, current_address  } = req.body;
-    console.log(userId, permanent_address, current_address )
+    const { userId, permanent_address, current_address } = req.body;
+    console.log(userId, permanent_address, current_address);
     // Call service function to save address details
-    await scholarshipServices.saveAddressDetails({userId, permanent_address, current_address  });
+    await scholarshipServices.saveAddressDetails({
+      userId,
+      permanent_address,
+      current_address,
+    });
 
     // Send success response
-    res.status(201).json({ message: 'Address details saved successfully' });
+    res.status(201).json({ message: "Address details saved successfully" });
   } catch (error) {
-    console.error('Error saving address details:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Error saving address details:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 }
 
@@ -85,11 +81,11 @@ async function saveAddressDetails(req, res) {
 // Configure Multer to store files in a specific directory
 const storage2 = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, './income_certificates/') // Specify the directory where files should be stored
+    cb(null, "./income_certificates/"); // Specify the directory where files should be stored
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname) // Use a unique file name
-  }
+    cb(null, Date.now() + "-" + file.originalname); // Use a unique file name
+  },
 });
 
 // Create multer instance with the configured storage options
@@ -99,15 +95,15 @@ const upload2 = multer({ storage: storage2 });
 async function saveIncomeDetails(req, res) {
   try {
     // Handle file upload
-    upload2.single('incomeCertificate')(req, res, async function (err) {
+    upload2.single("incomeCertificate")(req, res, async function (err) {
       if (err instanceof multer.MulterError) {
         // Multer error occurred
-        console.error('Multer error:', err);
-        return res.status(500).json({ error: 'Error uploading file' });
+        console.error("Multer error:", err);
+        return res.status(500).json({ error: "Error uploading file" });
       } else if (err) {
         // Other error occurred
-        console.error('Error:', err);
-        return res.status(500).json({ error: 'Internal server error' });
+        console.error("Error:", err);
+        return res.status(500).json({ error: "Internal server error" });
       }
 
       // File upload successful, extract form data and file information
@@ -117,7 +113,7 @@ async function saveIncomeDetails(req, res) {
         parentMobile,
         jobType,
         jobDescription,
-        annualIncome
+        annualIncome,
       } = req.body;
       const incomeCertificate = req.file ? req.file.path : null; // Store file path in database
 
@@ -129,30 +125,85 @@ async function saveIncomeDetails(req, res) {
         jobType,
         jobDescription,
         annualIncome,
-        incomeCertificate
+        incomeCertificate,
       });
 
       // Send response
-      res.status(201).json({ message: 'Income details saved successfully' });
+      res.status(201).json({ message: "Income details saved successfully" });
     });
   } catch (error) {
-    console.error('Error saving income details:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Error saving income details:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 }
 
+const storage3 = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./Institue_Idcard/"); // Specify the directory where files should be stored
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname); // Use a unique file name
+  },
+});
 
+const upload3 = multer({
+  storage: storage3,
+  fileFilter: function (req, file, cb) {
+    if (!file.originalname.match(/\.(jpg|jpeg)$/)) {
+      return cb(new Error("Only JPG files are allowed!"));
+    }
+    cb(null, true);
+  },
+});
+
+// Function to handle file uploading and saving education details
+async function saveEducationDetails(req, res) {
+  try {
+    // Handle file upload
+    upload3.single("idCard")(req, res, async function (err) {
+      if (err instanceof multer.MulterError) {
+        // Multer error occurred
+        console.error("Multer error:", err);
+        return res.status(500).json({ error: "Error uploading file" });
+      } else if (err) {
+        // Other error occurred
+        console.error("Error:", err);
+        return res.status(500).json({ error: "Internal server error" });
+      }
+
+      // File upload successful, extract form data and file information
+      const { userId, qualification, courseName, institute, currentYear } =
+        req.body;
+      const idCard = req.file ? req.file.path : null; // Store file path in database
+
+      // Call service function to insert education details into the database
+      await scholarshipServices.saveEducationDetails({
+        userId,
+        qualification,
+        courseName,
+        institute,
+        currentYear,
+        idCard,
+      });
+
+      // Send response
+      res.status(201).json({ message: "Education details saved successfully" });
+    });
+  } catch (error) {
+    console.error("Error saving education details:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
 
 // Function to retrieve application status
 async function getApplicationStatus(req, res) {
   // Implement function to retrieve application status if needed
 }
 
-
-
 module.exports = {
   applyForScholarship,
   saveAddressDetails,
   saveIncomeDetails,
-  getApplicationStatus
+  saveEducationDetails,
+  getApplicationStatus,
 };

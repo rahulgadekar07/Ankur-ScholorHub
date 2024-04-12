@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import { decodeToken } from "../../Utils/auth";
 
 const IncomeDetails = (props) => {
-
   const token = localStorage.getItem("token");
   const decodedToken = decodeToken(token);
-  
+
   // Sample job options
   const jobOptions = [
     { value: "", label: "Select Occupation" },
@@ -13,7 +12,7 @@ const IncomeDetails = (props) => {
     { value: "business", label: "Business" },
     { value: "others", label: "Others" },
   ];
-  
+
   const [formData, setFormData] = useState({
     parentName: "",
     parentMobile: "",
@@ -22,7 +21,7 @@ const IncomeDetails = (props) => {
     annualIncome: "",
     incomeCertificate: null,
   });
-  
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -30,7 +29,7 @@ const IncomeDetails = (props) => {
       [name]: value,
     });
   };
-  
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setFormData({
@@ -38,39 +37,47 @@ const IncomeDetails = (props) => {
       incomeCertificate: file,
     });
   };
-  
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const formDataToSend = new FormData();
-    formDataToSend.append("userId", decodedToken.userId);
-    for (const key in formData) {
-      formDataToSend.append(key, formData[key]);
-    }
 
-    try {
-      const response = await fetch("http://localhost:5000/scholarship/applyId", {
-        method: "POST",
-        body: formDataToSend,
-      });
-      if (response.ok) {
-        alert("Income details saved successfully");
-        props.setbgcolor3(true);
-        props.setActiveSection("education-details");
-        // Reset the form after successful submission
-        setFormData({
-          parentName: "",
-          parentMobile: "",
-          jobType: "",
-          jobDescription: "",
-          annualIncome: "",
-          incomeCertificate: null,
-        });
-      } else {
-        throw new Error("Failed to save income details");
+  const handleSubmit = async (e) => {
+    let conf = window.confirm(
+      "Are you Sure you want to Save ? Once Saved you wont be able to Edit the details"
+    );
+    if (conf) {
+      e.preventDefault();
+      const formDataToSend = new FormData();
+      formDataToSend.append("userId", decodedToken.userId);
+      for (const key in formData) {
+        formDataToSend.append(key, formData[key]);
       }
-    } catch (error) {
-      console.error("Error saving income details:", error);
-      alert("Error saving income details");
+
+      try {
+        const response = await fetch(
+          "http://localhost:5000/scholarship/applyId",
+          {
+            method: "POST",
+            body: formDataToSend,
+          }
+        );
+        if (response.ok) {
+          alert("Income details saved successfully");
+          props.setbgcolor3(true);
+          props.setActiveSection("education-details");
+          // Reset the form after successful submission
+          setFormData({
+            parentName: "",
+            parentMobile: "",
+            jobType: "",
+            jobDescription: "",
+            annualIncome: "",
+            incomeCertificate: null,
+          });
+        } else {
+          throw new Error("Failed to save income details");
+        }
+      } catch (error) {
+        console.error("Error saving income details:", error);
+        alert("Error saving income details");
+      }
     }
   };
 
@@ -78,7 +85,10 @@ const IncomeDetails = (props) => {
     <>
       <h2>Income Details:</h2>
       <hr />
-      <form className="income-details-form d-flex flex-column" onSubmit={handleSubmit}>
+      <form
+        className="income-details-form d-flex flex-column"
+        onSubmit={handleSubmit}
+      >
         {/* Parent Information */}
         <div className="form-group">
           <label htmlFor="parentName">Parent Name</label>

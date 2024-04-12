@@ -3,7 +3,8 @@ import "../Styles/Footer.css"
 const Footer = () => {
   return (
     <footer className=' footer1'>
-      This is footer
+     <p className='m-0 '>&copy; {new Date().getFullYear()} Ankur Vidyarthi Foundation</p>
+
     </footer>
   )
 }

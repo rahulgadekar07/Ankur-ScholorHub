@@ -1,49 +1,96 @@
 import React, { useState } from "react";
+import { decodeToken } from "../../Utils/auth";
+import { useNavigate } from "react-router-dom";
 
-const EducationDetails = () => {
-  const [qualification, setQualification] = useState("");
-  const [courseName, setCourseName] = useState("");
-  const [institute, setInstitute] = useState("");
-  const [currentYear, setCurrentYear] = useState("");
-  const [idCard, setIdCard] = useState("");
+const token = localStorage.getItem("token");
+const decodedToken = decodeToken(token);
+let userId = decodedToken.userId;
+const EducationDetails = (props) => {
+  const [formData, setFormData] = useState({
+    qualification: "",
+    courseName: "",
+    institute: "",
+    currentYear: "",
+    idCard: null,
+  });
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle form submission here, you can send data to backend or do further processing
-    console.log({
-      qualification,
-      courseName,
-      institute,
-      currentYear,
-      idCard,
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
     });
-    // Clear form fields after submission (No need for this in case of reset button)
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setFormData({
+      ...formData,
+      idCard: file,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    let conf = window.confirm(
+      "Are you Sure you want to Save ? Once Saved you wont be able to Edit the details"
+    );
+    if (conf) {
+      e.preventDefault();
+      // Append userId to the formData
+      const formDataToSend = new FormData();
+      formDataToSend.append("userId", userId);
+      for (const key in formData) {
+        formDataToSend.append(key, formData[key]);
+      }
+
+      try {
+        const response = await fetch(
+          "http://localhost:5000/scholarship/applyEd",
+          {
+            method: "POST",
+            body: formDataToSend,
+          }
+        );
+        if (response.ok) {
+          alert("Education details saved successfully");
+          props.setbgcolor4(true);
+          
+          // Optionally, reset the form
+          setFormData({
+            qualification: "",
+            courseName: "",
+            institute: "",
+            currentYear: "",
+            idCard: null,
+          });
+          navigate("/")
+        } else {
+          throw new Error("Failed to save education details");
+        }
+      } catch (error) {
+        console.error("Error saving education details:", error);
+        alert("Error saving education details");
+      }
+    }
   };
 
   return (
-    <div className="container">
-      <h2>Education Details</h2>
-      <form onSubmit={handleSubmit}>
+    <>
+      <h2>Education Details:</h2>
+      <hr />
+      <form
+        className="education-details-form d-flex flex-column "
+        onSubmit={handleSubmit}
+      >
         <div className="form-group">
           <label htmlFor="qualification">Qualification</label>
-          <input
-            type="text"
-            className="form-control"
-            id="qualification"
-            name="qualification"
-            value={qualification}
-            onChange={(e) => setQualification(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="courseName">Course/Degree Name</label>
           <select
             className="form-select"
-            id="courseName"
-            name="courseName"
-            value={courseName}
-            onChange={(e) => setCourseName(e.target.value)}
+            id="qualification"
+            name="qualification"
+            value={formData.qualification}
+            onChange={handleChange}
             required
           >
             <option value="">Select</option>
@@ -52,14 +99,26 @@ const EducationDetails = () => {
           </select>
         </div>
         <div className="form-group">
+          <label htmlFor="courseName">Course/Degree Name</label>
+          <input
+            type="text"
+            className="form-control"
+            id="courseName"
+            name="courseName"
+            value={formData.courseName}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="form-group">
           <label htmlFor="institute">Name of College/University</label>
           <input
             type="text"
             className="form-control"
             id="institute"
             name="institute"
-            value={institute}
-            onChange={(e) => setInstitute(e.target.value)}
+            value={formData.institute}
+            onChange={handleChange}
             required
           />
         </div>
@@ -70,20 +129,19 @@ const EducationDetails = () => {
             className="form-control"
             id="currentYear"
             name="currentYear"
-            value={currentYear}
-            onChange={(e) => setCurrentYear(e.target.value)}
+            value={formData.currentYear}
+            onChange={handleChange}
             required
           />
         </div>
         <div className="form-group">
           <label htmlFor="idCard">ID Card of the Institute</label>
           <input
-            type="text"
+            type="file"
             className="form-control"
             id="idCard"
             name="idCard"
-            value={idCard}
-            onChange={(e) => setIdCard(e.target.value)}
+            onChange={handleFileChange}
             required
           />
         </div>
@@ -91,10 +149,12 @@ const EducationDetails = () => {
           <button type="submit" className="btn btn-success my-2">
             Save
           </button>
-          <input type="reset" className="btn btn-danger my-2" value="Clear" />
+          <button type="reset" className="btn btn-danger my-2">
+            Clear
+          </button>
         </div>
       </form>
-    </div>
+    </>
   );
 };
 

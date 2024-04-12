@@ -15,7 +15,6 @@ const SignUpModal = (props) => {
     message: ""
   });
 
-  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();

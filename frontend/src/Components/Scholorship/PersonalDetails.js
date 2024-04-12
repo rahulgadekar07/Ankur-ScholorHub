@@ -47,7 +47,8 @@ const PersonalDetails = (props) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+   let conf= window.confirm("Are you Sure you want to Save ? Once Saved you wont be able to Edit the details");
+   if (conf){
     console.log("Form Data before submission: ", formData);
     const form = new FormData();
     form.append("userId", decodedToken.userId);
@@ -79,6 +80,8 @@ const PersonalDetails = (props) => {
       console.error("Error saving personal details:", error);
       // Add logic to handle error
     }
+   }
+    
   };
 
   return (

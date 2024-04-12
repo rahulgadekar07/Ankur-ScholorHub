@@ -161,40 +161,49 @@ const AddressDetails = (props) => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(currentAddress, permanentAddress);
-    try {
-      const response = await fetch(
-        "http://localhost:5000/scholarship/applyAd",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            userId: decodedToken.userId,
-            permanent_address: permanentAddress,
-            current_address: currentAddress,
-          }),
-        }
-      );
+    let conf = window.confirm(
+      "Are you Sure you want to Save ? Once Saved you wont be able to Edit the details"
+    );
+    if (conf) {
+      console.log(currentAddress, permanentAddress);
+      try {
+        const response = await fetch(
+          "http://localhost:5000/scholarship/applyAd",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              userId: decodedToken.userId,
+              permanent_address: permanentAddress,
+              current_address: currentAddress,
+            }),
+          }
+        );
 
-      if (response.ok) {
-        console.log("Address details saved successfully");
-        alert("Personal Details Saved SuccessFully");
-        props.setbgcolor2(true);
-        props.setActiveSection("income-details");
-        // Add logic for successful submission
-      } else {
-        console.error("Failed to save address details");
-        // Add logic for failed submission
+        if (response.ok) {
+          console.log("Address details saved successfully");
+          alert("Personal Details Saved SuccessFully");
+          props.setbgcolor2(true);
+          props.setActiveSection("income-details");
+          // Add logic for successful submission
+        } else {
+          console.error("Failed to save address details");
+          // Add logic for failed submission
+        }
+      } catch (error) {
+        console.error("Error saving address details:", error);
+        // Add logic for error
       }
-    } catch (error) {
-      console.error("Error saving address details:", error);
-      // Add logic for error
     }
   };
   return (
+    <>
+    <h2>Address Details:</h2>
+      <hr />
     <div className="d-flex align-content-center">
+      
       <form className="row g-3" onSubmit={handleSubmit}>
         <div className="col-12">
           <label htmlFor="inputAddress" className="form-label">
@@ -420,6 +429,7 @@ const AddressDetails = (props) => {
         </div>
       </form>
     </div>
+    </>
   );
 };
 

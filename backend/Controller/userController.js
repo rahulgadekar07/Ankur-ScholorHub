@@ -65,22 +65,35 @@ async function signIn(req, res) {
   }
 }
 
-async function getUserData(req, res) {
-  console.log("upklnwejcnwejn")
+const getUserData = async (req, res) => {
   try {
-    // Extract user ID from JWT token
-    const userId = req.user.userId;
-    console.log(userId)
-    // Fetch user data from the database using the user ID
+    // Extract user ID from Authorization header
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      throw new Error("Authorization header is missing");
+    }
+
+    const [bearer, tokenAndUserId] = authHeader.split(" "); // Split based on space
+    
+    if (bearer !== "Bearer" || !tokenAndUserId) {
+      throw new Error("Invalid authorization header format");
+    }
+
+    const [prefix, userId] = tokenAndUserId.split("="); // Split by "="
+console.log(userId);  // Should now print "35"
+    if (!userId) {
+      throw new Error("Missing user ID in authorization header");
+    }
+
+    // Rest of the code to fetch user data using userId
 
     const userData = await userService.getUserById(userId);
-    console.log(userData)
     res.status(200).json(userData);
   } catch (error) {
     console.error("Error fetching user data:", error);
     res.status(500).json({ error: "Error fetching user data" });
   }
-}
+};
 
 // Controller function for uploading profile picture
 

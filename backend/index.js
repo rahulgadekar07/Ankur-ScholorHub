@@ -1,4 +1,5 @@
 // index.js
+const path = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -9,6 +10,7 @@ const cors=require('cors');
 
 const app = express();
 app.use(express.json());
+app.use('/profile_images', express.static(path.join(__dirname, 'profile_images')));
 
 // Middleware to parse JSON request bodies
 app.use(bodyParser.json());

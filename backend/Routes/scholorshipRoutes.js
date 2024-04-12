@@ -9,6 +9,7 @@ const router = express.Router();
 router.post("/applyPd",  scholarshipController.applyForScholarship);
 router.post("/applyAd",  scholarshipController.saveAddressDetails);
 router.post("/applyId",  scholarshipController.saveIncomeDetails);
+router.post("/applyEd",  scholarshipController.saveEducationDetails);
 router.get("/status",  scholarshipController.getApplicationStatus);
 
 // Export the router

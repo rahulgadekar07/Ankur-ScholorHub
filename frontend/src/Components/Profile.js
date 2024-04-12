@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../Styles/Profile.css";
+import { decodeToken } from "../Utils/auth";
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
@@ -8,17 +9,24 @@ const Profile = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
   const fetchUserData = async () => {
     try {
+      console.log("Fetching user data..."); // Log 1: Fetching initiated
+
       const token = localStorage.getItem("token");
       if (!token) {
         throw new Error("User is not authenticated");
       }
-
+      const decodedToken = decodeToken(token);
+      const userId = decodedToken.userId;
       const response = await fetch("http://localhost:5000/user/user", {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token},userId=${userId}`,
           "Content-Type": "application/json",
         },
       });
@@ -28,17 +36,16 @@ const Profile = () => {
       }
 
       const userData = await response.json();
+      console.log("Data fetched:", userData); // Log 2: Fetched data
       setUserData(userData);
       setLoading(false);
     } catch (error) {
+      console.error("Error fetching data:", error); // Log 3: Error encountered
+
       setError(error.message);
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchUserData();
-  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -47,25 +54,28 @@ const Profile = () => {
     }
   }, [navigate]);
 
-  //endpoint for uploading profile picture
   const handleProfilePicChange = async (event) => {
     const file = event.target.files[0];
-    console.log(file)
     const token = localStorage.getItem("token");
+
+    if (!file) {
+      return; // No file selected, do nothing
+    }
 
     try {
       const formData = new FormData();
       formData.append("profilePic", file);
-      console.log("FormData:", formData);
 
-      const response = await fetch("http://localhost:5000/user/upload-profile-pic", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          
-        },
-        body: formData,
-      });
+      const response = await fetch(
+        "http://localhost:5000/user/upload-profile-pic",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        }
+      );
 
       if (response.ok) {
         // Profile picture uploaded successfully
@@ -76,6 +86,7 @@ const Profile = () => {
       }
     } catch (error) {
       console.error("Error uploading profile picture:", error);
+      setError(error.message); // Set error state for display on frontend
     }
   };
 
@@ -86,34 +97,53 @@ const Profile = () => {
   if (error) {
     return <div>Error: {error}</div>;
   }
+  const replacedImgUrl = userData.profpic.replace(/\\/g, "/");
+  const imageUrl = `../../../backend/${replacedImgUrl}`;
+  const filename = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+  console.log(filename); // Output: profile_1712817276229.png
 
+  console.log(imageUrl);
   return (
-    <div className="d-flex flex-column container border border-warning rounded text-center" style={{ marginBottom: '50px', marginTop: '20px' }}>
+    <div
+      className="d-flex flex-column container border border-warning rounded text-center"
+      style={{ marginBottom: "50px", marginTop: "20px" }}
+    >
       <h1>Profile</h1>
+      {/* {console.log(userData.profpic)} */}
+      {}
       {userData && (
         <div className="d-flex flex-column">
           <div className="profpic">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRA6g9BWr61gs6KYIq3zjFEy36Z8OuOIJQ75A&usqp=CAU" alt="ERROR" />
-            <label htmlFor="profilePicInput" style={{ cursor: 'pointer' }}>
-              <span><i className="fa-solid fa-pen-to-square"></i></span> Edit Image
-            </label>
-            <input
-              type="file"
-              id="profilePicInput"
-              accept="image/*"
-              style={{ display: "none" }}
-              onChange={handleProfilePicChange}
+            <img
+              src={`http://localhost:5000/profile_images/${filename}`}
+              alt="Profile Picture"
             />
           </div>
-          <div>
-            <p>
-              <b>Name:</b> {userData.name}
-            </p>
-          </div>
-          <div>
-            <p>
-              <b>Email:</b> {userData.email}
-            </p>
+
+          <label htmlFor="profilePicInput" style={{ cursor: "pointer" }}>
+            <span>
+              <i className="fa-solid fa-pen-to-square"></i>
+            </span>{" "}
+            Edit Image
+          </label>
+          <input
+            type="file"
+            id="profilePicInput"
+            accept="image/*"
+            style={{ display: "none" }}
+            onChange={handleProfilePicChange}
+          />
+          <div className="my-3">
+            <div>
+              <p>
+                <b>Name:</b> {userData.name}
+              </p>
+            </div>
+            <div>
+              <p>
+                <b>Email:</b> {userData.email}
+              </p>
+            </div>
           </div>
         </div>
       )}
