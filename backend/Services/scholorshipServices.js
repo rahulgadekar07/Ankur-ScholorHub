@@ -9,13 +9,7 @@ async function savePersonalDetails({
   gender,
   aadharCard
 }) {
-  console.log(userId,
-    fullname,
-    email,
-    mobile,
-    dob,
-    gender,
-    aadharCard)
+  
   try {
     const sql = `
       INSERT INTO personal_details (userId, fullname, email, mobile, dob, gender, aadharCard)
@@ -71,15 +65,7 @@ async function saveIncomeDetails({
   annualIncome,
   incomeCertificate
 }) {
-  console.log(
-    userId,
-    parentName,
-    parentMobile,
-    jobType,
-    jobDescription,
-    annualIncome,
-    incomeCertificate
-  );
+  
   try {
     const sql = `
       INSERT INTO incomedetails (userId, parentName, parentMobile, jobType, jobDescription, annualIncome, incomeCertificate)
@@ -118,9 +104,89 @@ async function saveEducationDetails({ userId,qualification, courseName, institut
     throw error;
   }
 }
+
+
+async function checkPersonalDetails(userId) {
+  try {
+    const sql = `
+      SELECT * FROM personal_details WHERE userId = ?
+    `;
+    const [rows] = await db.promise().query(sql, [userId]);
+    return rows.length > 0; // Return true if personal details exist; otherwise, false
+  } catch (error) {
+    console.error("Error checking personal details:", error);
+    throw error;
+  }
+}
+async function checkIncomeDetails(userId) {
+  console.log("UUUUID",userId)
+  try {
+    const sql = `
+      SELECT * FROM incomedetails WHERE userId = ?
+    `;
+    const [rows] = await db.promise().query(sql, [userId]);
+    console.log(rows.length)
+    return rows.length > 0; // Return true if personal details exist; otherwise, false
+  } catch (error) {
+    console.error("Error checking Income details:", error);
+    throw error;
+  }
+}
+async function checkAddressDetails(userId) {
+  console.log("UUUUID",userId)
+  try {
+    const sql = `
+      SELECT * FROM address_details WHERE user_id = ?
+    `;
+    const [rows] = await db.promise().query(sql, [userId]);
+    console.log(rows.length)
+    return rows.length > 0; // Return true if personal details exist; otherwise, false
+  } catch (error) {
+    console.error("Error checking Income details:", error);
+    throw error;
+  }
+}
+async function checkEducationDetails(userId) {
+  console.log("UUUUID",userId)
+  try {
+    const sql = `
+      SELECT * FROM education_details WHERE userId = ?
+    `;
+    const [rows] = await db.promise().query(sql, [userId]);
+    console.log(rows.length)
+    return rows.length > 0; // Return true if personal details exist; otherwise, false
+  } catch (error) {
+    console.error("Error checking Education details:", error);
+    throw error;
+  }
+}
+
+async function checkApplicationStatus(userId) {
+  try {
+    const sql = `
+      SELECT * FROM application_status WHERE userId = ?
+    `;
+    const [rows] = await db.promise().query(sql, [userId]);
+    if (rows.length > 0) {
+      return { exists: true, data: rows[0] }; // Return an object indicating existence and data
+    } else {
+      return { exists: false }; // Return an object indicating non-existence
+    }
+  } catch (error) {
+    console.error("Error checking application status:", error);
+    throw error;
+  }
+}
+
 module.exports = {
   savePersonalDetails,
   saveIncomeDetails,
   saveEducationDetails,
-  saveAddressDetails
+  checkPersonalDetails,
+  saveAddressDetails,
+  checkIncomeDetails,
+  checkAddressDetails,
+  checkEducationDetails,
+  checkApplicationStatus
+
 };

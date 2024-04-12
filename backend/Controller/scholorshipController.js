@@ -196,14 +196,86 @@ async function saveEducationDetails(req, res) {
 }
 
 // Function to retrieve application status
-async function getApplicationStatus(req, res) {
-  // Implement function to retrieve application status if needed
+async function checkApplicationStatus(req, res) {
+  try {
+    const userId = req.params.userId;
+    const userExists = await scholarshipServices.checkApplicationStatus(userId);
+    res.json({ userExists });
+  }
+  catch (error) {
+    console.error("Error checking application status:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 }
+
+// scholarshipController.js
+
+
+// Function to check if the user has submitted personal details
+async function checkPersonalDetails(req, res) {
+  try {
+    const userId = req.params.userId;
+
+    const detailsExist = await scholarshipServices.checkPersonalDetails(userId);
+    console.log("detailsExist",detailsExist)
+    res.json({ detailsExist });
+  } catch (error) {
+    console.error("Error checking personal details:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+// Function to check if the user has submitted Income details
+async function checkIncomeDetails(req, res) {
+  try {
+    const userId = req.params.userId;
+
+    const detailsExist1 = await scholarshipServices.checkIncomeDetails(userId);
+    console.log("detailsExist1",detailsExist1)
+    res.json({ detailsExist1 });
+  } catch (error) {
+    console.error("Error checking Income details:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+// Function to check if the user has submitted Address details
+async function checkAddressDetails(req, res) {
+  try {
+    const userId = req.params.userId;
+
+    const detailsExist2 = await scholarshipServices.checkAddressDetails(userId);
+    console.log("detailsExist2",detailsExist2)
+    res.json({ detailsExist2 });
+  } catch (error) {
+    console.error("Error checking Address details:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+// Function to check if the user has submitted Address details
+async function checkEducationDetails(req, res) {
+  try {
+    const userId = req.params.userId;
+
+    const detailsExist3 = await scholarshipServices.checkEducationDetails(userId);
+    console.log("detailsExist3",detailsExist3)
+    res.json({ detailsExist3 });
+  } catch (error) {
+    console.error("Error checking Address details:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+// Other controller functions...
+
+
 
 module.exports = {
   applyForScholarship,
   saveAddressDetails,
   saveIncomeDetails,
   saveEducationDetails,
-  getApplicationStatus,
+  checkApplicationStatus,
+  checkPersonalDetails,
+  checkIncomeDetails,
+  checkAddressDetails,
+  checkEducationDetails
 };

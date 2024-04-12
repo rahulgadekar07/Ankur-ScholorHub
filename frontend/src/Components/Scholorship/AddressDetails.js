@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { decodeToken } from "../../Utils/auth";
+import { useNavigate } from "react-router-dom";
 
-const token = localStorage.getItem("token");
-const decodedToken = decodeToken(token);
 
 const AddressDetails = (props) => {
+  const token = localStorage.getItem("token");
+const decodedToken = decodeToken(token);
   const [sameAsPermanent, setSameAsPermanent] = useState(false);
   const [currentAddress, setCurrentAddress] = useState({
     address: "",
@@ -14,6 +15,29 @@ const AddressDetails = (props) => {
     city: "",
     pincode: "",
   });
+
+  const navigate = useNavigate();
+
+  const checkAddressDetails = async () => {
+    try {
+      const userId = decodedToken.userId;
+
+      const response = await fetch(
+        `http://localhost:5000/scholarship/checkAddressDetails/${userId}`
+      );
+      const data = await response.json();
+      if (data.detailsExist2) {
+        alert("You have already submitted your Address details.");
+        props.setActiveSection("income-details") // Redirect to dashboard or any other page
+      }
+    } catch (error) {
+      console.error("Error checking user details:", error);
+    }
+  };
+
+  useEffect(() => {
+    checkAddressDetails();
+  }, []);
 
   const [permanentAddress, setPermanentAddress] = useState({
     address: "",
@@ -200,235 +224,234 @@ const AddressDetails = (props) => {
   };
   return (
     <>
-    <h2>Address Details:</h2>
+      <h2>Address Details:</h2>
       <hr />
-    <div className="d-flex align-content-center">
-      
-      <form className="row g-3" onSubmit={handleSubmit}>
-        <div className="col-12">
-          <label htmlFor="inputAddress" className="form-label">
-            <b>Permanent Address</b>
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="inputAddress"
-            name="address"
-            value={permanentAddress.address}
-            onChange={handlePermanentChange}
-            required
-          />
-        </div>
-        <div className="col-md-4">
-          <label htmlFor="permanentCity" className="form-label">
-            City/Village
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="permanentCity"
-            name="city"
-            value={permanentAddress.city}
-            onChange={handlePermanentChange}
-            required
-          />
-        </div>
-        <div className="col-md-4">
-          <label htmlFor="permanentPincode" className="form-label">
-            Pincode
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="permanentPincode"
-            name="pincode"
-            value={permanentAddress.pincode}
-            onChange={handlePermanentChange}
-            required
-          />
-        </div>
-        <div className="col-md-4">
-          <label htmlFor="permanentState" className="form-label">
-            State
-          </label>
-          <select
-            className="form-select"
-            id="permanentState"
-            name="state"
-            value={permanentAddress.state}
-            onChange={handlePermanentChange}
-            required
-          >
-            <option value="Maharashtra">Maharashtra</option>
-          </select>
-        </div>
-        <div className="col-md-4">
-          <label htmlFor="permanentDistrict" className="form-label">
-            District
-          </label>
-          <select
-            className="form-select"
-            id="permanentDistrict"
-            name="district"
-            value={permanentAddress.district}
-            onChange={handlePermanentChange}
-            required
-          >
-            <option value="">Select District</option>
-            {maharashtraData.Maharashtra.districts.map((district) => (
-              <option key={district} value={district}>
-                {district}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="col-md-4">
-          <label htmlFor="permanentTaluka" className="form-label">
-            Taluka
-          </label>
-          <select
-            className="form-select"
-            id="permanentTaluka"
-            name="taluka"
-            value={permanentAddress.taluka}
-            onChange={handlePermanentChange}
-            required
-          >
-            <option value="">Select Taluka</option>
-            {maharashtraData.Maharashtra.talukas[
-              permanentAddress.district
-            ]?.map((taluka) => (
-              <option key={taluka} value={taluka}>
-                {taluka}
-              </option>
-            ))}
-          </select>
-        </div>
-        {/* Add more permanent address fields here... */}
-        <div className="form-check my-2 d-flex mx-2">
-          <input
-            type="checkbox"
-            className="form-check-input"
-            id="sameAsPermanent"
-            checked={sameAsPermanent}
-            onChange={handleCheckboxChange}
-          />
-          <label className="form-check-label mx-2" htmlFor="sameAsPermanent">
-            Same as Permanent Address
-          </label>
-        </div>
-        <div className="col-12">
-          <label htmlFor="inputAddress2" className="form-label">
-            <b>Current Address</b>
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="inputAddress2"
-            placeholder="Apartment, studio, or floor"
-            name="address"
-            value={currentAddress.address}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="col-md-4">
-          <label htmlFor="currentCity" className="form-label">
-            City/Village
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="currentCity"
-            name="city"
-            value={currentAddress.city}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="col-md-4">
-          <label htmlFor="currentPincode" className="form-label">
-            Pincode
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="currentPincode"
-            name="pincode"
-            value={currentAddress.pincode}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="col-md-4">
-          <label htmlFor="currentState" className="form-label">
-            State
-          </label>
-          <select
-            className="form-select"
-            id="currentState"
-            name="state"
-            value={currentAddress.state}
-            onChange={handleStateChange}
-            required
-          >
-            <option value="">Select State</option>
-            <option value="Maharashtra">Maharashtra</option>
-          </select>
-        </div>
-        <div className="col-md-4">
-          <label htmlFor="currentDistrict" className="form-label">
-            District
-          </label>
-          <select
-            className="form-select"
-            id="currentDistrict"
-            name="district"
-            value={currentAddress.district}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Select District</option>
-            {maharashtraData.Maharashtra.districts.map((district) => (
-              <option key={district} value={district}>
-                {district}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="col-md-4">
-          <label htmlFor="currentTaluka" className="form-label">
-            Taluka
-          </label>
-          <select
-            className="form-select"
-            id="currentTaluka"
-            name="taluka"
-            value={currentAddress.taluka}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Select Taluka</option>
-            {maharashtraData.Maharashtra.talukas[currentAddress.district]?.map(
-              (taluka) => (
+      <div className="d-flex align-content-center">
+        <form className="row g-3" onSubmit={handleSubmit}>
+          <div className="col-12">
+            <label htmlFor="inputAddress" className="form-label">
+              <b>Permanent Address</b>
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="inputAddress"
+              name="address"
+              value={permanentAddress.address}
+              onChange={handlePermanentChange}
+              required
+            />
+          </div>
+          <div className="col-md-4">
+            <label htmlFor="permanentCity" className="form-label">
+              City/Village
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="permanentCity"
+              name="city"
+              value={permanentAddress.city}
+              onChange={handlePermanentChange}
+              required
+            />
+          </div>
+          <div className="col-md-4">
+            <label htmlFor="permanentPincode" className="form-label">
+              Pincode
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="permanentPincode"
+              name="pincode"
+              value={permanentAddress.pincode}
+              onChange={handlePermanentChange}
+              required
+            />
+          </div>
+          <div className="col-md-4">
+            <label htmlFor="permanentState" className="form-label">
+              State
+            </label>
+            <select
+              className="form-select"
+              id="permanentState"
+              name="state"
+              value={permanentAddress.state}
+              onChange={handlePermanentChange}
+              required
+            >
+              <option value="Maharashtra">Maharashtra</option>
+            </select>
+          </div>
+          <div className="col-md-4">
+            <label htmlFor="permanentDistrict" className="form-label">
+              District
+            </label>
+            <select
+              className="form-select"
+              id="permanentDistrict"
+              name="district"
+              value={permanentAddress.district}
+              onChange={handlePermanentChange}
+              required
+            >
+              <option value="">Select District</option>
+              {maharashtraData.Maharashtra.districts.map((district) => (
+                <option key={district} value={district}>
+                  {district}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="col-md-4">
+            <label htmlFor="permanentTaluka" className="form-label">
+              Taluka
+            </label>
+            <select
+              className="form-select"
+              id="permanentTaluka"
+              name="taluka"
+              value={permanentAddress.taluka}
+              onChange={handlePermanentChange}
+              required
+            >
+              <option value="">Select Taluka</option>
+              {maharashtraData.Maharashtra.talukas[
+                permanentAddress.district
+              ]?.map((taluka) => (
                 <option key={taluka} value={taluka}>
                   {taluka}
                 </option>
-              )
-            )}
-          </select>
-        </div>
-        {/* Add more current address fields here... */}
-        <div className="buttons my-3 d-flex flex-column">
-          <button type="submit" className="btn btn-success my-2">
-            Save
-          </button>
-          <button type="reset" className="btn btn-danger my-1">
-            Clear
-          </button>
-        </div>
-      </form>
-    </div>
+              ))}
+            </select>
+          </div>
+          {/* Add more permanent address fields here... */}
+          <div className="form-check my-2 d-flex mx-2">
+            <input
+              type="checkbox"
+              className="form-check-input"
+              id="sameAsPermanent"
+              checked={sameAsPermanent}
+              onChange={handleCheckboxChange}
+            />
+            <label className="form-check-label mx-2" htmlFor="sameAsPermanent">
+              Same as Permanent Address
+            </label>
+          </div>
+          <div className="col-12">
+            <label htmlFor="inputAddress2" className="form-label">
+              <b>Current Address</b>
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="inputAddress2"
+              placeholder="Apartment, studio, or floor"
+              name="address"
+              value={currentAddress.address}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="col-md-4">
+            <label htmlFor="currentCity" className="form-label">
+              City/Village
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="currentCity"
+              name="city"
+              value={currentAddress.city}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="col-md-4">
+            <label htmlFor="currentPincode" className="form-label">
+              Pincode
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="currentPincode"
+              name="pincode"
+              value={currentAddress.pincode}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="col-md-4">
+            <label htmlFor="currentState" className="form-label">
+              State
+            </label>
+            <select
+              className="form-select"
+              id="currentState"
+              name="state"
+              value={currentAddress.state}
+              onChange={handleStateChange}
+              required
+            >
+              <option value="">Select State</option>
+              <option value="Maharashtra">Maharashtra</option>
+            </select>
+          </div>
+          <div className="col-md-4">
+            <label htmlFor="currentDistrict" className="form-label">
+              District
+            </label>
+            <select
+              className="form-select"
+              id="currentDistrict"
+              name="district"
+              value={currentAddress.district}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Select District</option>
+              {maharashtraData.Maharashtra.districts.map((district) => (
+                <option key={district} value={district}>
+                  {district}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="col-md-4">
+            <label htmlFor="currentTaluka" className="form-label">
+              Taluka
+            </label>
+            <select
+              className="form-select"
+              id="currentTaluka"
+              name="taluka"
+              value={currentAddress.taluka}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Select Taluka</option>
+              {maharashtraData.Maharashtra.talukas[
+                currentAddress.district
+              ]?.map((taluka) => (
+                <option key={taluka} value={taluka}>
+                  {taluka}
+                </option>
+              ))}
+            </select>
+          </div>
+          {/* Add more current address fields here... */}
+          <div className="buttons my-3 d-flex flex-column">
+            <button type="submit" className="btn btn-success my-2">
+              Save
+            </button>
+            <button type="reset" className="btn btn-danger my-1">
+              Clear
+            </button>
+          </div>
+        </form>
+      </div>
     </>
   );
 };

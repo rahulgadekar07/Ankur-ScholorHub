@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { decodeToken } from "../../Utils/auth";
 import { useNavigate } from "react-router-dom";
 
-const token = localStorage.getItem("token");
-const decodedToken = decodeToken(token);
-let userId = decodedToken.userId;
+
 const EducationDetails = (props) => {
+  const token = localStorage.getItem("token");
+  const decodedToken = decodeToken(token);
+  let userId = decodedToken.userId;
   const [formData, setFormData] = useState({
     qualification: "",
     courseName: "",
@@ -15,6 +16,28 @@ const EducationDetails = (props) => {
   });
   const navigate = useNavigate();
 
+  const checkEducationDetails = async () => {
+    try {
+      const userId = decodedToken.userId;
+
+      const response = await fetch(
+        `http://localhost:5000/scholarship/checkEducationDetails/${userId}`
+      );
+      const data = await response.json();
+      if (data.detailsExist3) {
+        alert("You have already submitted your Education details.");
+        navigate("/"); // Redirect to dashboard or any other page
+      }
+    } catch (error) {
+      console.error("Error checking user details:", error);
+    }
+  };
+
+  useEffect(() => {
+    checkEducationDetails();
+  }, []);
+
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({

@@ -6,16 +6,19 @@ import { decodeToken } from "../Utils/auth";
 const Profile = () => {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [applicationStatus, setApplicationStatus] = useState(null); // State to store application status
+
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchUserData();
+    fetchApplicationStatus(); // Fetch application status data
   }, []);
 
   const fetchUserData = async () => {
     try {
-      console.log("Fetching user data..."); // Log 1: Fetching initiated
+      // console.log("Fetching user data..."); // Log 1: Fetching initiated
 
       const token = localStorage.getItem("token");
       if (!token) {
@@ -36,7 +39,7 @@ const Profile = () => {
       }
 
       const userData = await response.json();
-      console.log("Data fetched:", userData); // Log 2: Fetched data
+      // console.log("Data fetched:", userData); // Log 2: Fetched data
       setUserData(userData);
       setLoading(false);
     } catch (error) {
@@ -46,6 +49,45 @@ const Profile = () => {
       setLoading(false);
     }
   };
+
+  const fetchApplicationStatus = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const decodedToken = decodeToken(token);
+      const userId = decodedToken.userId;
+
+      const response = await fetch(
+        `http://localhost:5000/scholarship/checkApplicationStatus/${userId}`,
+        {
+          method: "GET",
+          // headers: {
+          //   Authorization: `Bearer ${token}`,
+          //   "Content-Type": "application/json",
+          // },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch application status");
+      }
+
+      const result = await response.json();
+      console.log("API Response:", result);
+      console.log("Application data:", result.userExists.data);
+      if(result.userExists.exists){
+        setApplicationStatus(result.userExists.data);
+      }else{
+        setApplicationStatus(null); 
+      }
+       // Update applicationStatus state
+    } catch (error) {
+      console.error("Error fetching application status:", error);
+      setError(error.message);
+    }
+  };
+  useEffect(() => {
+    console.log("State applicationStatus", applicationStatus);
+  }, [applicationStatus]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -100,15 +142,16 @@ const Profile = () => {
   const replacedImgUrl = userData.profpic.replace(/\\/g, "/");
   const imageUrl = `../../../backend/${replacedImgUrl}`;
   const filename = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
-  console.log(filename); // Output: profile_1712817276229.png
+  // console.log(filename); // Output: profile_1712817276229.png
 
-  console.log(imageUrl);
+  // console.log(imageUrl);
   return (
     <div
       className="d-flex flex-column container border border-warning rounded text-center"
       style={{ marginBottom: "50px", marginTop: "20px" }}
     >
       <h1>Profile</h1>
+      <hr />
       {/* {console.log(userData.profpic)} */}
       {}
       {userData && (
@@ -144,6 +187,20 @@ const Profile = () => {
                 <b>Email:</b> {userData.email}
               </p>
             </div>
+          </div>
+          <hr />
+          <div>
+            <h2 className="my-2">Scholarship Application Status</h2>
+          {  console.log("State applicationStatus",applicationStatus)}
+            {applicationStatus ? (
+              <div className="my-4">
+                <p><b>Application ID:</b> {applicationStatus.id}</p>
+                <p><b>Status:</b> {applicationStatus.status}</p>
+                <p><b>Remarks:</b> {applicationStatus.replyMessage}.....</p>
+              </div>
+            ) : (
+              <p>No application submitted</p>
+            )}
           </div>
         </div>
       )}

@@ -1,9 +1,31 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { decodeToken } from "../../Utils/auth";
-
+import { useNavigate } from "react-router-dom";
 const IncomeDetails = (props) => {
   const token = localStorage.getItem("token");
   const decodedToken = decodeToken(token);
+  const navigate = useNavigate();
+
+  const checkIncomeDetails = async () => {
+    try {
+      const userId = decodedToken.userId;
+
+      const response = await fetch(
+        `http://localhost:5000/scholarship/checkIncomeDetails/${userId}`
+      );
+      const data = await response.json();
+      if (data.detailsExist1) {
+        alert("You have already submitted your Income details.");
+        navigate("/"); // Redirect to dashboard or any other page
+      }
+    } catch (error) {
+      console.error("Error checking user details:", error);
+    }
+  };
+
+  useEffect(() => {
+    checkIncomeDetails();
+  }, []);
 
   // Sample job options
   const jobOptions = [

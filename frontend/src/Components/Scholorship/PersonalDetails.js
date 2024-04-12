@@ -5,6 +5,37 @@ import { useNavigate } from "react-router-dom";
 
 const PersonalDetails = (props) => {
   
+  const [applicationSubmitted, setApplicationSubmitted] = useState(false)
+
+  const navigate=useNavigate()
+  // Update email value in state when signing in with a new account
+  // Initialize default email using decoded token
+  const token = localStorage.getItem("token");
+  const decodedToken = decodeToken(token);
+
+  const checkApplicationStatus=async()=>{
+    try {
+      
+      const userId = decodedToken.userId;
+
+      const response = await fetch(`http://localhost:5000/scholarship/checkApplicationStatus/${userId}`);
+      const data = await response.json();
+
+      if (data.userExists) {
+        setApplicationSubmitted(true); // Set the application submission flag
+
+        alert("You have already submitted your Application Form.");
+       navigate("/"); // Redirect to dashboard or any other page
+       return;
+      }
+    } catch (error) {
+      console.error("Error checking user details:", error);
+    }
+  }
+
+  useEffect(() => {
+    checkApplicationStatus();
+  }, []);
   const [formData, setFormData] = useState({
     fullname: "",
     email: "",
@@ -14,11 +45,31 @@ const PersonalDetails = (props) => {
     aadharCard: null,
   });
 
-  const navigate=useNavigate()
-  // Update email value in state when signing in with a new account
-  // Initialize default email using decoded token
-  const token = localStorage.getItem("token");
-  const decodedToken = decodeToken(token);
+  const checkPersonalDetails = async () => {
+    try {
+      
+      const userId = decodedToken.userId;
+
+      const response = await fetch(`http://localhost:5000/scholarship/checkPersonalDetails/${userId}`);
+      const data = await response.json();
+
+      if (!applicationSubmitted && data.detailsExist) {
+        alert("You have already submitted your personal details.");
+        props.setActiveSection("address-details") // Redirect to dashboard or any other page
+      }
+    } catch (error) {
+      console.error("Error checking user details:", error);
+    }
+  };
+
+  useEffect(() => {
+    checkPersonalDetails();
+  }, [applicationSubmitted]);
+
+
+
+
+
   const [defaultEmail, setDefaultEmail] = useState(
     decodedToken ? decodedToken.email : ""
   );
