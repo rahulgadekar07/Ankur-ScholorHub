@@ -20,8 +20,9 @@ const PersonalDetails = (props) => {
 
       const response = await fetch(`http://localhost:5000/scholarship/checkApplicationStatus/${userId}`);
       const data = await response.json();
-
-      if (data.userExists) {
+      console.log(data)
+      console.log(data.userExists)
+      if (data.userExists.exists) {
         setApplicationSubmitted(true); // Set the application submission flag
 
         alert("You have already submitted your Application Form.");
@@ -53,9 +54,14 @@ const PersonalDetails = (props) => {
       const response = await fetch(`http://localhost:5000/scholarship/checkPersonalDetails/${userId}`);
       const data = await response.json();
 
-      if (!applicationSubmitted && data.detailsExist) {
-        alert("You have already submitted your personal details.");
-        props.setActiveSection("address-details") // Redirect to dashboard or any other page
+      if (data.detailsExist) {
+        if (!applicationSubmitted) {
+          alert("You have already submitted your personal details.");
+          props.setActiveSection("address-details"); // Redirect to the next section
+        } else {
+          // If applicationSubmitted is true, then the personal details have been submitted
+          // and we don't need to show the alert again
+        }
       }
     } catch (error) {
       console.error("Error checking user details:", error);
@@ -119,6 +125,7 @@ const PersonalDetails = (props) => {
       if (response.ok) {
         console.log("Personal details saved successfully");
         props.setbgcolor1(true)
+        setApplicationSubmitted(true); // Update applicationSubmitted when the form is successfully submitted
 
         alert("Personal Details Saved SuccessFully")
         props.setActiveSection("address-details")

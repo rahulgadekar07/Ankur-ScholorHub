@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import "../Styles/Profile.css";
 import { decodeToken } from "../Utils/auth";
 
+
+
 const Profile = () => {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -15,6 +17,40 @@ const Profile = () => {
     fetchUserData();
     fetchApplicationStatus(); // Fetch application status data
   }, []);
+
+  const handleDelete = async () => {
+    let confdelete = window.confirm(
+      "Are You Sure you want to Delete Application Form?"
+    );
+    if (confdelete) {
+      try {
+        const token = localStorage.getItem("token");
+        const decodedToken = decodeToken(token);
+        const userId = decodedToken.userId;
+
+        const response = await fetch(
+          `http://localhost:5000/scholarship/deleteApplication/${userId}`,
+          {
+            method: "DELETE", // Change the method to DELETE
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to delete application");
+        }
+        alert("Scholorship Application Deleted Successfully..!!")
+        // Application deleted successfully
+        setApplicationStatus(null); // Clear the application status in state
+      } catch (error) {
+        console.error("Error Deleting Form:", error);
+        // Handle error
+      }
+    }
+  };
 
   const fetchUserData = async () => {
     try {
@@ -74,12 +110,12 @@ const Profile = () => {
       const result = await response.json();
       console.log("API Response:", result);
       console.log("Application data:", result.userExists.data);
-      if(result.userExists.exists){
+      if (result.userExists.exists) {
         setApplicationStatus(result.userExists.data);
-      }else{
-        setApplicationStatus(null); 
+      } else {
+        setApplicationStatus(null);
       }
-       // Update applicationStatus state
+      // Update applicationStatus state
     } catch (error) {
       console.error("Error fetching application status:", error);
       setError(error.message);
@@ -139,6 +175,7 @@ const Profile = () => {
   if (error) {
     return <div>Error: {error}</div>;
   }
+  console.log(userData)
   const replacedImgUrl = userData.profpic.replace(/\\/g, "/");
   const imageUrl = `../../../backend/${replacedImgUrl}`;
   const filename = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
@@ -160,6 +197,7 @@ const Profile = () => {
             <img
               src={`http://localhost:5000/profile_images/${filename}`}
               alt="Profile Picture"
+              style={{height:'200px',width:'200px'}}
             />
           </div>
 
@@ -191,16 +229,28 @@ const Profile = () => {
           <hr />
           <div>
             <h2 className="my-2">Scholarship Application Status</h2>
-          {  console.log("State applicationStatus",applicationStatus)}
+            {console.log("State applicationStatus", applicationStatus)}
             {applicationStatus ? (
               <div className="my-4">
-                <p><b>Application ID:</b> {applicationStatus.id}</p>
-                <p><b>Status:</b> {applicationStatus.status}</p>
-                <p><b>Remarks:</b> {applicationStatus.replyMessage}.....</p>
-                <Link className="btn btn-primary " to="/printform"> View Form </Link>
+                <p>
+                  <b>Application ID:</b> {applicationStatus.id}
+                </p>
+                <p>
+                  <b>Status:</b> {applicationStatus.status}
+                </p>
+                <p>
+                  <b>Remarks:</b> {applicationStatus.replyMessage}.....
+                </p>
+                <Link className="btn btn-primary mx-1" to="/printform">
+                  {" "}
+                  View Form{" "}
+                </Link>
+                <button className="btn btn-danger mx-1" onClick={handleDelete}>
+                  Delete Application
+                </button>
               </div>
             ) : (
-              <p>No application submitted</p>
+              <p className="text-danger ">No any application submitted...</p>
             )}
           </div>
         </div>
@@ -208,5 +258,5 @@ const Profile = () => {
     </div>
   );
 };
-
 export default Profile;
+

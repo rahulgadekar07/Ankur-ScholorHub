@@ -94,10 +94,10 @@ async function saveEducationDetails({ userId,qualification, courseName, institut
     await db.promise().query(sql, values);
       // Insert record into application_status table
       const statusSql = `
-      INSERT INTO application_status (userId, status, replyMessage)
-      VALUES (?, ?, ?)
+      INSERT INTO application_status (userId, status)
+      VALUES (?, ?)
     `;
-    const statusValues = [userId, 'pending', 'null']; // Set initial status as 'pending' and replyMessage as null
+    const statusValues = [userId, 'pending']; // Set initial status as 'pending' and replyMessage as null
     await db.promise().query(statusSql, statusValues);
   } catch (error) {
     console.error("Error saving education details:", error);
@@ -164,7 +164,7 @@ async function checkEducationDetails(userId) {
 async function checkApplicationStatus(userId) {
   try {
     const sql = `
-      SELECT * FROM application_status WHERE userId = ?
+      SELECT * FROM application_status WHERE userId = ? AND status = 'pending'
     `;
     const [rows] = await db.promise().query(sql, [userId]);
     if (rows.length > 0) {
@@ -177,6 +177,7 @@ async function checkApplicationStatus(userId) {
     throw error;
   }
 }
+
 
 // Functions to View Application Form
 
@@ -233,6 +234,47 @@ async function getAllEducationDetails(userId) {
   }
 }
 
+// Function to delete application data for a user
+
+
+async function deleteApplication(userId) {
+  try {
+    // Delete application status
+    const deleteStatusSql = `
+      DELETE FROM application_status WHERE userId = ?
+    `;
+    await db.promise().query(deleteStatusSql, [userId]);
+
+    // Delete personal details
+    const deletePersonalDetailsSql = `
+      DELETE FROM personal_details WHERE userId = ?
+    `;
+    await db.promise().query(deletePersonalDetailsSql, [userId]);
+
+    // Delete income details
+    const deleteIncomeDetailsSql = `
+      DELETE FROM incomedetails WHERE userId = ?
+    `;
+    await db.promise().query(deleteIncomeDetailsSql, [userId]);
+
+    // Delete education details
+    const deleteEducationDetailsSql = `
+      DELETE FROM education_details WHERE userId = ?
+    `;
+    await db.promise().query(deleteEducationDetailsSql, [userId]);
+
+    // Delete address details
+    const deleteAddressDetailsSql = `
+      DELETE FROM address_details WHERE user_id = ?
+    `;
+    await db.promise().query(deleteAddressDetailsSql, [userId]);
+
+    console.log("Application data deleted successfully");
+  } catch (error) {
+    console.error("Error deleting application data:", error);
+    throw error;
+  }
+}
 
 
 module.exports = {
@@ -245,6 +287,8 @@ module.exports = {
   checkIncomeDetails,
   checkAddressDetails,
   checkEducationDetails,
+
+  deleteApplication,
   checkApplicationStatus,
 
   getAllPersonalDetails,

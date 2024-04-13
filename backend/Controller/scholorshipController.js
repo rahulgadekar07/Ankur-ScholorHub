@@ -314,6 +314,23 @@ async function getAllEducationDetails(req, res) {
     res.status(500).json({ error: "Internal server error" });
   }
 }
+
+
+// Function to delete the application data for a user
+async function deleteApplication(req, res) {
+  try {
+    const userId = req.params.userId;
+
+    // Call the service function to delete the application data
+    await scholarshipServices.deleteApplication(userId);
+
+    // Send a success response
+    res.status(200).json({ message: "Application data deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting application data:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
 // Other controller functions...
 
 
@@ -326,6 +343,9 @@ module.exports = {
 
 
   checkApplicationStatus,
+  deleteApplication,
+
+  
   checkPersonalDetails,
   checkIncomeDetails,
   checkAddressDetails,
