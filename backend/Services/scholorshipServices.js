@@ -178,15 +178,78 @@ async function checkApplicationStatus(userId) {
   }
 }
 
+// Functions to View Application Form
+
+async function getAllPersonalDetails(userId) {
+  try {
+    const sql = `
+      SELECT * FROM personal_details WHERE userId = ?
+    `;
+    const [rows] = await db.promise().query(sql, [userId]);
+    return rows; // Return all personal details for the given userId
+    
+  } catch (error) {
+    console.error("Error getting personal details:", error);
+    throw error;
+  }
+}
+
+async function getAllIncomeDetails(userId) {
+  try {
+    const sql = `
+      SELECT * FROM incomedetails WHERE userId = ?
+    `;
+    const [rows] = await db.promise().query(sql, [userId]);
+    return rows; // Return all income details for the given userId
+  } catch (error) {
+    console.error("Error getting income details:", error);
+    throw error;
+  }
+}
+
+async function getAllAddressDetails(userId) {
+  try {
+    const sql = `
+      SELECT * FROM address_details WHERE user_id = ?
+    `;
+    const [rows] = await db.promise().query(sql, [userId]);
+    return rows; // Return all address details for the given userId
+  } catch (error) {
+    console.error("Error getting address details:", error);
+    throw error;
+  }
+}
+
+async function getAllEducationDetails(userId) {
+  try {
+    const sql = `
+      SELECT * FROM education_details WHERE userId = ?
+    `;
+    const [rows] = await db.promise().query(sql, [userId]);
+    return rows; // Return all education details for the given userId
+  } catch (error) {
+    console.error("Error getting education details:", error);
+    throw error;
+  }
+}
+
+
+
 module.exports = {
   savePersonalDetails,
   saveIncomeDetails,
   saveEducationDetails,
-  checkPersonalDetails,
   saveAddressDetails,
+
+  checkPersonalDetails,
   checkIncomeDetails,
   checkAddressDetails,
   checkEducationDetails,
-  checkApplicationStatus
+  checkApplicationStatus,
+
+  getAllPersonalDetails,
+  getAllIncomeDetails,
+  getAllAddressDetails,
+  getAllEducationDetails
 
 };

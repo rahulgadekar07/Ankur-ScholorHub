@@ -1,0 +1,9 @@
+@media print {
+    body {
+        size: A3; /* Set the page size */
+        margin: 10px; /* Set margins */
+        padding: 10px;
+    }
+
+    /* Add more print styles here */
+}

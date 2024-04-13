@@ -264,6 +264,56 @@ async function checkEducationDetails(req, res) {
   }
 }
 
+
+
+// Functions to retrieve all personal details for a user
+async function getAllPersonalDetails(req, res) {
+  try {
+    const userId = req.params.userId;
+    const personalDetails = await scholarshipServices.getAllPersonalDetails(userId);
+    console.log("personalDetails: ",personalDetails)
+    res.json(personalDetails);
+  } catch (error) {
+    console.error("Error retrieving personal details:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+// Function to retrieve all income details for a user
+async function getAllIncomeDetails(req, res) {
+  try {
+    const userId = req.params.userId;
+    const incomeDetails = await scholarshipServices.getAllIncomeDetails(userId);
+    res.json(incomeDetails);
+  } catch (error) {
+    console.error("Error retrieving income details:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+// Function to retrieve all address details for a user
+async function getAllAddressDetails(req, res) {
+  try {
+    const userId = req.params.userId;
+    const addressDetails = await scholarshipServices.getAllAddressDetails(userId);
+    res.json(addressDetails);
+  } catch (error) {
+    console.error("Error retrieving address details:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+// Function to retrieve all education details for a user
+async function getAllEducationDetails(req, res) {
+  try {
+    const userId = req.params.userId;
+    const educationDetails = await scholarshipServices.getAllEducationDetails(userId);
+    res.json(educationDetails);
+  } catch (error) {
+    console.error("Error retrieving education details:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
 // Other controller functions...
 
 
@@ -273,9 +323,18 @@ module.exports = {
   saveAddressDetails,
   saveIncomeDetails,
   saveEducationDetails,
+
+
   checkApplicationStatus,
   checkPersonalDetails,
   checkIncomeDetails,
   checkAddressDetails,
-  checkEducationDetails
+  checkEducationDetails,
+
+  getAllPersonalDetails,
+  getAllIncomeDetails,
+  getAllAddressDetails,
+  getAllEducationDetails
+
+
 };

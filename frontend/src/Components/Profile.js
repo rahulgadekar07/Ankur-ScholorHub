@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../Styles/Profile.css";
 import { decodeToken } from "../Utils/auth";
 
@@ -150,7 +150,7 @@ const Profile = () => {
       className="d-flex flex-column container border border-warning rounded text-center"
       style={{ marginBottom: "50px", marginTop: "20px" }}
     >
-      <h1>Profile</h1>
+      <h1 className="my-3">Profile</h1>
       <hr />
       {/* {console.log(userData.profpic)} */}
       {}
@@ -197,6 +197,7 @@ const Profile = () => {
                 <p><b>Application ID:</b> {applicationStatus.id}</p>
                 <p><b>Status:</b> {applicationStatus.status}</p>
                 <p><b>Remarks:</b> {applicationStatus.replyMessage}.....</p>
+                <Link className="btn btn-primary " to="/printform"> View Form </Link>
               </div>
             ) : (
               <p>No application submitted</p>

@@ -17,6 +17,7 @@ import PersonalDetails from "./Components/Scholorship/PersonalDetails";
 import IncomeDetails from "./Components/Scholorship/IncomeDetails";
 import EducationDetails from "./Components/Scholorship/EducationDetails";
 import AddressDetails from "./Components/Scholorship/AddressDetails";
+import ApplicationForm from "./Components/Scholorship/ApplicationForm";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
           <Route path="/donate" element={<Donate />} />
           <Route path="/market" element={<Market />} />
           <Route path="/apply" element={<Formpage />} />
+          <Route path="/printform" element={<ApplicationForm/>} />
           <Route path="/personal-details" element={<PersonalDetails />} />
           <Route path="/address-details" element={<AddressDetails />} />
           <Route path="/income-details" element={<IncomeDetails />} />
