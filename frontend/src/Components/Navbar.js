@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../Styles/Navbar.css";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import SignInModal from "./Modals/SignInModal";
 import SignUpModal from "./Modals/SignUpModal";
@@ -15,6 +15,10 @@ function Navbar() {
   const [userName, setUserName] = useState("");
   const { signOut } = useAuth();
   const navigate = useNavigate();
+
+  const location = useLocation(); // Get current location
+  const isAdminDash = location.pathname === "/admindash";
+
   useEffect(() => {
     // Check if the user is already authenticated based on the token stored in local storage
     const token = localStorage.getItem("token");
@@ -24,7 +28,7 @@ function Navbar() {
       const decodedToken = decodeToken(token);
       if (decodedToken) {
         setUserName(decodedToken.email ?? "");
-         // Assuming the token contains the user's ID
+        // Assuming the token contains the user's ID
       }
     }
   }, []);
@@ -51,58 +55,61 @@ function Navbar() {
 
   return (
     <>
-      <div className="navbar1">
-        <div className="navbar1-left">
-          <i className="fa-solid fa-envelope mx-1 "></i>
-          <span>ankurfoundation@gmail.com</span>
+      {!isAdminDash && (
+        <div className="navbar1">
+          <div className="navbar1-left">
+            <i className="fa-solid fa-envelope mx-1 "></i>
+            <span>ankurfoundation@gmail.com</span>
+          </div>
+          <div className="navbar1-right">
+            {authenticated ? (
+              <div className="dropdown">
+                <button
+                  className="btn btn-sm btn-link text-white text-decoration-none dropdown-toggle"
+                  type="button"
+                  id="dropdownMenuButton"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  {userName}
+                </button>
+                <ul
+                  className="dropdown-menu"
+                  aria-labelledby="dropdownMenuButton"
+                >
+                  <li>
+                    <Link className="dropdown-item" to="/profile">
+                      Profile
+                    </Link>
+                  </li>
+                  <li>
+                    <button className="dropdown-item" onClick={handleSignOut}>
+                      Logout
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            ) : (
+              <>
+                <button
+                  className="btn btn-sm btn-link text-white text-decoration-none"
+                  onClick={toggleSignUpModal}
+                >
+                  SignUp
+                </button>
+                <button
+                  className="btn btn-sm btn-link text-white text-decoration-none"
+                  onClick={toggleSignInModal}
+                >
+                  SignIn
+                </button>
+              </>
+            )}
+          </div>
         </div>
-        <div className="navbar1-right">
-          {authenticated ? (
-            <div className="dropdown">
-              <button
-                className="btn btn-sm btn-link text-white text-decoration-none dropdown-toggle"
-                type="button"
-                id="dropdownMenuButton"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                {userName}
-              </button>
-              <ul
-                className="dropdown-menu"
-                aria-labelledby="dropdownMenuButton"
-              >
-                <li>
-                  <Link className="dropdown-item" to="/profile">
-                    Profile
-                  </Link>
-                </li>
-                <li>
-                  <button className="dropdown-item" onClick={handleSignOut}>
-                    Logout
-                  </button>
-                </li>
-              </ul>
-            </div>
-          ) : (
-            <>
-              <button
-                className="btn btn-sm btn-link text-white text-decoration-none"
-                onClick={toggleSignUpModal}
-              >
-                SignUp
-              </button>
-              <button
-                className="btn btn-sm btn-link text-white text-decoration-none"
-                onClick={toggleSignInModal}
-              >
-                SignIn
-              </button>
-            </>
-          )}
-        </div>
-      </div>
-      <div className="container1">
+      )}
+     <div className={`container1 ${isAdminDash ? "d-none" : ""}`}>
+
         <div className="logodiv">
           <img className="logo1 my-1 " src="/Logo.jpg" alt="error" />
         </div>
@@ -119,7 +126,7 @@ function Navbar() {
           <img className="logo1 my-1 " src="/Logo.jpg" alt="error" />
         </div>
       </div>
-      <div className="navbar2">
+      <div className={`navbar2 ${isAdminDash ? "d-none" : ""}`}>
         <div className="my-2">
           <ul>
             <li>
@@ -165,7 +172,11 @@ function Navbar() {
       {showSignInModal && (
         <div className="modal">
           <div className="modal-content d-flex ">
-            <SignInModal toggleSignInModal={toggleSignInModal} setAuthenticated={setAuthenticated} setUserName={setUserName} />
+            <SignInModal
+              toggleSignInModal={toggleSignInModal}
+              setAuthenticated={setAuthenticated}
+              setUserName={setUserName}
+            />
             <div className="close mx-3 my-1  " onClick={toggleSignInModal}>
               &times;
             </div>
@@ -180,12 +191,10 @@ function Navbar() {
               &times;
             </div>
           </div>
-        
         </div>
       )}
     </>
   );
 }
 
-
-export default Navbar ;
+export default Navbar;

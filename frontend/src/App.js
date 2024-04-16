@@ -1,4 +1,3 @@
-// App.js
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./Contexts/authContext";
@@ -18,12 +17,17 @@ import IncomeDetails from "./Components/Scholorship/IncomeDetails";
 import EducationDetails from "./Components/Scholorship/EducationDetails";
 import AddressDetails from "./Components/Scholorship/AddressDetails";
 import ApplicationForm from "./Components/Scholorship/ApplicationForm";
+import AdminDash from "./Components/Administrator/AdminDash";
+import AdminLogin from "./Components/Administrator/AdminLogin";
+import AdminSignup from "./Components/Administrator/AdminSignUp";
+import { AdminAuthProvider } from "./Contexts/AdminAuthContext";
+import SendEmail from "./Components/Administrator/SendEmail";
 
 function App() {
   return (
     <AuthProvider>
       <Router>
-        <Navbar></Navbar>
+        <Navbar />
         <Routes>
           <Route path="/signin" element={<SignInModal />} />
           <Route path="/" element={<Home />} />
@@ -34,14 +38,42 @@ function App() {
           <Route path="/donate" element={<Donate />} />
           <Route path="/market" element={<Market />} />
           <Route path="/apply" element={<Formpage />} />
-          <Route path="/printform" element={<ApplicationForm/>} />
+          <Route path="/printform" element={<ApplicationForm />} />
           <Route path="/personal-details" element={<PersonalDetails />} />
           <Route path="/address-details" element={<AddressDetails />} />
           <Route path="/income-details" element={<IncomeDetails />} />
           <Route path="/education-details" element={<EducationDetails />} />
+          <Route
+            path="/admin"
+            element={
+              <AdminAuthProvider>
+                <AdminLogin />
+              </AdminAuthProvider>
+            }
+          />
+          <Route path="/adminsignup" element={<AdminSignup />} />
+
+          <Route
+            path="/admindash"
+            element={
+              <AdminAuthProvider>
+                <AdminDash />
+              </AdminAuthProvider>
+            }
+          />
+          <Route
+            path="/sendemail"
+            element={
+              <AdminAuthProvider>
+               <SendEmail/>
+              </AdminAuthProvider>
+            }
+          />
+
           {/* Add other routes as needed
       <Route path="*" element={<NotFound />} /> */}
         </Routes>
+
         <Footer />
       </Router>
     </AuthProvider>
