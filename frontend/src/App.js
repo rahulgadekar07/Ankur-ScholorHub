@@ -27,6 +27,7 @@ function App() {
   return (
     <AuthProvider>
       <Router>
+        
         <Navbar />
         <Routes>
           <Route path="/signin" element={<SignInModal />} />
@@ -73,7 +74,7 @@ function App() {
           {/* Add other routes as needed
       <Route path="*" element={<NotFound />} /> */}
         </Routes>
-
+      
         <Footer />
       </Router>
     </AuthProvider>

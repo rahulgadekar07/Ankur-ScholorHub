@@ -43,6 +43,8 @@ const SignInModal = (props) => {
           props.setUserName(decodedToken.email); // Assuming the token contains the user's ID
         }
         console.log("Sign-in successful!");
+        window.location.reload();
+
       } else {
         const responseData = await response.json();
         console.error("Sign-in failed:", responseData.error);

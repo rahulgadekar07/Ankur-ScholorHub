@@ -12,15 +12,54 @@ function Navbar() {
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [showSignUpModal, setShowSignUpModal] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const [userName, setUserName] = useState("");
   const { signOut } = useAuth();
   const navigate = useNavigate();
 
   const location = useLocation(); // Get current location
   const isAdminDash = location.pathname === "/admindash";
-
+  
   useEffect(() => {
     // Check if the user is already authenticated based on the token stored in local storage
+
+    const fetchUserData = async () => {
+      try {
+        // console.log("Fetching user data..."); // Log 1: Fetching initiated
+  
+        const token = localStorage.getItem("token");
+        if (!token) {
+          throw new Error("User is not authenticated");
+        }
+        const decodedToken = decodeToken(token);
+        const userId = decodedToken.userId;
+        const response = await fetch("http://localhost:5000/user/getUserData", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token},userId=${userId}`,
+            "Content-Type": "application/json",
+          },
+        });
+  
+        if (!response.ok) {
+          throw new Error("Failed to fetch user data");
+        }
+  
+        const userData = await response.json();
+        // console.log("Data fetched:", userData); // Log 2: Fetched data
+        setUserData(userData);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching data:", error); // Log 3: Error encountered
+  
+        setError(error.message);
+        setLoading(false);
+      }
+    };
+  
     const token = localStorage.getItem("token");
     if (token) {
       setAuthenticated(true);
@@ -31,6 +70,7 @@ function Navbar() {
         // Assuming the token contains the user's ID
       }
     }
+    fetchUserData();
   }, []);
 
   const toggleSignInModal = () => {
@@ -52,6 +92,10 @@ function Navbar() {
       setUserName("");
     }
   };
+  const profpic = userData?.profpic;
+  const replacedImgUrl = profpic?.replace(/\\/g, "/");
+  const imageUrl = `../../../backend/${replacedImgUrl}`;
+  const filename = imageUrl?.substring(imageUrl.lastIndexOf("/") + 1);
 
   return (
     <>
@@ -64,6 +108,13 @@ function Navbar() {
           <div className="navbar1-right">
             {authenticated ? (
               <div className="dropdown">
+                {userData&&
+                <img
+                  className="rounded-5"
+                  src={`http://localhost:5000/profile_images/${filename}`}
+                  alt="Profile Picture"
+                  style={{ height: "40px", width: "40px" }}
+                />}
                 <button
                   className="btn btn-sm btn-link text-white text-decoration-none dropdown-toggle"
                   type="button"
@@ -108,8 +159,7 @@ function Navbar() {
           </div>
         </div>
       )}
-     <div className={`container1 ${isAdminDash ? "d-none" : ""}`}>
-
+      <div className={`container1 ${isAdminDash ? "d-none" : ""}`}>
         <div className="logodiv">
           <img className="logo1 my-1 " src="/Logo.jpg" alt="error" />
         </div>

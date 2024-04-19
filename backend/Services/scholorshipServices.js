@@ -91,14 +91,18 @@ async function saveEducationDetails({ userId,qualification, courseName, institut
     const values = [userId,qualification, courseName, institute, currentYear, idCard];
 
     // Execute the SQL query
-    await db.promise().query(sql, values);
+    const q1=await db.promise().query(sql, values);
+    if(q1){
       // Insert record into application_status table
       const statusSql = `
       INSERT INTO application_status (userId, status)
       VALUES (?, ?)
     `;
     const statusValues = [userId, 'pending']; // Set initial status as 'pending' and replyMessage as null
-    await db.promise().query(statusSql, statusValues);
+    const result=await db.promise().query(statusSql, statusValues);
+    return result;
+    }
+      
   } catch (error) {
     console.error("Error saving education details:", error);
     throw error;
@@ -119,13 +123,13 @@ async function checkPersonalDetails(userId) {
   }
 }
 async function checkIncomeDetails(userId) {
-  console.log("UUUUID",userId)
+  // console.log("UUUUID",userId)
   try {
     const sql = `
       SELECT * FROM incomedetails WHERE userId = ?
     `;
     const [rows] = await db.promise().query(sql, [userId]);
-    console.log(rows.length)
+    // console.log(rows.length)
     return rows.length > 0; // Return true if personal details exist; otherwise, false
   } catch (error) {
     console.error("Error checking Income details:", error);
@@ -133,13 +137,13 @@ async function checkIncomeDetails(userId) {
   }
 }
 async function checkAddressDetails(userId) {
-  console.log("UUUUID",userId)
+  // console.log("UUUUID",userId)
   try {
     const sql = `
       SELECT * FROM address_details WHERE user_id = ?
     `;
     const [rows] = await db.promise().query(sql, [userId]);
-    console.log(rows.length)
+    // console.log(rows.length)
     return rows.length > 0; // Return true if personal details exist; otherwise, false
   } catch (error) {
     console.error("Error checking Income details:", error);
@@ -147,13 +151,13 @@ async function checkAddressDetails(userId) {
   }
 }
 async function checkEducationDetails(userId) {
-  console.log("UUUUID",userId)
+  // console.log("UUUUID",userId)
   try {
     const sql = `
       SELECT * FROM education_details WHERE userId = ?
     `;
     const [rows] = await db.promise().query(sql, [userId]);
-    console.log(rows.length)
+    // console.log(rows.length)
     return rows.length > 0; // Return true if personal details exist; otherwise, false
   } catch (error) {
     console.error("Error checking Education details:", error);
@@ -162,11 +166,13 @@ async function checkEducationDetails(userId) {
 }
 
 async function checkApplicationStatus(userId) {
+  // console.log(userId); // Check if the function is receiving the correct userId
   try {
     const sql = `
       SELECT * FROM application_status WHERE userId = ? AND status = 'pending'
     `;
     const [rows] = await db.promise().query(sql, [userId]);
+    // console.log(rows); // Log the rows returned by the query
     if (rows.length > 0) {
       return { exists: true, data: rows[0] }; // Return an object indicating existence and data
     } else {
@@ -177,6 +183,7 @@ async function checkApplicationStatus(userId) {
     throw error;
   }
 }
+
 
 
 // Functions to View Application Form
@@ -269,13 +276,43 @@ async function deleteApplication(userId) {
     `;
     await db.promise().query(deleteAddressDetailsSql, [userId]);
 
-    console.log("Application data deleted successfully");
+    // console.log("Application data deleted successfully");
   } catch (error) {
     console.error("Error deleting application data:", error);
     throw error;
   }
 }
 
+async function getAllDocuments(userId) {
+  try {
+    const personalDetailsSql = `
+      SELECT aadharCard FROM personal_details WHERE userId = ?
+    `;
+    const [personalDetailsRows] = await db.promise().query(personalDetailsSql, [userId]);
+
+    const incomeDetailsSql = `
+      SELECT incomeCertificate FROM incomedetails WHERE userId = ?
+    `;
+    const [incomeDetailsRows] = await db.promise().query(incomeDetailsSql, [userId]);
+   
+    const educationDetailsSql = `
+      SELECT id_card_path FROM education_details WHERE userId = ?
+    `;
+    const [educationDetailsRows] = await db.promise().query(educationDetailsSql, [userId]);
+
+    const documents = {
+      personalDetails: personalDetailsRows.map(row => row.aadharCard).filter(Boolean),
+      incomeDetails: incomeDetailsRows.map(row => row.incomeCertificate).filter(Boolean),
+     
+      educationDetails: educationDetailsRows.map(row => row.id_card_path).filter(Boolean)
+    };
+    console.log("All Docs:- ",documents)
+    return documents;
+  } catch (error) {
+    console.error("Error fetching documents:", error);
+    throw error;
+  }
+}
 
 module.exports = {
   savePersonalDetails,
@@ -294,6 +331,8 @@ module.exports = {
   getAllPersonalDetails,
   getAllIncomeDetails,
   getAllAddressDetails,
-  getAllEducationDetails
+  getAllEducationDetails,
+
+  getAllDocuments
 
 };

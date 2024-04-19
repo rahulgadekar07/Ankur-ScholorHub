@@ -62,7 +62,7 @@ const Profile = () => {
       }
       const decodedToken = decodeToken(token);
       const userId = decodedToken.userId;
-      const response = await fetch("http://localhost:5000/user/user", {
+      const response = await fetch("http://localhost:5000/user/getUserData", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token},userId=${userId}`,
@@ -75,7 +75,7 @@ const Profile = () => {
       }
 
       const userData = await response.json();
-      // console.log("Data fetched:", userData); // Log 2: Fetched data
+      console.log("Data fetched:", userData); // Log 2: Fetched data
       setUserData(userData);
       setLoading(false);
     } catch (error) {
@@ -159,6 +159,8 @@ const Profile = () => {
         // Profile picture uploaded successfully
         // Refresh user data to display updated profile picture
         fetchUserData();
+        window.location.reload();
+
       } else {
         throw new Error("Failed to upload profile picture");
       }
@@ -175,8 +177,8 @@ const Profile = () => {
   if (error) {
     return <div>Error: {error}</div>;
   }
-  console.log(userData)
-  const replacedImgUrl = userData.profpic.replace(/\\/g, "/");
+  console.log("User data:- ",userData)
+  const replacedImgUrl = userData ? userData.profpic.replace(/\\/g, "/") : '';
   const imageUrl = `../../../backend/${replacedImgUrl}`;
   const filename = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
   // console.log(filename); // Output: profile_1712817276229.png

@@ -1,6 +1,9 @@
+const { checkApplicationStatus, deleteApplication } = require('./scholorshipServices');
+
 const bcrypt = require('bcryptjs'); // Import bcrypt library for password hashing
 const db = require("../Config/database");
 const jwt = require('jsonwebtoken');
+
 // Service function for admin signup
 async function adminSignup(adminname, email, password) {
   try {
@@ -8,7 +11,7 @@ async function adminSignup(adminname, email, password) {
     const [existingAdmins] = await db
       .promise()
       .query("SELECT * FROM adminlogin WHERE email = ?", [email]);
-      console.log("The existing emials:- ",existingAdmins.length)
+      // console.log("The existing emials:- ",existingAdmins.length)
     if (existingAdmins.length > 0) {
       throw new Error("Email already exists");
     }
@@ -57,8 +60,45 @@ async function adminLogin(email, password) {
     throw error; // Rethrow the error to be handled by the caller
   }
 }
+// Service function to fetch all users
+async function getAllUsers() {
+  try {
+    // Query the database to fetch all users
+    const [users] = await db.promise().query("SELECT * FROM users");
+
+    // Return the fetched users
+    return users;
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    throw error; // Rethrow the error to be handled by the caller
+  }
+}
+
+
+// Function to remove user from all tables
+const removeUser = async (userId) => {
+  try {
+    // Remove user from the 'users' table
+    // console.log("user IDDDDD:- ",userId)
+   
+
+    // Remove user from other tables if needed
+    
+     let r1=await checkApplicationStatus(userId)
+     if(r1.exists){
+      await deleteApplication(userId)
+     }
+     let gg=await db.promise().query("DELETE FROM users WHERE id = ?", [userId]);
+    // Return success message if user is deleted successfully
+    return { message: 'User deleted successfully' };
+  } catch (error) {
+    throw new Error('Failed to delete user');
+  }
+};
 
 module.exports = {
   adminSignup,
-  adminLogin
+  adminLogin,
+  getAllUsers,
+  removeUser
 };

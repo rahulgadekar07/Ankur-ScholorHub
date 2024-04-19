@@ -5,6 +5,7 @@ const Footer = () => {
   const location=useLocation();
   const footerStyle = {
     backgroundColor: location.pathname === '/admindash' ? 'darkblue' : 'rgb(87, 70, 181)',
+    
    
   };
 

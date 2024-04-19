@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Erroralert from "../Alerts/Erroralert";
+import Spinner from "../Alerts/Spinner";
 
 const SignUpModal = (props) => {
   const [formData, setFormData] = useState({
@@ -9,6 +10,7 @@ const SignUpModal = (props) => {
     password: "",
     cpassword: ""
   });
+  const [loading, setLoading] = useState(false);
 
   const [error_message, setErrorMessage] = useState({
     flag: false,
@@ -17,7 +19,9 @@ const SignUpModal = (props) => {
 
 
   const handleSubmit = async (e) => {
+
     e.preventDefault();
+    setLoading(true)
     console.log("Form data:", formData); // Log form data
     setErrorMessage({
       flag: false,
@@ -29,6 +33,7 @@ const SignUpModal = (props) => {
         flag: true,
         message: "Passwords do not match"
       });
+      setLoading(false)
       return;
     }
   
@@ -43,10 +48,14 @@ const SignUpModal = (props) => {
   
       if (response.ok) {
         console.log("Sign-up successful!");
+        setLoading(false)
+
         await props.toggleSignUpModal(false);
-        alert("Welcome");
+        alert("Welcome..!! Now You Can Login");
       } else {
         const responseData = await response.json();
+        setLoading(false)
+
         console.error("Sign-up failed:", responseData.error);
         if (response.status === 500) {
           console.error("Internal Server Error");
@@ -84,6 +93,7 @@ const SignUpModal = (props) => {
   return (
     <div>
       <h2 className="text-center">Sign Up</h2>
+      {loading && <Spinner />}
       {error_message.flag && <Erroralert error_message={error_message.message} />}
      
       <form onSubmit={handleSubmit}>
@@ -144,6 +154,7 @@ const SignUpModal = (props) => {
           Sign Up
         </button>
       </form>
+      
     </div>
   );
 };

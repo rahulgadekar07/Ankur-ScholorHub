@@ -84,11 +84,19 @@ const AdminDash = () => {
           </ul>
         </div>
       </div>
-    
+
       <div className="container1">
         <div className="menu1">
-          <h3 className="m-2 text-center ">Admin Navigation</h3>
-          <hr />
+          <h3 id="adminh3" className="m-2 text-center ">
+            Admin Navigation
+          </h3>
+          <hr
+            style={{
+              border: "none",
+              borderTop: " 1px solid #ffffff" /* White line color */,
+              margin: "10px 0",
+            }}
+          />
           <div
             className={`menu-item text-center ${
               activeMenu === "manage-users" ? "active" : ""
@@ -97,7 +105,7 @@ const AdminDash = () => {
           >
             Manage Users
           </div>
-          <hr />
+          <hr className="adhr" />
           <div
             className={`menu-item text-center ${
               activeMenu === "manage-donors" ? "active" : ""
@@ -106,7 +114,7 @@ const AdminDash = () => {
           >
             Manage Donors
           </div>
-          <hr />
+          <hr className="adhr" />
           <div
             className={`menu-item text-center ${
               activeMenu === "manage-quiz" ? "active" : ""
@@ -115,7 +123,7 @@ const AdminDash = () => {
           >
             Manage Aptitude Test
           </div>
-          <hr />
+          <hr className="adhr" />
           <div
             className={`menu-item text-center ${
               activeMenu === "manage-scholorship" ? "active" : ""
@@ -124,9 +132,9 @@ const AdminDash = () => {
           >
             Manage Scholorship
           </div>
-        <hr />
+          <hr className="adhr" />
         </div>
-        <div className="aside">
+        <div className="aside" style={{marginBottom:'50px',padding:'30px 30px'}}>
           {activeMenu === "manage-users" && <DisplayUsers />}
           {activeMenu === "manage-donors" && <DisplayDonors />}
           {activeMenu === "manage-quiz" && <Quiz />}

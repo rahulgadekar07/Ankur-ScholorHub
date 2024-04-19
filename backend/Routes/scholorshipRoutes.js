@@ -15,8 +15,9 @@ router.post("/applyEd",  scholarshipController.saveEducationDetails);
 router.get("/checkPersonalDetails/:userId", scholarshipController.checkPersonalDetails);
 router.get("/checkAddressDetails/:userId", scholarshipController.checkAddressDetails);
 router.get("/checkIncomeDetails/:userId", scholarshipController.checkIncomeDetails);
-router.get("/checkEducationDetails/:userId", scholarshipController.checkEducationDetails);
 
+router.get("/checkEducationDetails/:userId", scholarshipController.checkEducationDetails);
+router.get("/getAllDocuments/:userId", scholarshipController.getAllDocuments);
 
 // Add routes for retrieving all details
 router.get("/getAllPersonalDetails/:userId", scholarshipController.getAllPersonalDetails);

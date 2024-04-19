@@ -1,15 +1,25 @@
-// utils/auth.js
-
 export const decodeToken = (token) => {
-  try {
+    try {
       if (!token) {
-          console.error('Token is null or undefined');
-          return null;
+        console.error('Token is null or undefined');
+        return null;
       }
-      const decodedToken = JSON.parse(atob(token.split('.')[1]));
+  
+      // Split the token into its components
+      const tokenParts = token.split('.');
+  
+      // Ensure there are three parts (header, payload, signature)
+      if (tokenParts.length !== 3) {
+        console.error('Invalid token format');
+        return null;
+      }
+  
+      // Decode the payload (middle part)
+      const decodedToken = JSON.parse(atob(tokenParts[1]));
       return decodedToken;
-  } catch (error) {
+    } catch (error) {
       console.error('Error decoding token:', error);
       return null;
-  }
-};
+    }
+  };
+  

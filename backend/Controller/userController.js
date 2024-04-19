@@ -4,17 +4,31 @@
 const userService = require("../Services/userServices");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { sendEmail } = require("../Config/emailSender");
 
 const multer = require("multer");
 const path = require("path");
-
-
 
 // Controller function for user sign-up
 async function signUp(req, res) {
   try {
     const { name, email, password } = req.body;
-    await userService.createUser(name, email, password);
+    const result = await userService.createUser(name, email, password);
+    if (result) {
+      const text =
+        "User Successfully Registered....! Welcome to Ankur Vidyarthi Foundation";
+      try {
+        const emailSent = await sendEmail(email, "Successfull SignUp", text);
+        if (emailSent) {
+          // console.log("Email sent successfully");
+        } else {
+          res.status(500).send("Failed to send email");
+        }
+      } catch (error) {
+        console.error("Error sending email:", error);
+        res.status(500).send("Failed to send email");
+      }
+    }
     res.status(201).send("User created successfully");
   } catch (error) {
     console.error("Error creating user:", error);
@@ -45,7 +59,7 @@ async function signIn(req, res) {
 
     // Compare the provided password with the hashed password stored in the database
     const passwordMatch = await bcrypt.compare(password, user.password);
-    console.log(passwordMatch);
+    // console.log(passwordMatch);
     if (!passwordMatch) {
       return res.status(401).json({ error: "Incorrect password" });
     }
@@ -65,6 +79,7 @@ async function signIn(req, res) {
   }
 }
 
+//Controller function for getting user data
 const getUserData = async (req, res) => {
   try {
     // Extract user ID from Authorization header
@@ -74,13 +89,13 @@ const getUserData = async (req, res) => {
     }
 
     const [bearer, tokenAndUserId] = authHeader.split(" "); // Split based on space
-    
+
     if (bearer !== "Bearer" || !tokenAndUserId) {
       throw new Error("Invalid authorization header format");
     }
 
     const [prefix, userId] = tokenAndUserId.split("="); // Split by "="
-console.log(userId);  // Should now print "35"
+    console.log(userId);
     if (!userId) {
       throw new Error("Missing user ID in authorization header");
     }
@@ -89,6 +104,7 @@ console.log(userId);  // Should now print "35"
 
     const userData = await userService.getUserById(userId);
     res.status(200).json(userData);
+    console.log("userData:- ",userData)
   } catch (error) {
     console.error("Error fetching user data:", error);
     res.status(500).json({ error: "Error fetching user data" });
@@ -100,11 +116,11 @@ console.log(userId);  // Should now print "35"
 // Define storage for profile pictures
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, './profile_images'); // Destination folder for storing profile pictures
+    cb(null, "./profile_images"); // Destination folder for storing profile pictures
   },
   filename: function (req, file, cb) {
-    cb(null, 'profile_' + Date.now() + path.extname(file.originalname)); // Unique filename for each uploaded picture
-  }
+    cb(null, "profile_" + Date.now() + path.extname(file.originalname)); // Unique filename for each uploaded picture
+  },
 });
 
 // Initialize multer upload
@@ -112,21 +128,22 @@ const upload = multer({ storage: storage });
 async function uploadProfilePic(req, res) {
   try {
     // Check if a file is uploaded
-    console.log(req.file)
+    // console.log(req.file);
     if (!req.file) {
-      return res.status(400).json({ error: 'No file uploaded' });
+      return res.status(400).json({ error: "No file uploaded" });
     }
 
     // Extract user ID from JWT token
+    // console.log("req.user.userId:- ", req.user.userId);
     const userId = req.user.userId;
 
     // Update user record in the database with the path to the uploaded profile picture
     await userService.updateProfilePic(userId, req.file.path);
 
-    res.status(200).json({ message: 'Profile picture uploaded successfully' });
+    res.status(200).json({ message: "Profile picture uploaded successfully" });
   } catch (error) {
-    console.error('Error uploading profile picture:', error);
-    res.status(500).json({ error: 'Error uploading profile picture' });
+    console.error("Error uploading profile picture:", error);
+    res.status(500).json({ error: "Error uploading profile picture" });
   }
 }
 
@@ -136,5 +153,5 @@ module.exports = {
   signIn,
   getUserData,
   uploadProfilePic,
-  upload // Export the upload middleware for use in routes
+  upload, // Export the upload middleware for use in routes
 };

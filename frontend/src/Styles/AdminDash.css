@@ -1,4 +1,5 @@
 /* General styles */
+/* AdminDash.css */
 .heading1 {
   background-color: darkblue; /* Dark blue background */
   color: gold; /* White text color */
@@ -18,7 +19,7 @@
   color: white;
   transition: background-color 0.3s ease; /* Smooth transition effect */
 }
-h3{
+#adminh3{
   color: gold;
 }
 .menu-item:hover {
@@ -55,7 +56,7 @@ h3{
   overflow-y: auto; /* Enable vertical scroll if content exceeds height */
 }
 
-hr {
+.adhr {
   border: none;
   border-top: 1px solid #ffffff; /* White line color */
   margin: 10px 0; /* Adjust margin for better spacing */

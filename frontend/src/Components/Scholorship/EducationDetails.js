@@ -1,12 +1,16 @@
 import React, { useState,useEffect } from "react";
 import { decodeToken } from "../../Utils/auth";
 import { useNavigate } from "react-router-dom";
+import Spinner from "../Alerts/Spinner";
 
 
 const EducationDetails = (props) => {
   const token = localStorage.getItem("token");
   const decodedToken = decodeToken(token);
   let userId = decodedToken.userId;
+  let emailtosend=decodedToken.email;
+  const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     qualification: "",
     courseName: "",
@@ -53,20 +57,24 @@ const EducationDetails = (props) => {
       idCard: file,
     });
   };
+  console.log("Email to send:",emailtosend)
 
   const handleSubmit = async (e) => {
+    e.preventDefault();
+
     let conf = window.confirm(
       "Are you Sure you want to Save ? Once Saved you wont be able to Edit the details"
     );
     if (conf) {
-      e.preventDefault();
+      setLoading(true)
+      
       // Append userId to the formData
       const formDataToSend = new FormData();
       formDataToSend.append("userId", userId);
+      formDataToSend.append("email", emailtosend);
       for (const key in formData) {
         formDataToSend.append(key, formData[key]);
       }
-
       try {
         const response = await fetch(
           "http://localhost:5000/scholarship/applyEd",
@@ -75,8 +83,11 @@ const EducationDetails = (props) => {
             body: formDataToSend,
           }
         );
+        console.log("Formdata:- ",formData)
         if (response.ok) {
+          setLoading(false)
           alert("Education details saved successfully");
+
           props.setbgcolor4(true);
           
           // Optionally, reset the form
@@ -89,9 +100,13 @@ const EducationDetails = (props) => {
           });
           navigate("/")
         } else {
+          setLoading(false)
+
           throw new Error("Failed to save education details");
         }
       } catch (error) {
+        setLoading(false)
+
         console.error("Error saving education details:", error);
         alert("Error saving education details");
       }
@@ -175,6 +190,7 @@ const EducationDetails = (props) => {
           <button type="reset" className="btn btn-danger my-2">
             Clear
           </button>
+          {loading && <Spinner/>}
         </div>
       </form>
     </>

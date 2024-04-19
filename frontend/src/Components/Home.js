@@ -2,6 +2,7 @@ import React from "react";
 import "../Styles/Home.css";
 import { Link } from "react-router-dom";
 const Home = () => {
+  
   return (
     <div className="flex my-3 ">
       <div className="content1 container text-center">

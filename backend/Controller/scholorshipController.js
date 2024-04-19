@@ -1,5 +1,6 @@
 const db = require("../Config/database");
 const multer = require("multer");
+const { sendEmail } = require("../Config/emailSender");
 
 // Configure Multer to store files in a specific directory
 const storage = multer.diskStorage({
@@ -61,7 +62,7 @@ async function saveAddressDetails(req, res) {
   try {
     // Extract address details from request body
     const { userId, permanent_address, current_address } = req.body;
-    console.log(userId, permanent_address, current_address);
+    // console.log(userId, permanent_address, current_address);
     // Call service function to save address details
     await scholarshipServices.saveAddressDetails({
       userId,
@@ -172,12 +173,18 @@ async function saveEducationDetails(req, res) {
       }
 
       // File upload successful, extract form data and file information
-      const { userId, qualification, courseName, institute, currentYear } =
-        req.body;
+      const {
+        email,
+        userId,
+        qualification,
+        courseName,
+        institute,
+        currentYear,
+      } = req.body;
       const idCard = req.file ? req.file.path : null; // Store file path in database
 
       // Call service function to insert education details into the database
-      await scholarshipServices.saveEducationDetails({
+      const result = await scholarshipServices.saveEducationDetails({
         userId,
         qualification,
         courseName,
@@ -185,7 +192,27 @@ async function saveEducationDetails(req, res) {
         currentYear,
         idCard,
       });
-
+      // console.log("result:- ",result)
+      if (result) {
+        const text =
+          "User Successfully Applied for Scholorship....! Check Profile to view Details..";
+        try {
+          // console.log("eamil to send:- ",email)
+          const emailSent = await sendEmail(
+            email,
+            "Scholorship Application Successfull",
+            text
+          );
+          if (emailSent) {
+            // console.log('Email sent successfully');
+          } else {
+            res.status(500).send("Failed to send email");
+          }
+        } catch (error) {
+          console.error("Error sending email:", error);
+          res.status(500).send("Failed to send email");
+        }
+      }
       // Send response
       res.status(201).json({ message: "Education details saved successfully" });
     });
@@ -201,8 +228,7 @@ async function checkApplicationStatus(req, res) {
     const userId = req.params.userId;
     const userExists = await scholarshipServices.checkApplicationStatus(userId);
     res.json({ userExists });
-  }
-  catch (error) {
+  } catch (error) {
     console.error("Error checking application status:", error);
     res.status(500).json({ error: "Internal server error" });
   }
@@ -210,14 +236,13 @@ async function checkApplicationStatus(req, res) {
 
 // scholarshipController.js
 
-
 // Function to check if the user has submitted personal details
 async function checkPersonalDetails(req, res) {
   try {
     const userId = req.params.userId;
 
     const detailsExist = await scholarshipServices.checkPersonalDetails(userId);
-    console.log("detailsExist",detailsExist)
+    // console.log("detailsExist",detailsExist)
     res.json({ detailsExist });
   } catch (error) {
     console.error("Error checking personal details:", error);
@@ -230,7 +255,7 @@ async function checkIncomeDetails(req, res) {
     const userId = req.params.userId;
 
     const detailsExist1 = await scholarshipServices.checkIncomeDetails(userId);
-    console.log("detailsExist1",detailsExist1)
+    // console.log("detailsExist1",detailsExist1)
     res.json({ detailsExist1 });
   } catch (error) {
     console.error("Error checking Income details:", error);
@@ -243,7 +268,7 @@ async function checkAddressDetails(req, res) {
     const userId = req.params.userId;
 
     const detailsExist2 = await scholarshipServices.checkAddressDetails(userId);
-    console.log("detailsExist2",detailsExist2)
+    // console.log("detailsExist2",detailsExist2)
     res.json({ detailsExist2 });
   } catch (error) {
     console.error("Error checking Address details:", error);
@@ -255,8 +280,10 @@ async function checkEducationDetails(req, res) {
   try {
     const userId = req.params.userId;
 
-    const detailsExist3 = await scholarshipServices.checkEducationDetails(userId);
-    console.log("detailsExist3",detailsExist3)
+    const detailsExist3 = await scholarshipServices.checkEducationDetails(
+      userId
+    );
+    // console.log("detailsExist3",detailsExist3)
     res.json({ detailsExist3 });
   } catch (error) {
     console.error("Error checking Address details:", error);
@@ -264,14 +291,14 @@ async function checkEducationDetails(req, res) {
   }
 }
 
-
-
 // Functions to retrieve all personal details for a user
 async function getAllPersonalDetails(req, res) {
   try {
     const userId = req.params.userId;
-    const personalDetails = await scholarshipServices.getAllPersonalDetails(userId);
-    console.log("personalDetails: ",personalDetails)
+    const personalDetails = await scholarshipServices.getAllPersonalDetails(
+      userId
+    );
+    // console.log("personalDetails: ",personalDetails)
     res.json(personalDetails);
   } catch (error) {
     console.error("Error retrieving personal details:", error);
@@ -295,7 +322,9 @@ async function getAllIncomeDetails(req, res) {
 async function getAllAddressDetails(req, res) {
   try {
     const userId = req.params.userId;
-    const addressDetails = await scholarshipServices.getAllAddressDetails(userId);
+    const addressDetails = await scholarshipServices.getAllAddressDetails(
+      userId
+    );
     res.json(addressDetails);
   } catch (error) {
     console.error("Error retrieving address details:", error);
@@ -307,14 +336,15 @@ async function getAllAddressDetails(req, res) {
 async function getAllEducationDetails(req, res) {
   try {
     const userId = req.params.userId;
-    const educationDetails = await scholarshipServices.getAllEducationDetails(userId);
+    const educationDetails = await scholarshipServices.getAllEducationDetails(
+      userId
+    );
     res.json(educationDetails);
   } catch (error) {
     console.error("Error retrieving education details:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 }
-
 
 // Function to delete the application data for a user
 async function deleteApplication(req, res) {
@@ -331,9 +361,24 @@ async function deleteApplication(req, res) {
     res.status(500).json({ error: "Internal server error" });
   }
 }
+
+
+// Function to retrieve all documents for a user
+async function getAllDocuments(req, res) {
+  try {
+    const userId = req.params.userId;
+
+    // Call the service function to get all documents for the user
+    const documents = await scholarshipServices.getAllDocuments(userId);
+
+    // Send the documents as a response
+    res.json(documents);
+  } catch (error) {
+    console.error("Error retrieving documents:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
 // Other controller functions...
-
-
 
 module.exports = {
   applyForScholarship,
@@ -341,11 +386,9 @@ module.exports = {
   saveIncomeDetails,
   saveEducationDetails,
 
-
   checkApplicationStatus,
   deleteApplication,
 
-  
   checkPersonalDetails,
   checkIncomeDetails,
   checkAddressDetails,
@@ -354,7 +397,7 @@ module.exports = {
   getAllPersonalDetails,
   getAllIncomeDetails,
   getAllAddressDetails,
-  getAllEducationDetails
+  getAllEducationDetails,
 
-
+  getAllDocuments
 };

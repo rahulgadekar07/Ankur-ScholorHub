@@ -14,6 +14,7 @@ const ApplicationForm = () => {
   const [incomeDetails, setIncomeDetails] = useState({});
   const [educationDetails, setEducationDetails] = useState({});
   const [addressDetails, setAddressDetails] = useState({});
+  const [documents, setDocuments] = useState([]);
   const [userData, setUserData] = useState(null);
 
   const componentRef = useRef(null);
@@ -86,11 +87,27 @@ const ApplicationForm = () => {
       }
     };
 
+    // Function to fetch all documents
+    const fetchAllDocuments = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:5000/scholarship/getAllDocuments/${userId}`
+        );
+        const data = await response.json();
+        console.log("Data:- ", data);
+        setDocuments(data);
+        console.log("Fetched Documents Data:", data);
+      } catch (error) {
+        console.error("Error fetching documents:", error);
+      }
+    };
+
     // Call the fetch functions
     fetchPersonalDetails();
     fetchIncomeDetails();
     fetchEducationDetails();
     fetchAddressDetails();
+    fetchAllDocuments();
     fetchUserData();
   }, []); // Empty dependency array to run once on component mount
 
@@ -98,8 +115,6 @@ const ApplicationForm = () => {
   // const handlePrint = () => {
   //     window.print(); // Trigger the browser's print dialog
   //   };
-
-
 
   const fetchUserData = async () => {
     try {
@@ -111,7 +126,7 @@ const ApplicationForm = () => {
       }
       const decodedToken = decodeToken(token);
       const userId = decodedToken.userId;
-      const response = await fetch("http://localhost:5000/user/user", {
+      const response = await fetch("http://localhost:5000/user/getUserData", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token},userId=${userId}`,
@@ -140,11 +155,21 @@ const ApplicationForm = () => {
   // if (error) {
   //   return <div>Error: {error}</div>;
   // }
-  
-  console.log(userData)
-  const replacedImgUrl = userData.profpic.replace(/\\/g, "/");
+
+  console.log("userData in APF:- ", userData);
+  // Check if userData is not null before accessing its properties
+  const replacedImgUrl =
+    userData && userData.profpic ? userData.profpic.replace(/\\/g, "/") : "";
   const imageUrl = `../../../backend/${replacedImgUrl}`;
-   const filename = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+  const filename = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+
+  console.log("documentssssssssssss:- ", documents);
+  const { personalDetails1, incomeDetails1, educationDetails1 } = documents;
+
+  const personalDetailsUrls = documents.personalDetails || [];
+  const incomeDetailsUrls = documents.incomeDetails || [];
+  const educationDetailsUrls = documents.educationDetails || [];
+  console.log(personalDetailsUrls[0]);
   return (
     <>
       <ReactToPrint
@@ -166,7 +191,7 @@ const ApplicationForm = () => {
             className="rounded-pill mt-3 "
             src={`http://localhost:5000/profile_images/${filename}`}
             alt="Profile Picture"
-            style={{height:'200px',width:'200px'}}
+            style={{ height: "200px", width: "200px" }}
           />
         </div>
 
@@ -317,6 +342,64 @@ const ApplicationForm = () => {
                   </tbody>
                 </table>
               </div>
+            </div>
+          </div>
+          <h3>Documents:- </h3>
+          <div>
+            <div>
+              {/* Render personalDetails documents */}
+              {documents.personalDetails &&
+                documents.personalDetails.map((documentUrl, index) => (
+                  <div key={`personal_${index}`}>
+                    {/* Display link to open image in new tab */}
+                    <a
+                      href={`http://localhost:5000/${documentUrl.replace(
+                        /\\/g,
+                        "/"
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Show Adhaar Card
+                    </a>
+                  </div>
+                ))}
+
+              {/* Render incomeDetails documents */}
+              {documents.incomeDetails &&
+                documents.incomeDetails.map((documentUrl, index) => (
+                  <div key={`income_${index}`}>
+                    {/* Display link to open image in new tab */}
+                    <a
+                      href={`http://localhost:5000/${documentUrl.replace(
+                        /\\/g,
+                        "/"
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                     Show Income Certificate 
+                    </a>
+                  </div>
+                ))}
+
+              {/* Render educationDetails documents */}
+              {documents.educationDetails &&
+                documents.educationDetails.map((documentUrl, index) => (
+                  <div key={`education_${index}`}>
+                    {/* Display link to open image in new tab */}
+                    <a
+                      href={`http://localhost:5000/${documentUrl.replace(
+                        /\\/g,
+                        "/"
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Show College ID Card
+                    </a>
+                  </div>
+                ))}
             </div>
           </div>
         </div>
