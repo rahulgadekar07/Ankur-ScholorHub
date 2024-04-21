@@ -21,7 +21,7 @@ function Navbar() {
   const navigate = useNavigate();
 
   const location = useLocation(); // Get current location
-  const isAdminDash = location.pathname === "/admindash";
+  const isAdminDash = location.pathname === "/admindash" ||  location.pathname === "/adminappform";
   
   useEffect(() => {
     // Check if the user is already authenticated based on the token stored in local storage

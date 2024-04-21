@@ -22,12 +22,12 @@ import AdminLogin from "./Components/Administrator/AdminLogin";
 import AdminSignup from "./Components/Administrator/AdminSignUp";
 import { AdminAuthProvider } from "./Contexts/AdminAuthContext";
 import SendEmail from "./Components/Administrator/SendEmail";
+import AdminApplicationForm from "./Components/Administrator/AdminApplicationForm";
 
 function App() {
   return (
     <AuthProvider>
       <Router>
-        
         <Navbar />
         <Routes>
           <Route path="/signin" element={<SignInModal />} />
@@ -66,7 +66,15 @@ function App() {
             path="/sendemail"
             element={
               <AdminAuthProvider>
-               <SendEmail/>
+                <SendEmail />
+              </AdminAuthProvider>
+            }
+          />
+          <Route
+            path="/adminappform"
+            element={
+              <AdminAuthProvider>
+                <AdminApplicationForm />
               </AdminAuthProvider>
             }
           />
@@ -74,7 +82,7 @@ function App() {
           {/* Add other routes as needed
       <Route path="*" element={<NotFound />} /> */}
         </Routes>
-      
+
         <Footer />
       </Router>
     </AuthProvider>

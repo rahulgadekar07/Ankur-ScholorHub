@@ -5,5 +5,8 @@ const router = express.Router();
 router.post("/adminsignup",adminController.adminSignup);
 router.post("/adminlogin",adminController.adminLogin);
 router.get("/getusers",adminController.getAllUsers);
-router.delete("/removeuser/:userId", adminController.removeUser); // Add :userId placeholder in the URL
+router.get("/getAllApplications",adminController.getAllApplications);
+router.delete("/removeuser/:userId", adminController.removeUser);
+router.patch("/approveApplication/:applicationId",adminController.approveApplication) ;
+router.patch("/rejectApplication/:selectedApplicationId",adminController.rejectApplication) ;
 module.exports = router;

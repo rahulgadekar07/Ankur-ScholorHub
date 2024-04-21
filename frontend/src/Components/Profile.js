@@ -3,13 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import "../Styles/Profile.css";
 import { decodeToken } from "../Utils/auth";
 
-
-
 const Profile = () => {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [applicationStatus, setApplicationStatus] = useState(null); // State to store application status
-
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
@@ -42,7 +39,7 @@ const Profile = () => {
         if (!response.ok) {
           throw new Error("Failed to delete application");
         }
-        alert("Scholorship Application Deleted Successfully..!!")
+        alert("Scholorship Application Deleted Successfully..!!");
         // Application deleted successfully
         setApplicationStatus(null); // Clear the application status in state
       } catch (error) {
@@ -54,8 +51,6 @@ const Profile = () => {
 
   const fetchUserData = async () => {
     try {
-      // console.log("Fetching user data..."); // Log 1: Fetching initiated
-
       const token = localStorage.getItem("token");
       if (!token) {
         throw new Error("User is not authenticated");
@@ -75,12 +70,10 @@ const Profile = () => {
       }
 
       const userData = await response.json();
-      console.log("Data fetched:", userData); // Log 2: Fetched data
       setUserData(userData);
       setLoading(false);
     } catch (error) {
-      console.error("Error fetching data:", error); // Log 3: Error encountered
-
+      console.error("Error fetching data:", error);
       setError(error.message);
       setLoading(false);
     }
@@ -96,10 +89,6 @@ const Profile = () => {
         `http://localhost:5000/scholarship/checkApplicationStatus/${userId}`,
         {
           method: "GET",
-          // headers: {
-          //   Authorization: `Bearer ${token}`,
-          //   "Content-Type": "application/json",
-          // },
         }
       );
 
@@ -108,27 +97,21 @@ const Profile = () => {
       }
 
       const result = await response.json();
-      console.log("API Response:", result);
-      console.log("Application data:", result.userExists.data);
       if (result.userExists.exists) {
         setApplicationStatus(result.userExists.data);
       } else {
         setApplicationStatus(null);
       }
-      // Update applicationStatus state
     } catch (error) {
       console.error("Error fetching application status:", error);
       setError(error.message);
     }
   };
-  useEffect(() => {
-    console.log("State applicationStatus", applicationStatus);
-  }, [applicationStatus]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      navigate("/signin"); // Redirect to signin page if user is not authenticated
+      navigate("/signin");
     }
   }, [navigate]);
 
@@ -137,7 +120,7 @@ const Profile = () => {
     const token = localStorage.getItem("token");
 
     if (!file) {
-      return; // No file selected, do nothing
+      return;
     }
 
     try {
@@ -156,17 +139,14 @@ const Profile = () => {
       );
 
       if (response.ok) {
-        // Profile picture uploaded successfully
-        // Refresh user data to display updated profile picture
         fetchUserData();
         window.location.reload();
-
       } else {
         throw new Error("Failed to upload profile picture");
       }
     } catch (error) {
       console.error("Error uploading profile picture:", error);
-      setError(error.message); // Set error state for display on frontend
+      setError(error.message);
     }
   };
 
@@ -177,30 +157,19 @@ const Profile = () => {
   if (error) {
     return <div>Error: {error}</div>;
   }
-  console.log("User data:- ",userData)
-  const replacedImgUrl = userData ? userData.profpic.replace(/\\/g, "/") : '';
+
+  const replacedImgUrl = userData ? userData.profpic.replace(/\\/g, "/") : "";
   const imageUrl = `../../../backend/${replacedImgUrl}`;
   const filename = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
-  // console.log(filename); // Output: profile_1712817276229.png
 
-  // console.log(imageUrl);
   return (
-    <div
-      className="d-flex flex-column container border border-warning rounded text-center"
-      style={{ marginBottom: "50px", marginTop: "20px" }}
-    >
+    <div className="d-flex flex-column container border border-warning rounded text-center animate__fadeInUp" style={{ marginBottom: "50px", marginTop: "20px" }}>
       <h1 className="my-3">Profile</h1>
       <hr />
-      {/* {console.log(userData.profpic)} */}
-      {}
       {userData && (
         <div className="d-flex flex-column">
           <div className="profpic">
-            <img
-              src={`http://localhost:5000/profile_images/${filename}`}
-              alt="Profile Picture"
-              style={{height:'200px',width:'200px'}}
-            />
+            <img src={`http://localhost:5000/profile_images/${filename}`} alt="Profile Picture" style={{ height: "200px", width: "200px" }} className="animate__fadeInDown" />
           </div>
 
           <label htmlFor="profilePicInput" style={{ cursor: "pointer" }}>
@@ -231,23 +200,32 @@ const Profile = () => {
           <hr />
           <div>
             <h2 className="my-2">Scholarship Application Status</h2>
-            {console.log("State applicationStatus", applicationStatus)}
             {applicationStatus ? (
               <div className="my-4">
                 <p>
                   <b>Application ID:</b> {applicationStatus.id}
                 </p>
                 <p>
-                  <b>Status:</b> {applicationStatus.status}
+                  <b>Status:</b>{" "}
+                  <span className={`application-status ${applicationStatus.status === 'approved' ? 'text-success animate__fadeIn' : 'text-danger animate__shakeX'}`}>
+                    {applicationStatus.status}
+                  </span>
                 </p>
                 <p>
-                  <b>Remarks:</b> {applicationStatus.replyMessage}.....
+                  <b>Remarks:</b>{" "}
+                  <span className={`application-status ${applicationStatus.status === 'approved' ? 'text-success animate__fadeIn' : 'text-danger animate__shakeX'}`}>
+                    {applicationStatus.replyMessage}
+                  </span>
+                  .....
                 </p>
                 <Link className="btn btn-primary mx-1" to="/printform">
                   {" "}
                   View Form{" "}
                 </Link>
-                <button className="btn btn-danger mx-1" onClick={handleDelete}>
+                <button
+                  className="btn btn-danger mx-1 animate__fadeInUp"
+                  onClick={handleDelete}
+                >
                   Delete Application
                 </button>
               </div>
@@ -260,5 +238,5 @@ const Profile = () => {
     </div>
   );
 };
-export default Profile;
 
+export default Profile;

@@ -108,11 +108,11 @@ const AdminDash = () => {
           <hr className="adhr" />
           <div
             className={`menu-item text-center ${
-              activeMenu === "manage-donors" ? "active" : ""
+              activeMenu === "manage-scholorship" ? "active" : ""
             }`}
-            onClick={() => handleMenuClick("manage-donors")}
+            onClick={() => handleMenuClick("manage-scholorship")}
           >
-            Manage Donors
+            Manage Scholorship
           </div>
           <hr className="adhr" />
           <div
@@ -126,15 +126,17 @@ const AdminDash = () => {
           <hr className="adhr" />
           <div
             className={`menu-item text-center ${
-              activeMenu === "manage-scholorship" ? "active" : ""
+              activeMenu === "manage-donors" ? "active" : ""
             }`}
-            onClick={() => handleMenuClick("manage-scholorship")}
+            onClick={() => handleMenuClick("manage-donors")}
           >
-            Manage Scholorship
+            Manage Donors
           </div>
+         
+         
           <hr className="adhr" />
         </div>
-        <div className="aside" style={{marginBottom:'50px',padding:'30px 30px'}}>
+        <div className="aside" style={{marginBottom:'50px',padding:'30px 30px',backgroundColor:'lightgray'}}>
           {activeMenu === "manage-users" && <DisplayUsers />}
           {activeMenu === "manage-donors" && <DisplayDonors />}
           {activeMenu === "manage-quiz" && <Quiz />}

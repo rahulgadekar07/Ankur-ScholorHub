@@ -82,22 +82,27 @@ async function signIn(req, res) {
 //Controller function for getting user data
 const getUserData = async (req, res) => {
   try {
+    let userId;
+
     // Extract user ID from Authorization header
     const authHeader = req.headers.authorization;
-    if (!authHeader) {
-      throw new Error("Authorization header is missing");
+    if (authHeader) {
+      const [bearer, tokenAndUserId] = authHeader.split(" "); // Split based on space
+      if (bearer === "Bearer" && tokenAndUserId) {
+        const [prefix, extractedUserId] = tokenAndUserId.split("="); // Split by "="
+        if (extractedUserId) {
+          userId = extractedUserId;
+        }
+      }
     }
 
-    const [bearer, tokenAndUserId] = authHeader.split(" "); // Split based on space
-
-    if (bearer !== "Bearer" || !tokenAndUserId) {
-      throw new Error("Invalid authorization header format");
-    }
-
-    const [prefix, userId] = tokenAndUserId.split("="); // Split by "="
-    console.log(userId);
+    // If userId is not found in the Authorization header, try to extract it from query parameters
     if (!userId) {
-      throw new Error("Missing user ID in authorization header");
+      userId = req.query.userId;
+    }
+
+    if (!userId) {
+      throw new Error("User ID not found");
     }
 
     // Rest of the code to fetch user data using userId

@@ -95,10 +95,52 @@ const removeUser = async (userId) => {
     throw new Error('Failed to delete user');
   }
 };
+const getAllApplications = async () => {
+  try {
+    // Query the database to fetch all applications
+    const [applications] = await db.promise().query("SELECT * FROM application_status");
+    return applications;
+  } catch (error) {
+    console.error("Error fetching all applications:", error);
+    throw new Error("Internal server error");
+  }
+};
 
+
+const approveApplication = async (applicationId, status, replyMessage) => {
+  try {
+    // Update the application status and reply message in the database
+    const sql = "UPDATE application_status SET status = ?, replyMessage = ? WHERE id = ?";
+    await db.promise().query(sql, [status, replyMessage, applicationId]);
+
+    // Return success message or any other data if needed
+    return { message: 'Application approved successfully' };
+  } catch (error) {
+    // Handle any errors
+    console.error('Error approving application:', error);
+    throw error; // Rethrow the error to be handled by the caller
+  }
+};
+
+const rejectApplication = async (applicationId, status, replyMessage) => {
+  try {
+    // Update the application status and reply message in the database
+    const sql = "UPDATE application_status SET status = ?, replyMessage = ? WHERE id = ?";
+    await db.promise().query(sql, [status, replyMessage, applicationId]);
+
+    // Return success message or any other data if needed
+    return { message: 'Application rejected successfully' };
+  } catch (error) {
+    // Handle any errors
+    console.error('Error rejecting application:', error);
+    throw error; // Rethrow the error to be handled by the caller
+  }
+};
 module.exports = {
   adminSignup,
   adminLogin,
   getAllUsers,
-  removeUser
+  removeUser,
+  getAllApplications,
+  approveApplication,rejectApplication
 };

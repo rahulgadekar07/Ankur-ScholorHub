@@ -344,13 +344,13 @@ const ApplicationForm = () => {
               </div>
             </div>
           </div>
-          <h3>Documents:- </h3>
+          <h3> Uploaded Documents:- </h3>
           <div>
             <div>
               {/* Render personalDetails documents */}
               {documents.personalDetails &&
                 documents.personalDetails.map((documentUrl, index) => (
-                  <div key={`personal_${index}`}>
+                  <div key={`personal_${index}`}  className="my-2">
                     {/* Display link to open image in new tab */}
                     <a
                       href={`http://localhost:5000/${documentUrl.replace(
@@ -368,7 +368,7 @@ const ApplicationForm = () => {
               {/* Render incomeDetails documents */}
               {documents.incomeDetails &&
                 documents.incomeDetails.map((documentUrl, index) => (
-                  <div key={`income_${index}`}>
+                  <div key={`income_${index}`} className="my-2">
                     {/* Display link to open image in new tab */}
                     <a
                       href={`http://localhost:5000/${documentUrl.replace(
@@ -386,7 +386,7 @@ const ApplicationForm = () => {
               {/* Render educationDetails documents */}
               {documents.educationDetails &&
                 documents.educationDetails.map((documentUrl, index) => (
-                  <div key={`education_${index}`}>
+                  <div key={`education_${index}`} className="my-2">
                     {/* Display link to open image in new tab */}
                     <a
                       href={`http://localhost:5000/${documentUrl.replace(

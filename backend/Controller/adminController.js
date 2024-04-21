@@ -98,10 +98,52 @@ async function removeUser(req, res) {
   }
 }
 
+const getAllApplications = async (req, res) => {
+  try {
+    const applications = await adminService.getAllApplications();
+    res.json(applications);
+  } catch (error) {
+    console.error("Error fetching all applications:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 
+const approveApplication = async (req, res) => {
+  try {
+    const { applicationId } = req.params; // Accessing applicationId from URL params
+    console.log("APP ID:", applicationId); // Just for logging and debugging
+    // Assuming you want to update the application status and reply message
+    const { status, replyMessage } = req.body;
+    
+    // Call the service function to update the application status
+    await adminService.approveApplication(applicationId, status, replyMessage);
+    
+    res.status(200).json({ message: 'Application approved successfully' });
+  } catch (error) {
+    console.error('Error approving application:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+const rejectApplication = async (req, res) => {
+  try {
+    const { selectedApplicationId } = req.params;
+    const { status, replyMessage } = req.body;
+
+    await adminService.rejectApplication(selectedApplicationId, status, replyMessage);
+
+    res.status(200).json({ message: 'Application rejected successfully' });
+  } catch (error) {
+    console.error('Error rejecting application:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
 module.exports = {
   adminLogin,
   adminSignup,
   getAllUsers,
-  removeUser
-};
+  removeUser,
+  getAllApplications,
+  approveApplication,
+  rejectApplication
+}

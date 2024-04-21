@@ -169,7 +169,7 @@ async function checkApplicationStatus(userId) {
   // console.log(userId); // Check if the function is receiving the correct userId
   try {
     const sql = `
-      SELECT * FROM application_status WHERE userId = ? AND status = 'pending'
+      SELECT * FROM application_status WHERE userId = ? 
     `;
     const [rows] = await db.promise().query(sql, [userId]);
     // console.log(rows); // Log the rows returned by the query
