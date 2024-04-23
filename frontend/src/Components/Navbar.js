@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import SignInModal from "./Modals/SignInModal";
 import SignUpModal from "./Modals/SignUpModal";
 import { useAuth } from "../Contexts/authContext";
-import Formpage from "./Scholorship/Formpage";
 import { decodeToken } from "../Utils/auth";
 
 function Navbar() {
@@ -101,7 +100,7 @@ function Navbar() {
     <>
       {!isAdminDash && (
         <div className="navbar1">
-          <div className="navbar1-left">
+          <div className="navbar1-left my-1 ">
             <i className="fa-solid fa-envelope mx-1 "></i>
             <span>ankurfoundation@gmail.com</span>
           </div>
@@ -165,7 +164,7 @@ function Navbar() {
         </div>
         <div className="heading">
           <div>
-            <h1>Ankur Vidyarthi Foundation</h1>
+            <h1 className="exo-2">Ankur Vidyarthi Foundation</h1>
             <b>
               <span>Velu, Tal- Koregaon, District-Satara,415511</span>
               <span> Reg.No:- ABC123XYZ456</span>

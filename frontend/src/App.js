@@ -23,6 +23,7 @@ import AdminSignup from "./Components/Administrator/AdminSignUp";
 import { AdminAuthProvider } from "./Contexts/AdminAuthContext";
 import SendEmail from "./Components/Administrator/SendEmail";
 import AdminApplicationForm from "./Components/Administrator/AdminApplicationForm";
+import DisplayQuiz from "./Components/Quiz/DisplayQuiz";
 
 function App() {
   return (
@@ -44,6 +45,10 @@ function App() {
           <Route path="/address-details" element={<AddressDetails />} />
           <Route path="/income-details" element={<IncomeDetails />} />
           <Route path="/education-details" element={<EducationDetails />} />
+
+          <Route path="/display-quiz" element={<DisplayQuiz/>} />
+
+
           <Route
             path="/admin"
             element={

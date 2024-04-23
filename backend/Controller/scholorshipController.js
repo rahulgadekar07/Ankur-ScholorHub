@@ -191,6 +191,7 @@ async function saveEducationDetails(req, res) {
         institute,
         currentYear,
         idCard,
+        email
       });
       // console.log("result:- ",result)
       if (result) {

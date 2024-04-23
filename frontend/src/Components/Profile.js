@@ -228,6 +228,11 @@ const Profile = () => {
                 >
                   Delete Application
                 </button>
+                {applicationStatus.status === "approved" && (
+                  <Link className="btn btn-success mx-1" to="/display-quiz">
+                    Give Test
+                  </Link>
+                )}
               </div>
             ) : (
               <p className="text-danger ">No any application submitted...</p>

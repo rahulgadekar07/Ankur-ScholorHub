@@ -60,7 +60,7 @@ const DisplayUsers = () => {
         <p className="text-center">No users found</p>
       ) : (
         <table className="table table-striped table-bordered ">
-          <thead>
+          <thead className="text-center ">
             <tr>
               <th>ID</th>
               <th>Name</th>
@@ -68,7 +68,7 @@ const DisplayUsers = () => {
               <th>Action</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="text-center">
             {users.map((user) => (
               <tr key={user.id}>
                 <td>{user.id}</td>

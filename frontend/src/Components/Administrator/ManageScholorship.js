@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
+import Spinner from '../Alerts/Spinner';
 
 const ManageScholarship = () => {
   const [applications, setApplications] = useState([]);
   const [replyMessage, setReplyMessage] = useState('');
   const [selectedApplicationId, setSelectedApplicationId] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetchApplications();
@@ -35,6 +37,7 @@ const ManageScholarship = () => {
 
   const handleApprove = async (applicationId) => {
     try {
+      setLoading(true)
       const response = await fetch(`http://localhost:5000/admin/approveApplication/${applicationId}`, {
         method: 'PATCH',
         headers: {
@@ -44,11 +47,16 @@ const ManageScholarship = () => {
       });
       if (!response.ok) {
         throw new Error('Failed to approve application');
+        setLoading(false)
       }
-      alert('Application approved successfully');
+      setLoading(false)
+
+      alert('Application approved successfully...! Notification Email Sent to User..');
       fetchApplications();
     } catch (error) {
       console.error('Error approving application:', error);
+      setLoading(false)
+
     }
   };
 
@@ -59,6 +67,7 @@ const ManageScholarship = () => {
   };
 
   const submitReject = async () => {
+    setLoading(true)
     try {
       const response = await fetch(`http://localhost:5000/admin/rejectApplication/${selectedApplicationId}`, {
         method: 'PATCH',
@@ -69,19 +78,25 @@ const ManageScholarship = () => {
       });
       if (!response.ok) {
         throw new Error('Failed to reject application');
+        setLoading(false)
       }
       fetchApplications();
+      setLoading(false)
+      alert("Application Rejected Successfully..! Notification Email Sent to User..")
+
       setModalIsOpen(false);
     } catch (error) {
       console.error('Error rejecting application:', error);
+      setLoading(false)
+
     }
   };
 
   return (
     <div className="container">
       <h1 className="my-4">Manage Scholarship Applications</h1>
-      <table className="table table-striped">
-        <thead>
+      <table className="table table-striped table-bordered">
+        <thead className='text-center justify-content-center '>
           <tr>
             <th>Application ID</th>
             <th>User ID</th>
@@ -91,7 +106,7 @@ const ManageScholarship = () => {
             <th>Action</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className='text-center'>
           {applications.map(application => (
             <tr key={application.id}>
               <td>{application.id}</td>
@@ -99,23 +114,23 @@ const ManageScholarship = () => {
               <td>{application.status}</td>
               <td>{application.created_at}</td>
               <td>{application.replyMessage}</td>
-              <td>
+              <td className='d-flex flex-column  '> 
                 <button
-                  className="btn btn-info"
+                  className="btn btn-info btn-sm my-1"
                   disabled={isVerifyDisabled(application.status)}
                   onClick={() => openApplicationFormInNewTab(application.userId)}
                 >
                   Verify
                 </button>
                 <button
-                  className="btn btn-success mx-2"
+                  className="btn btn-success btn-sm my-1"
                   onClick={() => handleApprove(application.id)}
                   disabled={application.status !== 'pending'}
                 >
                   Approve
                 </button>
                 <button
-                  className="btn btn-danger"
+                  className="btn btn-danger btn-sm my-1"
                   onClick={() => handleReject(application.id)}
                   disabled={application.status !== 'pending'}
                 >
@@ -133,7 +148,7 @@ const ManageScholarship = () => {
       >
         <div>
           <h2>Reject Application</h2>
-          <label htmlFor="replyMessage">Reply Message:</label>
+          <label htmlFor="replyMessage">Mention Reason:</label>
           <textarea
             id="replyMessage"
             className="form-control"
@@ -145,6 +160,7 @@ const ManageScholarship = () => {
           <button className="btn btn-danger my-2 mx-2  " onClick={submitReject}>Reject</button>
         </div>
       </Modal>
+      {loading && <Spinner/>}
     </div>
   );
 };

@@ -7,8 +7,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const userRoutes = require('./Routes/userRoutes');
-const scholarshipRoutes=require('./Routes/scholorshipRoutes')
-const adminRoutes=require('./Routes/adminRoutes')
+const scholarshipRoutes=require('./Routes/scholorshipRoutes');
+const adminRoutes=require('./Routes/adminRoutes');
+const quizRoutes=require('./Routes/quizRoutes');
 const cors=require('cors');
 
 const app = express();
@@ -47,6 +48,7 @@ app.use((req, res, next) => {
 app.use('/user', userRoutes);
 app.use('/scholarship', scholarshipRoutes);
 app.use('/admin', adminRoutes);
+app.use('/quiz', quizRoutes);
 
 
 app.post('/api/send-email', async (req, res) => {

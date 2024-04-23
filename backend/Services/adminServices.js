@@ -3,6 +3,7 @@ const { checkApplicationStatus, deleteApplication } = require('./scholorshipServ
 const bcrypt = require('bcryptjs'); // Import bcrypt library for password hashing
 const db = require("../Config/database");
 const jwt = require('jsonwebtoken');
+const { sendEmail } = require("../Config/emailSender");
 
 // Service function for admin signup
 async function adminSignup(adminname, email, password) {
@@ -111,8 +112,31 @@ const approveApplication = async (applicationId, status, replyMessage) => {
   try {
     // Update the application status and reply message in the database
     const sql = "UPDATE application_status SET status = ?, replyMessage = ? WHERE id = ?";
-    await db.promise().query(sql, [status, replyMessage, applicationId]);
-
+    const result=await db.promise().query(sql, [status, replyMessage, applicationId]);
+    const sql2= "select email from application_status where id= ? ";
+    const [res]=await db.promise().query(sql2, [applicationId]);
+    console.log("SQL2:- ",res[0].email)
+    const useremail=res[0].email;
+    if (result && res) {
+      const text =
+        "Your Application is Approved..! Kindly wait for further Updates..";
+      try {
+        // console.log("eamil to send:- ",email)
+        const emailSent = await sendEmail(
+          useremail,
+          "Scholorship Application Approved",
+          text
+        );
+        if (emailSent) {
+          // console.log('Email sent successfully');
+        } else {
+          res.status(500).send("Failed to send email");
+        }
+      } catch (error) {
+        console.error("Error sending email:", error);
+        res.status(500).send("Failed to send email");
+      }
+    }
     // Return success message or any other data if needed
     return { message: 'Application approved successfully' };
   } catch (error) {
@@ -125,9 +149,34 @@ const approveApplication = async (applicationId, status, replyMessage) => {
 const rejectApplication = async (applicationId, status, replyMessage) => {
   try {
     // Update the application status and reply message in the database
-    const sql = "UPDATE application_status SET status = ?, replyMessage = ? WHERE id = ?";
-    await db.promise().query(sql, [status, replyMessage, applicationId]);
+   
+    const sql2= "select email from application_status where id= ? ";
+    const [res]=await db.promise().query(sql2, [applicationId]);
 
+    const sql = "UPDATE application_status SET status = ?, replyMessage = ? WHERE id = ?";
+    const result =await db.promise().query(sql, [status, replyMessage, applicationId]);
+    console.log("SQL2:- ",res[0].email)
+    const useremail=res[0].email;
+    if (result && res) {
+      const text =
+        "Your Application is Rejected..! Kindly Contact to Office for further Enquiries.."+replyMessage;
+      try {
+        // console.log("eamil to send:- ",email)
+        const emailSent = await sendEmail(
+          useremail,
+          "Scholorship Application Rejected",
+          text
+        );
+        if (emailSent) {
+          // console.log('Email sent successfully');
+        } else {
+          res.status(500).send("Failed to send email");
+        }
+      } catch (error) {
+        console.error("Error sending email:", error);
+        res.status(500).send("Failed to send email");
+      }
+    }
     // Return success message or any other data if needed
     return { message: 'Application rejected successfully' };
   } catch (error) {

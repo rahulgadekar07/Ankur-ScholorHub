@@ -81,7 +81,7 @@ async function saveIncomeDetails({
 
 
 // Function to save education details into the database
-async function saveEducationDetails({ userId,qualification, courseName, institute, currentYear, idCard }) {
+async function saveEducationDetails({ userId,qualification, courseName, institute, currentYear, idCard,email }) {
   try {
     // Prepare SQL query to insert education details
     const sql = `
@@ -95,10 +95,10 @@ async function saveEducationDetails({ userId,qualification, courseName, institut
     if(q1){
       // Insert record into application_status table
       const statusSql = `
-      INSERT INTO application_status (userId, status)
-      VALUES (?, ?)
+      INSERT INTO application_status (userId, status,email)
+      VALUES (?, ?,?)
     `;
-    const statusValues = [userId, 'pending']; // Set initial status as 'pending' and replyMessage as null
+    const statusValues = [userId, 'pending',email]; // Set initial status as 'pending' and replyMessage as null
     const result=await db.promise().query(statusSql, statusValues);
     return result;
     }
