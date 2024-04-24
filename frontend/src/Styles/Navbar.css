@@ -36,8 +36,11 @@
 }
 
 .heading h1{
-    color: rgb(169, 5, 5);
+    color: rgb(9, 185, 17);
    padding-top: 10px;
+}
+.heading span{
+  color: red;
 }
 .container1{
     display: flex;
@@ -46,8 +49,8 @@
     justify-content: space-between;
 }
 .logo1{
-    height: 100px;
-    width: 100px;
+    height: 130px;
+    width: 130px;
 }
 /* Modal Css */
 

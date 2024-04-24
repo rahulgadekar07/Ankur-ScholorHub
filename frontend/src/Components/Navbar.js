@@ -20,15 +20,16 @@ function Navbar() {
   const navigate = useNavigate();
 
   const location = useLocation(); // Get current location
-  const isAdminDash = location.pathname === "/admindash" ||  location.pathname === "/adminappform";
-  
+  const isAdminDash =
+    location.pathname === "/admindash" || location.pathname === "/adminappform";
+
   useEffect(() => {
     // Check if the user is already authenticated based on the token stored in local storage
 
     const fetchUserData = async () => {
       try {
         // console.log("Fetching user data..."); // Log 1: Fetching initiated
-  
+
         const token = localStorage.getItem("token");
         if (!token) {
           throw new Error("User is not authenticated");
@@ -42,23 +43,23 @@ function Navbar() {
             "Content-Type": "application/json",
           },
         });
-  
+
         if (!response.ok) {
           throw new Error("Failed to fetch user data");
         }
-  
+
         const userData = await response.json();
         // console.log("Data fetched:", userData); // Log 2: Fetched data
         setUserData(userData);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error); // Log 3: Error encountered
-  
+
         setError(error.message);
         setLoading(false);
       }
     };
-  
+
     const token = localStorage.getItem("token");
     if (token) {
       setAuthenticated(true);
@@ -107,13 +108,14 @@ function Navbar() {
           <div className="navbar1-right">
             {authenticated ? (
               <div className="dropdown">
-                {userData&&
-                <img
-                  className="rounded-5"
-                  src={`http://localhost:5000/profile_images/${filename}`}
-                  alt="Profile Picture"
-                  style={{ height: "40px", width: "40px" }}
-                />}
+                {userData && (
+                  <img
+                    className="rounded-5"
+                    src={`http://localhost:5000/profile_images/${filename}`}
+                    alt="Profile Picture"
+                    style={{ height: "40px", width: "40px" }}
+                  />
+                )}
                 <button
                   className="btn btn-sm btn-link text-white text-decoration-none dropdown-toggle"
                   type="button"
@@ -162,15 +164,21 @@ function Navbar() {
         <div className="logodiv">
           <img className="logo1 my-1 " src="/Logo.jpg" alt="error" />
         </div>
-        <div className="heading">
-          <div>
-            <h1 className="exo-2">Ankur Vidyarthi Foundation</h1>
-            <b>
-              <span>Velu, Tal- Koregaon, District-Satara,415511</span>
-              <span> Reg.No:- ABC123XYZ456</span>
-            </b>
+        <div className="heading ">
+          <div className="d-flex flex-column align-items-center ">
+            <h1 className="">अंकुर विद्यार्थी फाउंडेशन</h1>
+       
+              <span> <b>र. वि. नं. महा /३५६/२०२०/</b>E-Mail:
+                ankur.vidyarthi.foundation@gmail.com</span>
+            
+              <span className="mb-2">
+                <b>पत्ता:-</b> मु .पो. वेळू ,
+                ग्रामपंचायत कायाालय, दुसरा मजला , ता. कोरेगाव,जि. सातारा,
+                ४१५५११
+              </span>
           </div>
         </div>
+
         <div className="logodiv">
           <img className="logo1 my-1 " src="/Logo.jpg" alt="error" />
         </div>
