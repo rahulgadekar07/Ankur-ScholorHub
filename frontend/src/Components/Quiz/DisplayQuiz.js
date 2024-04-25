@@ -8,7 +8,7 @@ const DisplayQuiz = () => {
 
   const [showPreviousButton, setShowPreviousButton] = useState(false); // State to toggle visibility of the previous button
   const [submitted, setSubmitted] = useState(false); // State to track whether the quiz has been submitted
-  const [timeLeft, setTimeLeft] = useState(1800); // Timer set to 30 minutes (1800 seconds)
+  const [timeLeft, setTimeLeft] = useState(30); // Timer set to 30 minutes (1800 seconds)
   const [isLessThan20, setIsLessThan20] = useState(false);
   // Timer functionality
   useEffect(() => {
