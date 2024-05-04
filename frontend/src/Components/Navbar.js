@@ -129,12 +129,22 @@ function Navbar() {
                   className="dropdown-menu"
                   aria-labelledby="dropdownMenuButton"
                 >
-                  <li>
+                  <li className="my-1">
                     <Link className="dropdown-item" to="/profile">
                       Profile
                     </Link>
                   </li>
-                  <li>
+                  <li className="my-1">
+                    <Link className="dropdown-item" to="/additem">
+                      Upload Sales Items
+                    </Link>
+                  </li>
+                  <li className="my-1">
+                    <Link className="dropdown-item" to="/myproducts">
+                      My Products
+                    </Link>
+                  </li>
+                  <li className="my-1">
                     <button className="dropdown-item" onClick={handleSignOut}>
                       Logout
                     </button>
@@ -167,15 +177,17 @@ function Navbar() {
         <div className="heading ">
           <div className="d-flex flex-column align-items-center ">
             <h1 className="">अंकुर विद्यार्थी फाउंडेशन</h1>
-       
-              <span> <b>र. वि. नं. महा /३५६/२०२०/</b>E-Mail:
-                ankur.vidyarthi.foundation@gmail.com</span>
-            
-              <span className="mb-2">
-                <b>पत्ता:-</b> मु .पो. वेळू ,
-                ग्रामपंचायत कायाालय, दुसरा मजला , ता. कोरेगाव,जि. सातारा,
-                ४१५५११
-              </span>
+
+            <span>
+              {" "}
+              <b>र. वि. नं. महा /३५६/२०२०/</b>E-Mail:
+              ankur.vidyarthi.foundation@gmail.com
+            </span>
+
+            <span className="mb-2">
+              <b>पत्ता:-</b> मु .पो. वेळू , ग्रामपंचायत कायाालय, दुसरा मजला ,
+              ता. कोरेगाव,जि. सातारा, ४१५५११
+            </span>
           </div>
         </div>
 
@@ -186,12 +198,12 @@ function Navbar() {
       <div className={`navbar2 ${isAdminDash ? "d-none" : ""}`}>
         <div className="my-2">
           <ul>
-            <li>
+            <li className="my-1">
               <Link className="text-decoration-none text-white mx-2  " to="/">
                 Home
               </Link>
             </li>
-            <li>
+            <li className="my-1">
               <Link
                 className="text-decoration-none text-white mx-2 "
                 to="/about"
@@ -199,7 +211,7 @@ function Navbar() {
                 About Us
               </Link>
             </li>
-            <li>
+            <li className="my-1">
               <Link
                 className="text-decoration-none text-white mx-2 "
                 to="/contact"
@@ -207,7 +219,7 @@ function Navbar() {
                 Contact Us
               </Link>
             </li>
-            <li>
+            <li className="my-1">
               <Link
                 className="text-decoration-none text-white mx-2 "
                 to="/donate"
@@ -215,7 +227,7 @@ function Navbar() {
                 Donate Us
               </Link>
             </li>
-            <li>
+            <li className="my-1">
               <Link
                 className="text-decoration-none text-white mx-2 "
                 to="/Market"

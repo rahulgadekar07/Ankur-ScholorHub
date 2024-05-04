@@ -24,7 +24,6 @@ async function createUser(name, email, password) {
       .promise()
       .query(sql, [name, email, hashedPassword]);
 
-    // console.log(result); // Log the result for debugging
 
     // Return the result or handle it as needed
     return result;
@@ -41,7 +40,6 @@ async function findUserByEmail(email) {
     const [users] = await db
       .promise()
       .query("SELECT * FROM users WHERE email = ?", [email]);
-    // console.log(users);
     if (users.length === 0) {
       return null;
     }
@@ -55,16 +53,13 @@ async function findUserByEmail(email) {
 
 // Service function for getting user data by ID
 async function getUserById(userId) {
-  // console.log("UserServices :",userId)
   function formatIdWithLeadingZeros(userId) {
-    // console.log("please:",userId)
     return userId.toString().padStart(4, "0");
   }
   
   try {
     // Query the database to find the user by ID
     const formattedUserId = formatIdWithLeadingZeros(userId);
-    console.log("padded: ",formattedUserId)
     const [users] = await db
       .promise()
       .query("SELECT * FROM users WHERE id = ?", [formattedUserId]);
@@ -83,11 +78,9 @@ async function getUserById(userId) {
 // Service function for updating user profile picture path
 async function updateProfilePic(userId, profilePicPath) {
   try {
-    // console.log(userId, profilePicPath);
     // Update the user record in the database with the new profile picture path
     const sql = "UPDATE users SET profpic = ? WHERE id = ?";
     const [result] = await db.promise().query(sql, [profilePicPath, userId]);
-    // console.log(result); // Log the result for debugging
 
     // Return the result or handle it as needed
     return result;

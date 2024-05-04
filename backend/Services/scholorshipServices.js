@@ -123,13 +123,11 @@ async function checkPersonalDetails(userId) {
   }
 }
 async function checkIncomeDetails(userId) {
-  // console.log("UUUUID",userId)
   try {
     const sql = `
       SELECT * FROM incomedetails WHERE userId = ?
     `;
     const [rows] = await db.promise().query(sql, [userId]);
-    // console.log(rows.length)
     return rows.length > 0; // Return true if personal details exist; otherwise, false
   } catch (error) {
     console.error("Error checking Income details:", error);
@@ -137,13 +135,11 @@ async function checkIncomeDetails(userId) {
   }
 }
 async function checkAddressDetails(userId) {
-  // console.log("UUUUID",userId)
   try {
     const sql = `
       SELECT * FROM address_details WHERE user_id = ?
     `;
     const [rows] = await db.promise().query(sql, [userId]);
-    // console.log(rows.length)
     return rows.length > 0; // Return true if personal details exist; otherwise, false
   } catch (error) {
     console.error("Error checking Income details:", error);
@@ -151,13 +147,11 @@ async function checkAddressDetails(userId) {
   }
 }
 async function checkEducationDetails(userId) {
-  // console.log("UUUUID",userId)
   try {
     const sql = `
       SELECT * FROM education_details WHERE userId = ?
     `;
     const [rows] = await db.promise().query(sql, [userId]);
-    // console.log(rows.length)
     return rows.length > 0; // Return true if personal details exist; otherwise, false
   } catch (error) {
     console.error("Error checking Education details:", error);
@@ -166,13 +160,11 @@ async function checkEducationDetails(userId) {
 }
 
 async function checkApplicationStatus(userId) {
-  // console.log(userId); // Check if the function is receiving the correct userId
   try {
     const sql = `
       SELECT * FROM application_status WHERE userId = ? 
     `;
     const [rows] = await db.promise().query(sql, [userId]);
-    // console.log(rows); // Log the rows returned by the query
     if (rows.length > 0) {
       return { exists: true, data: rows[0] }; // Return an object indicating existence and data
     } else {
@@ -276,7 +268,6 @@ async function deleteApplication(userId) {
     `;
     await db.promise().query(deleteAddressDetailsSql, [userId]);
 
-    // console.log("Application data deleted successfully");
   } catch (error) {
     console.error("Error deleting application data:", error);
     throw error;
@@ -306,7 +297,6 @@ async function getAllDocuments(userId) {
      
       educationDetails: educationDetailsRows.map(row => row.id_card_path).filter(Boolean)
     };
-    console.log("All Docs:- ",documents)
     return documents;
   } catch (error) {
     console.error("Error fetching documents:", error);

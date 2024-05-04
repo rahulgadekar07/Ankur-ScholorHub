@@ -20,10 +20,24 @@ const ManageScholarship = () => {
         throw new Error('Failed to fetch scholarship applications');
       }
       const data = await response.json();
-      setApplications(data);
+      setApplications(data.map(application => ({
+        ...application,
+        created_at: formatTimestamp(application.created_at)
+      })));
     } catch (error) {
       console.error('Error fetching scholarship applications:', error);
     }
+  };
+
+  const formatTimestamp = (timestamp) => {
+    const date = new Date(timestamp);
+    const day = ('0' + date.getDate()).slice(-2);
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const year = date.getFullYear();
+    const hours = ('0' + (date.getHours() % 12 || 12)).slice(-2);
+    const minutes = ('0' + date.getMinutes()).slice(-2);
+    const ampm = date.getHours() >= 12 ? 'PM' : 'AM';
+    return `${day}/${month}/${year} ${hours}:${minutes} ${ampm}`;
   };
 
   const isVerifyDisabled = (status) => {

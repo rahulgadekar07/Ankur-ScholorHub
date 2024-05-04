@@ -8,7 +8,6 @@ const adminSignup = async (req, res) => {
   try {
     // Extract admin details from the request body
     const { adminname, email, password } = req.body;
-    // console.log( adminname, email, password)
     // Call the admin service to handle the signup logic
     await adminService.adminSignup(adminname, email, password);
     // Return success response
@@ -27,8 +26,7 @@ const adminLogin = async (req, res) => {
   try {
     // Extract admin credentials from the request body
     const { email, password } = req.body;
-    // console.log("Email fetched in controller:- ",email)
-    // console.log("/nPassword fetched in controller:- ",password)
+    
 
     // Call the admin service to verify admin credentials
     const admin = await adminService.adminLogin(email, password);
@@ -36,7 +34,6 @@ const adminLogin = async (req, res) => {
     if (!admin || !(await bcrypt.compare(password, admin.password))) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
-    // console.log("admin:- ",admin)
 
     // Generate JWT token containing admin ID, name, and email
     const token = jwt.sign(
@@ -76,11 +73,9 @@ async function removeUser(req, res) {
     if (result.message === 'User deleted successfully') {
       const text = "You have been Removed From Ankur Vidyarthi Foundation website By Admin....";
       try {
-        // console.log("email to send:- ", userEmail)
         // Assuming sendEmail is defined somewhere else or imported
         const emailSent = await sendEmail(userEmail, "Account Removed", text);
         if (emailSent) {
-          // console.log('Email sent successfully');
           res.status(200).send({ message: 'User deleted successfully' });
         } else {
           throw new Error('Failed to send email');
@@ -111,7 +106,6 @@ const getAllApplications = async (req, res) => {
 const approveApplication = async (req, res) => {
   try {
     const { applicationId } = req.params; // Accessing applicationId from URL params
-    console.log("APP ID:", applicationId); // Just for logging and debugging
     // Assuming you want to update the application status and reply message
     const { status, replyMessage } = req.body;
     

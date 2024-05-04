@@ -26,7 +26,6 @@ const ApplicationForm = () => {
           `http://localhost:5000/scholarship/getAllPersonalDetails/${userId}`
         ); // Assuming userId is available
         const data = await response.json();
-        // console.log("Personal Details Data:", data);
         if (data[0]) {
           // Set personal details state if they exist
           setPersonalDetails(data[0]);
@@ -60,7 +59,6 @@ const ApplicationForm = () => {
           `http://localhost:5000/scholarship/getAllEducationDetails/${userId}`
         );
         const data = await response.json();
-        // console.log("Education Details Data:", data);
 
         if (data[0]) {
           // Set education details state if they exist
@@ -94,9 +92,7 @@ const ApplicationForm = () => {
           `http://localhost:5000/scholarship/getAllDocuments/${userId}`
         );
         const data = await response.json();
-        console.log("Data:- ", data);
         setDocuments(data);
-        console.log("Fetched Documents Data:", data);
       } catch (error) {
         console.error("Error fetching documents:", error);
       }
@@ -111,15 +107,8 @@ const ApplicationForm = () => {
     fetchUserData();
   }, []); // Empty dependency array to run once on component mount
 
-  // Function to trigger printing
-  // const handlePrint = () => {
-  //     window.print(); // Trigger the browser's print dialog
-  //   };
-
   const fetchUserData = async () => {
     try {
-      // console.log("Fetching user data..."); // Log 1: Fetching initiated
-
       const token = localStorage.getItem("token");
       if (!token) {
         throw new Error("User is not authenticated");
@@ -139,12 +128,10 @@ const ApplicationForm = () => {
       }
 
       const userData = await response.json();
-      console.log("Data fetched:", userData); // Log 2: Fetched data
       setUserData(userData);
       setLoading(false);
     } catch (error) {
-      console.error("Error fetching data:", error); // Log 3: Error encountered
-
+      console.error("Error fetching data:", error);
       setLoading(false);
     }
   };
@@ -152,205 +139,156 @@ const ApplicationForm = () => {
     return <div>Loading...</div>;
   }
 
-  // if (error) {
-  //   return <div>Error: {error}</div>;
-  // }
-
-  console.log("userData in APF:- ", userData);
-  // Check if userData is not null before accessing its properties
   const replacedImgUrl =
     userData && userData.profpic ? userData.profpic.replace(/\\/g, "/") : "";
   const imageUrl = `../../../backend/${replacedImgUrl}`;
   const filename = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
-
-  console.log("documentssssssssssss:- ", documents);
-  const { personalDetails1, incomeDetails1, educationDetails1 } = documents;
-
-  const personalDetailsUrls = documents.personalDetails || [];
-  const incomeDetailsUrls = documents.incomeDetails || [];
-  const educationDetailsUrls = documents.educationDetails || [];
-  console.log(personalDetailsUrls[0]);
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+    return `${day < 10 ? '0' + day : day}/${month < 10 ? '0' + month : month}/${year}`;
+  };
+  
   return (
     <>
       <ReactToPrint
         trigger={() => (
-          <button className="btn btn-success mt-2 mx-2     ">
+          <button className="btn btn-success mt-2 mx-2">
             Print Application
           </button>
         )}
         content={() => componentRef.current}
       />
-      <div
-        className="container text-center"
-        style={{ marginBottom: "50px" }}
-        ref={componentRef}
-      >
-        <h2 className="my-2 display-4 fw-bold">Application Form</h2>
-        <div className="img">
-          <img
-            className="rounded-pill mt-3 "
-            src={`http://localhost:5000/profile_images/${filename}`}
-            alt="Profile Picture"
-            style={{ height: "200px", width: "200px" }}
-          />
-        </div>
-
-        <div
-          className="d-flex flex-column align-content-center my-3"
-          id="printable-content"
-        >
-          <div className="scholarship-summary">
-            <div className="row">
-              <div className="col my-3">
-                <h3>Personal Details:- </h3>
-                <table className="table table-striped table-bordered">
-                  <tbody>
-                    <tr>
-                      <th scope="row">Full Name</th>
-                      <td>{personalDetails.fullname}</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Email</th>
-                      <td>{personalDetails.email}</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Phone Number</th>
-                      <td>{personalDetails.mobile}</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Date of Birth</th>
-                      <td>{personalDetails.dob}</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Gender</th>
-                      <td>{personalDetails.gender}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <div className="col my-3">
-                <h3>Income Details:- </h3>
-                <table className="table table-striped table-bordered">
-                  <tbody>
-                    <tr>
-                      <th scope="row">Parent Name</th>
-                      <td>{incomeDetails.parentName}</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Parent Mobile</th>
-                      <td>{incomeDetails.parentMobile}</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Job Type</th>
-                      <td>{incomeDetails.jobType}</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Job Description</th>
-                      <td>{incomeDetails.jobDescription}</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Annual Income (₹)</th>
-                      <td>{incomeDetails.annualIncome}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <div className="row">
-              <div className="col my-3">
-                <h3>Education Details:- </h3>
-                <table className="table table-striped table-bordered">
-                  <tbody>
-                    <tr>
-                      <th scope="row">Qualification</th>
-                      <td>{educationDetails.qualification}</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Course/Degree Name</th>
-                      <td>{educationDetails.course_name}</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Name of College/University</th>
-                      <td>{educationDetails.institute}</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Current Studying Year</th>
-                      <td>{educationDetails.current_year}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <h3>Address Details:- </h3>
-              <div className="col my-3">
-                <table className="table table-striped table-bordered">
-                  <tbody>
-                    <tr>
-                      <th scope="row">Permanent Address</th>
-                      <td>{addressDetails.permanent_address}</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">State</th>
-                      <td>{addressDetails.permanent_state}</td>{" "}
-                    </tr>
-                    <tr>
-                      <th scope="row">District</th>
-                      <td>{addressDetails.permanent_district}</td>{" "}
-                    </tr>
-                    <tr>
-                      <th scope="row">Taluka</th>
-                      <td>{addressDetails.permanent_taluka}</td>{" "}
-                    </tr>
-                    <tr>
-                      <th scope="row">City</th>
-                      <td>{addressDetails.permanent_city}</td>{" "}
-                    </tr>
-                    <tr>
-                      <th scope="row">Pin Code</th>
-                      <td>{addressDetails.permanent_pincode}</td>{" "}
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <div className="col my-3">
-                <table className="table table-striped table-bordered">
-                  <tbody>
-                    <tr>
-                      <th scope="row">Current Address</th>
-                      <td>{addressDetails.current_address}</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">State</th>
-                      <td>{addressDetails.current_state}</td>{" "}
-                    </tr>
-                    <tr>
-                      <th scope="row">District</th>
-                      <td>{addressDetails.current_district}</td>{" "}
-                    </tr>
-                    <tr>
-                      <th scope="row">Taluka</th>
-                      <td>{addressDetails.current_taluka}</td>{" "}
-                    </tr>
-                    <tr>
-                      <th scope="row">City</th>
-                      <td>{addressDetails.current_city}</td>{" "}
-                    </tr>
-                    <tr>
-                      <th scope="row">Pin Code</th>
-                      <td>{addressDetails.current_pincode}</td>{" "}
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
+      <div ref={componentRef}>
+        <div className="container   text-center">
+          <h2 className="my-2 display-4 fw-bold">Application Form</h2>
+          <hr />
+          <div className="img  ">
+            <img
+              className=" rounded-pill mt-3 "
+              src={`http://localhost:5000/profile_images/${filename}`}
+              alt="Profile Picture"
+              style={{
+                height: "150px",
+                width: "150px",
+                border: "1px dotted black",
+              }}
+            />
+            <hr />
           </div>
-          <h3> Uploaded Documents:- </h3>
-          <div>
+
+          <div
+            className="d-flex flex-column align-content-center my-3"
+            id="printable-content"
+          >
+            <h3>Personal Details</h3>
+            <p>
+              <strong>Full Name:</strong> {personalDetails.fullname}
+            </p>
+            <p>
+              <strong>Email:</strong> {personalDetails.email}
+            </p>
+            <p>
+              <strong>Phone Number:</strong> {personalDetails.mobile}
+            </p>
+            <p>
+              <strong>Date of Birth:</strong> {formatDate(personalDetails.dob)}
+            </p>
+
+            <p>
+              <strong>Gender:</strong> {personalDetails.gender}
+            </p>
+
+            <hr />
+
+            <h3>Address Details</h3>
+            <p>
+              <strong>Permanent Address:</strong>{" "}
+              {addressDetails.permanent_address}
+            </p>
+            <p>
+              <strong>State:</strong> {addressDetails.permanent_state}
+            </p>
+            <p>
+              <strong>District:</strong> {addressDetails.permanent_district}
+            </p>
+            <p>
+              <strong>Taluka:</strong> {addressDetails.permanent_taluka}
+            </p>
+            <p>
+              <strong>City:</strong> {addressDetails.permanent_city}
+            </p>
+            <p>
+              <strong>Pin Code:</strong> {addressDetails.permanent_pincode}
+            </p>
+
+            <p>
+              <strong>Current Address:</strong> {addressDetails.current_address}
+            </p>
+            <p>
+              <strong>State:</strong> {addressDetails.current_state}
+            </p>
+            <p>
+              <strong>District:</strong> {addressDetails.current_district}
+            </p>
+            <p>
+              <strong>Taluka:</strong> {addressDetails.current_taluka}
+            </p>
+            <p>
+              <strong>City:</strong> {addressDetails.current_city}
+            </p>
+            <p>
+              <strong>Pin Code:</strong> {addressDetails.current_pincode}
+            </p>
+
+            <hr />
+
+            <h3>Income Details</h3>
+            <p>
+              <strong>Parent Name:</strong> {incomeDetails.parentName}
+            </p>
+            <p>
+              <strong>Parent Mobile:</strong> {incomeDetails.parentMobile}
+            </p>
+            <p>
+              <strong>Job Type:</strong> {incomeDetails.jobType}
+            </p>
+            <p>
+              <strong>Job Description:</strong> {incomeDetails.jobDescription}
+            </p>
+            <p>
+              <strong>Annual Income (₹):</strong> {incomeDetails.annualIncome}
+            </p>
+
+            <hr />
+
+            <h3>Education Details</h3>
+            <p>
+              <strong>Qualification:</strong> {educationDetails.qualification}
+            </p>
+            <p>
+              <strong>Course/Degree Name:</strong>{" "}
+              {educationDetails.course_name}
+            </p>
+            <p>
+              <strong>Name of College/University:</strong>{" "}
+              {educationDetails.institute}
+            </p>
+            <p>
+              <strong>Current Studying Year:</strong>{" "}
+              {educationDetails.current_year}
+            </p>
+
+            <hr />
+
+            <h3>Uploaded Documents</h3>
             <div>
               {/* Render personalDetails documents */}
               {documents.personalDetails &&
                 documents.personalDetails.map((documentUrl, index) => (
-                  <div key={`personal_${index}`}  className="my-2">
+                  <div key={`personal_${index}`} className="my-2">
                     {/* Display link to open image in new tab */}
                     <a
                       href={`http://localhost:5000/${documentUrl.replace(
@@ -360,7 +298,7 @@ const ApplicationForm = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      Show Adhaar Card
+                      Adhaar Card
                     </a>
                   </div>
                 ))}
@@ -378,7 +316,7 @@ const ApplicationForm = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                     Show Income Certificate 
+                      Income Certificate
                     </a>
                   </div>
                 ))}
@@ -396,11 +334,35 @@ const ApplicationForm = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      Show College ID Card
+                      College ID Card
                     </a>
                   </div>
                 ))}
             </div>
+            <hr />
+          </div>
+        </div>
+        {/* Add space for manually adding date, place, and student signature */}
+        <div className="manual-signature " style={{ margin: "4px 40px" }}>
+          <p>
+            <strong>Undertaking:</strong> I hereby declare that all the
+            information provided in this application form is true and correct to
+            the best of my knowledge and belief. I understand that any false
+            statement made herein may lead to the rejection of my application or
+            cancellation of any scholarship awarded to me.
+          </p>
+
+          <div>
+            <label>Date:</label>
+            <span>_____________</span>
+          </div>
+          <div>
+            <label>Place:</label>
+            <span>_________________________</span>
+          </div>
+          <div style={{ marginBottom: "70px" }}>
+            <label>Student Signature:</label>
+            <span>__________________________________</span>
           </div>
         </div>
       </div>

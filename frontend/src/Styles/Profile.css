@@ -40,4 +40,7 @@
       transform: translateY(0);
     }
   }
-  
+  .disabled-link {
+    pointer-events: none; /* Disable pointer events */
+    opacity: 0.5; /* Adjust opacity to make it look disabled */
+  }

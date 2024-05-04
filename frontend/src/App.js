@@ -24,6 +24,8 @@ import { AdminAuthProvider } from "./Contexts/AdminAuthContext";
 import SendEmail from "./Components/Administrator/SendEmail";
 import AdminApplicationForm from "./Components/Administrator/AdminApplicationForm";
 import DisplayQuiz from "./Components/Quiz/DisplayQuiz";
+import AddItem from "./Components/SalesItems/AddItem";
+import MyProducts from "./Components/SalesItems/MyProducts";
 
 function App() {
   return (
@@ -45,6 +47,8 @@ function App() {
           <Route path="/address-details" element={<AddressDetails />} />
           <Route path="/income-details" element={<IncomeDetails />} />
           <Route path="/education-details" element={<EducationDetails />} />
+          <Route path="/additem" element={<AddItem />} />
+          <Route path="/myproducts" element={<MyProducts />} />
 
           <Route path="/display-quiz" element={<DisplayQuiz/>} />
 

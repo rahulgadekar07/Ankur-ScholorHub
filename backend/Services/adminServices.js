@@ -12,7 +12,6 @@ async function adminSignup(adminname, email, password) {
     const [existingAdmins] = await db
       .promise()
       .query("SELECT * FROM adminlogin WHERE email = ?", [email]);
-      // console.log("The existing emials:- ",existingAdmins.length)
     if (existingAdmins.length > 0) {
       throw new Error("Email already exists");
     }
@@ -80,7 +79,6 @@ async function getAllUsers() {
 const removeUser = async (userId) => {
   try {
     // Remove user from the 'users' table
-    // console.log("user IDDDDD:- ",userId)
    
 
     // Remove user from other tables if needed
@@ -115,20 +113,17 @@ const approveApplication = async (applicationId, status, replyMessage) => {
     const result=await db.promise().query(sql, [status, replyMessage, applicationId]);
     const sql2= "select email from application_status where id= ? ";
     const [res]=await db.promise().query(sql2, [applicationId]);
-    console.log("SQL2:- ",res[0].email)
     const useremail=res[0].email;
     if (result && res) {
       const text =
         "Your Application is Approved..! Kindly wait for further Updates..";
       try {
-        // console.log("eamil to send:- ",email)
         const emailSent = await sendEmail(
           useremail,
           "Scholorship Application Approved",
           text
         );
         if (emailSent) {
-          // console.log('Email sent successfully');
         } else {
           res.status(500).send("Failed to send email");
         }
@@ -155,20 +150,17 @@ const rejectApplication = async (applicationId, status, replyMessage) => {
 
     const sql = "UPDATE application_status SET status = ?, replyMessage = ? WHERE id = ?";
     const result =await db.promise().query(sql, [status, replyMessage, applicationId]);
-    console.log("SQL2:- ",res[0].email)
     const useremail=res[0].email;
     if (result && res) {
       const text =
         "Your Application is Rejected..! Kindly Contact to Office for further Enquiries.."+replyMessage;
       try {
-        // console.log("eamil to send:- ",email)
         const emailSent = await sendEmail(
           useremail,
           "Scholorship Application Rejected",
           text
         );
         if (emailSent) {
-          // console.log('Email sent successfully');
         } else {
           res.status(500).send("Failed to send email");
         }

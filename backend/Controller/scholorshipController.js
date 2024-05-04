@@ -62,7 +62,6 @@ async function saveAddressDetails(req, res) {
   try {
     // Extract address details from request body
     const { userId, permanent_address, current_address } = req.body;
-    // console.log(userId, permanent_address, current_address);
     // Call service function to save address details
     await scholarshipServices.saveAddressDetails({
       userId,
@@ -193,19 +192,16 @@ async function saveEducationDetails(req, res) {
         idCard,
         email
       });
-      // console.log("result:- ",result)
       if (result) {
         const text =
           "User Successfully Applied for Scholorship....! Check Profile to view Details..";
         try {
-          // console.log("eamil to send:- ",email)
           const emailSent = await sendEmail(
             email,
             "Scholorship Application Successfull",
             text
           );
           if (emailSent) {
-            // console.log('Email sent successfully');
           } else {
             res.status(500).send("Failed to send email");
           }
@@ -243,7 +239,6 @@ async function checkPersonalDetails(req, res) {
     const userId = req.params.userId;
 
     const detailsExist = await scholarshipServices.checkPersonalDetails(userId);
-    // console.log("detailsExist",detailsExist)
     res.json({ detailsExist });
   } catch (error) {
     console.error("Error checking personal details:", error);
@@ -256,7 +251,6 @@ async function checkIncomeDetails(req, res) {
     const userId = req.params.userId;
 
     const detailsExist1 = await scholarshipServices.checkIncomeDetails(userId);
-    // console.log("detailsExist1",detailsExist1)
     res.json({ detailsExist1 });
   } catch (error) {
     console.error("Error checking Income details:", error);
@@ -269,7 +263,6 @@ async function checkAddressDetails(req, res) {
     const userId = req.params.userId;
 
     const detailsExist2 = await scholarshipServices.checkAddressDetails(userId);
-    // console.log("detailsExist2",detailsExist2)
     res.json({ detailsExist2 });
   } catch (error) {
     console.error("Error checking Address details:", error);
@@ -284,7 +277,6 @@ async function checkEducationDetails(req, res) {
     const detailsExist3 = await scholarshipServices.checkEducationDetails(
       userId
     );
-    // console.log("detailsExist3",detailsExist3)
     res.json({ detailsExist3 });
   } catch (error) {
     console.error("Error checking Address details:", error);
@@ -299,7 +291,6 @@ async function getAllPersonalDetails(req, res) {
     const personalDetails = await scholarshipServices.getAllPersonalDetails(
       userId
     );
-    // console.log("personalDetails: ",personalDetails)
     res.json(personalDetails);
   } catch (error) {
     console.error("Error retrieving personal details:", error);

@@ -20,7 +20,6 @@ async function signUp(req, res) {
       try {
         const emailSent = await sendEmail(email, "Successfull SignUp", text);
         if (emailSent) {
-          // console.log("Email sent successfully");
         } else {
           res.status(500).send("Failed to send email");
         }
@@ -59,7 +58,6 @@ async function signIn(req, res) {
 
     // Compare the provided password with the hashed password stored in the database
     const passwordMatch = await bcrypt.compare(password, user.password);
-    // console.log(passwordMatch);
     if (!passwordMatch) {
       return res.status(401).json({ error: "Incorrect password" });
     }
@@ -109,7 +107,6 @@ const getUserData = async (req, res) => {
 
     const userData = await userService.getUserById(userId);
     res.status(200).json(userData);
-    console.log("userData:- ",userData)
   } catch (error) {
     console.error("Error fetching user data:", error);
     res.status(500).json({ error: "Error fetching user data" });
@@ -133,13 +130,11 @@ const upload = multer({ storage: storage });
 async function uploadProfilePic(req, res) {
   try {
     // Check if a file is uploaded
-    // console.log(req.file);
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
     }
 
     // Extract user ID from JWT token
-    // console.log("req.user.userId:- ", req.user.userId);
     const userId = req.user.userId;
 
     // Update user record in the database with the path to the uploaded profile picture

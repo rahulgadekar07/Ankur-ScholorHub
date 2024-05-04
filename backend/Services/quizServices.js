@@ -26,8 +26,48 @@ const updateQuestion = async (questionData) => {
   }
 };
 
+const saveQuizResult = async (userId, score, result,email) => {
+  try {
+    const query = `
+      INSERT INTO quiz_results (userId, score, result,email)
+      VALUES (?, ?, ?,?)
+    `;
+    const [resultRows, fields] = await db.promise().query(query, [userId, score, result,email]);
+    return resultRows;
+  } catch (error) {
+    console.error('Error saving quiz result to the database:', error);
+    throw new Error('Error saving quiz result to the database');
+  }
+};
+const checkUserQuizStatus = async (userId) => {
+  try {
+    const [rows, fields] = await db.promise().query(
+      "SELECT COUNT(*) AS count FROM quiz_results WHERE userId = ?",
+      [userId]
+    );
+    const hasSubmittedQuiz = rows[0].count > 0;
+    return { hasSubmittedQuiz };
+  } catch (error) {
+    console.error('Error checking user quiz status:', error);
+    throw new Error('Error checking user quiz status');
+  }
+};
+
+
+const getQuizResults = async () => {
+  try {
+    const [rows, fields] = await db.promise().query("SELECT * FROM quiz_results");
+    return rows;
+  } catch (error) {
+    console.error('Error fetching quiz results from the database:', error);
+    throw new Error('Error fetching quiz results from the database');
+  }
+};
 
 module.exports = {
   getAllQuestions,
-  updateQuestion
+  updateQuestion,
+  saveQuizResult,
+  checkUserQuizStatus,
+  getQuizResults
 };

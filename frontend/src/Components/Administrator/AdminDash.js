@@ -8,6 +8,7 @@ import DisplayUsers from "./DisplayUsers";
 import DisplayDonors from "./DisplayDonors";
 import Quiz from "./Quiz";
 import ManageScholorship from "./ManageScholorship";
+import QuizResult from "./QuizResult";
 
 const AdminDash = () => {
   const { adminSignIn, isAdminAuthenticated, adminSignOut } = useAdminAuth();
@@ -126,6 +127,15 @@ const AdminDash = () => {
           <hr className="adhr" />
           <div
             className={`menu-item text-center ${
+              activeMenu === "manage-quizresult" ? "active" : ""
+            }`}
+            onClick={() => handleMenuClick("manage-quizresult")}
+          >
+            Manage Test Results
+          </div>
+          <hr className="adhr" />
+          <div
+            className={`menu-item text-center ${
               activeMenu === "manage-donors" ? "active" : ""
             }`}
             onClick={() => handleMenuClick("manage-donors")}
@@ -141,6 +151,7 @@ const AdminDash = () => {
           {activeMenu === "manage-donors" && <DisplayDonors />}
           {activeMenu === "manage-quiz" && <Quiz />}
           {activeMenu === "manage-scholorship" && <ManageScholorship />}
+          {activeMenu === "manage-quizresult" && <QuizResult />}
         </div>
       </div>
     </>

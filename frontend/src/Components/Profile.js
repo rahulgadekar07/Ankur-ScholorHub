@@ -2,16 +2,48 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../Styles/Profile.css";
 import { decodeToken } from "../Utils/auth";
-
+import Spinner from "./Alerts/Spinner";
+import AddItem from "./SalesItems/AddItem";
 const Profile = () => {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [applicationStatus, setApplicationStatus] = useState(null); // State to store application status
   const [error, setError] = useState(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const navigate = useNavigate();
+  const checkUserQuizStatus = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const decodedToken = decodeToken(token);
+      const userId = decodedToken.userId;
 
+      // Make a request to check if the user has already submitted the quiz
+      const response = await fetch(
+        "http://localhost:5000/quiz/checkUserQuizStatus",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: userId, // Replace with the actual user ID
+          }),
+        }
+      );
+
+      if (response.ok) {
+        const { hasSubmittedQuiz } = await response.json();
+        if (hasSubmittedQuiz) {
+          setIsSubmitted(true);
+        }
+      }
+    } catch (error) {
+      console.error("Error checking user quiz status:", error);
+    }
+  };
   useEffect(() => {
     fetchUserData();
+    checkUserQuizStatus();
     fetchApplicationStatus(); // Fetch application status data
   }, []);
 
@@ -151,7 +183,11 @@ const Profile = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div>
+        <Spinner />
+      </div>
+    );
   }
 
   if (error) {
@@ -162,14 +198,24 @@ const Profile = () => {
   const imageUrl = `../../../backend/${replacedImgUrl}`;
   const filename = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
 
+
+  
   return (
-    <div className="d-flex flex-column container border border-warning rounded text-center animate__fadeInUp" style={{ marginBottom: "50px", marginTop: "20px" }}>
+    <div
+      className="d-flex flex-column container border border-warning rounded text-center animate__fadeInUp"
+      style={{ marginBottom: "50px", marginTop: "20px" }}
+    >
       <h1 className="my-3">Profile</h1>
       <hr />
       {userData && (
         <div className="d-flex flex-column">
           <div className="profpic">
-            <img src={`http://localhost:5000/profile_images/${filename}`} alt="Profile Picture" style={{ height: "200px", width: "200px" }} className="animate__fadeInDown" />
+            <img
+              src={`http://localhost:5000/profile_images/${filename}`}
+              alt="Profile Picture"
+              style={{ height: "200px", width: "200px" }}
+              className="animate__fadeInDown"
+            />
           </div>
 
           <label htmlFor="profilePicInput" style={{ cursor: "pointer" }}>
@@ -207,13 +253,25 @@ const Profile = () => {
                 </p>
                 <p>
                   <b>Status:</b>{" "}
-                  <span className={`application-status ${applicationStatus.status === 'approved' ? 'text-success animate__fadeIn' : 'text-danger animate__shakeX'}`}>
+                  <span
+                    className={`application-status ${
+                      applicationStatus.status === "approved"
+                        ? "text-success animate__fadeIn"
+                        : "text-danger animate__shakeX"
+                    }`}
+                  >
                     {applicationStatus.status}
                   </span>
                 </p>
                 <p>
                   <b>Remarks:</b>{" "}
-                  <span className={`application-status ${applicationStatus.status === 'approved' ? 'text-success animate__fadeIn' : 'text-danger animate__shakeX'}`}>
+                  <span
+                    className={`application-status ${
+                      applicationStatus.status === "approved"
+                        ? "text-success animate__fadeIn"
+                        : "text-danger animate__shakeX"
+                    }`}
+                  >
                     {applicationStatus.replyMessage}
                   </span>
                   .....
@@ -229,15 +287,29 @@ const Profile = () => {
                   Delete Application
                 </button>
                 {applicationStatus.status === "approved" && (
-                  <Link className="btn btn-success mx-1" to="/display-quiz">
+                  <Link
+                    className={`btn btn-success mx-1 ${
+                      isSubmitted ? "disabled-link" : ""
+                    }`}
+                    to="/display-quiz"
+                    disabled={isSubmitted}
+                  >
                     Give Test
                   </Link>
+                )}
+                {isSubmitted && (
+                  <p className="text-danger my-2">
+                    You Have Submitted Quiz...Kindly Wait for Results
+                  </p>
                 )}
               </div>
             ) : (
               <p className="text-danger ">No any application submitted...</p>
             )}
           </div>
+          <hr />
+
+
         </div>
       )}
     </div>

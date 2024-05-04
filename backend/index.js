@@ -10,6 +10,7 @@ const userRoutes = require('./Routes/userRoutes');
 const scholarshipRoutes=require('./Routes/scholorshipRoutes');
 const adminRoutes=require('./Routes/adminRoutes');
 const quizRoutes=require('./Routes/quizRoutes');
+const salesItemRoutes=require('./Routes/salesItemRoutes')
 const cors=require('cors');
 
 const app = express();
@@ -18,6 +19,8 @@ app.use('/profile_images', express.static(path.join(__dirname, 'profile_images')
 app.use('/adhaar_uploads', express.static(path.join(__dirname, 'adhaar_uploads')));
 app.use('/income_certificates', express.static(path.join(__dirname, 'income_certificates')));
 app.use('/Institue_Idcard', express.static(path.join(__dirname, 'Institue_Idcard')));
+app.use('/Institue_Idcard', express.static(path.join(__dirname, 'Institue_Idcard')));
+app.use('/sales_items', express.static(path.join(__dirname, 'sales_items')));
 
 // Middleware to parse JSON request bodies
 app.use(bodyParser.json());
@@ -49,6 +52,7 @@ app.use('/user', userRoutes);
 app.use('/scholarship', scholarshipRoutes);
 app.use('/admin', adminRoutes);
 app.use('/quiz', quizRoutes);
+app.use('/sales',salesItemRoutes );
 
 
 app.post('/api/send-email', async (req, res) => {

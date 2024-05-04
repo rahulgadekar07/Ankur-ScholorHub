@@ -1,17 +1,59 @@
 import React, { useState, useEffect } from "react";
 import "../../Styles/DisplayQuiz.css";
+import { useNavigate } from "react-router-dom";
+
+import { decodeToken } from "../../Utils/auth";
 
 const DisplayQuiz = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [questions, setQuestions] = useState([]);
   const [quizStarted, setQuizStarted] = useState(false);
+  const navigate = useNavigate();
 
   const [showPreviousButton, setShowPreviousButton] = useState(false); // State to toggle visibility of the previous button
   const [submitted, setSubmitted] = useState(false); // State to track whether the quiz has been submitted
-  const [timeLeft, setTimeLeft] = useState(30); // Timer set to 30 minutes (1800 seconds)
+  const [timeLeft, setTimeLeft] = useState(1000); // Timer set to 30 minutes (1800 seconds)
   const [isLessThan20, setIsLessThan20] = useState(false);
   // Timer functionality
+  const token = localStorage.getItem("token");
+        const decodedToken = decodeToken(token);
+        const userId = decodedToken.userId;
+        const email=decodedToken.email;
   useEffect(() => {
+
+    const checkUserQuizStatus = async () => {
+      try {
+        
+
+        // Make a request to check if the user has already submitted the quiz
+        const response = await fetch("http://localhost:5000/quiz/checkUserQuizStatus", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: userId, // Replace with the actual user ID
+          }),
+        });
+
+        if (response.ok) {
+          const { hasSubmittedQuiz } = await response.json();
+          if (hasSubmittedQuiz) {
+            alert("You have already submitted the quiz.");
+            navigate("/");
+          }
+        } else {
+          console.error("Failed to check user quiz status");
+        }
+      } catch (error) {
+        console.error("Error checking user quiz status:", error);
+      }
+    };
+
+    checkUserQuizStatus();
+
+
+
     const fetchQuestions = async () => {
       try {
         const response = await fetch(
@@ -53,19 +95,57 @@ const DisplayQuiz = () => {
     updatedQuestions[currentQuestionIndex].answered = true;
     setQuestions(updatedQuestions);
     setShowPreviousButton(true);
-
-    
   };
 
   // Function to handle submission of the current question
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Check if all questions are answered
-
     const isAllAnswered = questions.every((question) => question.answered);
     if (!isAllAnswered) {
       alert("Please answer all questions before submitting.");
       return;
     }
+
+    // Calculate the number of correct answers
+    const correctAnswersCount = questions.filter(
+      (question) => question.selectedOption === question.right_option
+    ).length;
+
+    // Determine the result (Pass or Fail)
+    const result = correctAnswersCount >= 6 ? "Pass" : "Fail";
+
+    try {
+      // Make a POST request to your backend API endpoint
+      const response = await fetch(
+        "http://localhost:5000/quiz/saveQuizResult",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: userId, // Replace with the actual user ID
+            score: correctAnswersCount,
+            result: result,
+            email:email
+          }),
+        }
+      );
+
+      if (response.ok) {
+        alert("Quiz result saved successfully");
+        navigate("/");
+
+        // Handle any further actions after saving the result, such as displaying a confirmation message
+      } else {
+        console.error("Failed to save quiz result");
+        // Handle the error appropriately
+      }
+    } catch (error) {
+      console.error("Error saving quiz result:", error);
+      // Handle the error appropriately
+    }
+
     // For demo purposes, we'll just move to the next question
     setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
     setShowPreviousButton(false);
@@ -109,9 +189,10 @@ const DisplayQuiz = () => {
 
     return (
       <div>
-        
-{        console.log("currentQuestion.id:- ",currentQuestion.question_id)
-}        <h4 className="exo-2">{currentQuestion.question_id}]  {currentQuestion.question}</h4>
+        {console.log("currentQuestion.id:- ", currentQuestion.question_id)}{" "}
+        <h4 className="exo-2">
+          {currentQuestion.question_id}] {currentQuestion.question}
+        </h4>
         <ul>
           {Object.keys(currentQuestion)
             .filter((key) => key.startsWith("option"))
@@ -194,7 +275,7 @@ const DisplayQuiz = () => {
             you cannot change your answers. <br /> 3. Time for the Test is 30
             minutes. <br /> 4. After Timer Runs of Test will get Submitted.
           </em>
-          <br/>
+          <br />
           <button
             className="btn btn-primary mt-2 "
             onClick={() => setQuizStarted(true)}

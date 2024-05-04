@@ -13,7 +13,7 @@
 .menu-item {
   padding: 15px 20px; /* Increased padding for better touch responsiveness */
   margin: 10px 0; /* Reduced vertical margin for better spacing */
-  font-size: 20px; /* Slightly smaller font size */
+  font-size: 15px; /* Slightly smaller font size */
   font-family: 'Poppins', sans-serif; /* Modern font family */
   cursor: pointer;
   color: white;
@@ -23,12 +23,14 @@
   color: gold;
 }
 .menu-item:hover {
-  background-color: #34495e; /* Darker background on hover */
+  background-color: #737cb0; /* Darker background on hover */
   border-radius: 5px; /* Rounded corners on hover */
+  color: gold;
+  font-weight: bold;
 }
 
 .active {
-  color: #e67e22; /* Orange color for active menu items */
+  color: gold; /* Orange color for active menu items */
   font-weight: bold;
 }
 

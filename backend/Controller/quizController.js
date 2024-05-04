@@ -27,7 +27,52 @@ const updateQuestion = async (req, res) => {
   }
 };
 
+
+const saveQuizResult = async (req, res) => {
+  const { userId, score, result ,email } = req.body;
+
+  if (!userId || !score || !result || !email) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  try {
+    const savedResult = await quizServices.saveQuizResult(userId, score, result,email);
+    res.status(201).json({ success: true, message: 'Quiz result saved successfully', savedResult });
+  } catch (error) {
+    console.error('Error saving quiz result:', error);
+    res.status(500).json({ error: 'Failed to save quiz result' });
+  }
+};
+
+const checkUserQuizStatus = async (req, res) => {
+  const { userId } = req.body;
+
+  if (!userId) {
+    return res.status(400).json({ error: 'User ID is required' });
+  }
+
+  try {
+    const quizStatus = await quizServices.checkUserQuizStatus(userId);
+    res.json(quizStatus);
+  } catch (error) {
+    console.error('Error checking user quiz status:', error);
+    res.status(500).json({ error: 'Error checking user quiz status' });
+  }
+};
+
+const getQuizResults = async (req, res) => {
+  try {
+    const quizResults = await quizServices.getQuizResults();
+    res.json(quizResults);
+  } catch (error) {
+    console.error('Error fetching quiz results:', error);
+    res.status(500).json({ error: 'Error fetching quiz results from the database' });
+  }
+};
 module.exports = {
   getAllQuestions,
-  updateQuestion
+  updateQuestion,
+  saveQuizResult,
+  checkUserQuizStatus,
+  getQuizResults
 };
