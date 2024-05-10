@@ -1,11 +1,20 @@
 import React, { useState, useEffect } from "react";
 import "../Styles/Home.css";
-import { Link } from "react-router-dom";
-import Spinner from "../Components/Alerts/Spinner";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
+import PopupAlert from "../Components/Alerts/PopupAlert";
+import { decodeToken } from "../Utils/auth";
+
 const Home = () => {
   const [mapLoading, setMapLoading] = useState(true);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertSettings, setAlertSettings] = useState({
+    type: "warning",
+    message: "alert message",
+  });
+  const token = localStorage.getItem("token");
+  const decodedToken = decodeToken(token);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Simulate map loading delay
@@ -17,9 +26,67 @@ const Home = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  const handleDonateClick = () => {
+    if (!token) {
+      setShowAlert(true);
+      setAlertSettings({
+        type: "failure",
+        message: "Sign in before Donation",
+      });
+    } else {
+      navigate("/donate");
+    }
+  };
+  const handleApplyClick = async () => {
+    if (!token) {
+      setShowAlert(true);
+      setAlertSettings({
+        type: "failure",
+        message: "Sign in before Apply",
+      });
+    }
+    try {
+      const userId = decodedToken.userId;
+
+      const response = await fetch(
+        `http://localhost:5000/scholarship/checkApplicationStatus/${userId}`
+      );
+      const data = await response.json();
+      console.log(data);
+      console.log(data.userExists);
+      if (data.userExists.exists) {
+         // Set the application submission flag
+
+        setShowAlert(true);
+        setAlertSettings({
+          type: "failure",
+          message: "You have already submitted your Application",
+        });
+        
+       
+      }
+      else{
+        navigate("/apply")
+      }
+    } catch (error) {
+      console.error("Error checking user details:", error);
+    }
+  };
+
+  const handleCloseAlert = () => {
+    setShowAlert(false);
+  };
+
   return (
     <div className="flex my-3">
       {/* Google Maps Location */}
+      {showAlert && (
+        <PopupAlert
+          type={alertSettings.type}
+          message={alertSettings.message}
+          onClose={handleCloseAlert} // Pass function reference here
+        />
+      )}
       <div className="map1 m-4 ">
         {mapLoading && (
           <div className="loading-overlay  m-3">
@@ -89,13 +156,15 @@ const Home = () => {
           <h1>Welcome to Ankur Foundation</h1>
           <p>Click below to apply for our scholarships:</p>
           <div className="apl">
-            <Link id="btn1" to="/apply">
+            <button id="btn1" onClick={handleApplyClick}>
               Apply
-            </Link>
+            </button>
           </div>
           <p>Kindly Donate Us to Help more Students:</p>
           <div className="apl1">
-            <button id="btn2">Donate</button>
+            <button id="btn2" onClick={handleDonateClick}>
+              Donate
+            </button>
           </div>
         </div>
       </div>

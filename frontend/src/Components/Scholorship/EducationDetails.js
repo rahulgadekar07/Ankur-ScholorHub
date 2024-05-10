@@ -1,16 +1,21 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { decodeToken } from "../../Utils/auth";
 import { useNavigate } from "react-router-dom";
 import Spinner from "../Alerts/Spinner";
 
+import PopupAlert from "../../Components/Alerts/PopupAlert";
 
 const EducationDetails = (props) => {
   const token = localStorage.getItem("token");
   const decodedToken = decodeToken(token);
   let userId = decodedToken.userId;
-  let emailtosend=decodedToken.email;
+  let emailtosend = decodedToken.email;
   const [loading, setLoading] = useState(false);
-
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertSettings, setAlertSettings] = useState({
+    type: "warning",
+    message: "alert message",
+  });
   const [formData, setFormData] = useState({
     qualification: "",
     courseName: "",
@@ -29,8 +34,11 @@ const EducationDetails = (props) => {
       );
       const data = await response.json();
       if (data.detailsExist3) {
-        alert("You have already submitted your Education details.");
-        navigate("/"); // Redirect to dashboard or any other page
+        setShowAlert(true);
+        setAlertSettings({
+          type: "failure",
+          message: "Already saved Personal Details",
+        });
       }
     } catch (error) {
       console.error("Error checking user details:", error);
@@ -41,7 +49,6 @@ const EducationDetails = (props) => {
     checkEducationDetails();
   }, []);
 
-  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -57,7 +64,7 @@ const EducationDetails = (props) => {
       idCard: file,
     });
   };
-  console.log("Email to send:",emailtosend)
+  console.log("Email to send:", emailtosend);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -66,8 +73,8 @@ const EducationDetails = (props) => {
       "Are you Sure you want to Save ? Once Saved you wont be able to Edit the details"
     );
     if (conf) {
-      setLoading(true)
-      
+      setLoading(true);
+
       // Append userId to the formData
       const formDataToSend = new FormData();
       formDataToSend.append("userId", userId);
@@ -83,13 +90,13 @@ const EducationDetails = (props) => {
             body: formDataToSend,
           }
         );
-        console.log("Formdata:- ",formData)
+        console.log("Formdata:- ", formData);
         if (response.ok) {
-          setLoading(false)
+          setLoading(false);
           alert("Education details saved successfully");
 
           props.setbgcolor4(true);
-          
+
           // Optionally, reset the form
           setFormData({
             qualification: "",
@@ -98,101 +105,114 @@ const EducationDetails = (props) => {
             currentYear: "",
             idCard: null,
           });
-          navigate("/")
+          navigate("/");
         } else {
-          setLoading(false)
+          setLoading(false);
 
           throw new Error("Failed to save education details");
         }
       } catch (error) {
-        setLoading(false)
+        setLoading(false);
 
         console.error("Error saving education details:", error);
         alert("Error saving education details");
       }
     }
   };
-
+  const handleCloseAlert = () => {
+    setShowAlert(false);
+    props.setActiveSection("address-details");
+    props.setbgcolor3(true);
+  };
   return (
     <>
+      {showAlert && (
+        <PopupAlert
+          type={alertSettings.type}
+          message={alertSettings.message}
+          onClose={handleCloseAlert} // Pass function reference here
+        />
+      )}
       <h2>Education Details:</h2>
       <hr />
-      <form
-        className="education-details-form d-flex flex-column "
-        onSubmit={handleSubmit}
-      >
-        <div className="form-group">
-          <label htmlFor="qualification">Qualification</label>
-          <select
-            className="form-select"
-            id="qualification"
-            name="qualification"
-            value={formData.qualification}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Select</option>
-            <option value="Graduation">Graduation</option>
-            <option value="Post Graduation">Post Graduation</option>
-          </select>
-        </div>
-        <div className="form-group">
-          <label htmlFor="courseName">Course/Degree Name</label>
-          <input
-            type="text"
-            className="form-control"
-            id="courseName"
-            name="courseName"
-            value={formData.courseName}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="institute">Name of College/University</label>
-          <input
-            type="text"
-            className="form-control"
-            id="institute"
-            name="institute"
-            value={formData.institute}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="currentYear">Current Studying Year</label>
-          <input
-            type="number"
-            className="form-control"
-            id="currentYear"
-            name="currentYear"
-            value={formData.currentYear}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="idCard">ID Card of the Institute</label>
-          <input
-            type="file"
-            className="form-control"
-            id="idCard"
-            name="idCard"
-            onChange={handleFileChange}
-            required
-          />
-        </div>
-        <div className="buttons my-3 d-flex flex-column">
-          <button type="submit" className="btn btn-success my-2">
-            Save
-          </button>
-          <button type="reset" className="btn btn-danger my-2">
-            Clear
-          </button>
-          {loading && <Spinner/>}
-        </div>
-      </form>
+      {!showAlert && (
+        <form
+          className="education-details-form d-flex flex-column "
+          onSubmit={handleSubmit}
+        >
+          <div className="form-group">
+            <label htmlFor="qualification">Qualification</label>
+            <select
+              className="form-select"
+              id="qualification"
+              name="qualification"
+              value={formData.qualification}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Select</option>
+              <option value="Graduation">Graduation</option>
+              <option value="Post Graduation">Post Graduation</option>
+            </select>
+          </div>
+          <div className="form-group">
+            <label htmlFor="courseName">Course/Degree Name</label>
+            <input
+              type="text"
+              className="form-control"
+              id="courseName"
+              name="courseName"
+              value={formData.courseName}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="institute">Name of College/University</label>
+            <input
+              type="text"
+              className="form-control"
+              id="institute"
+              name="institute"
+              value={formData.institute}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="currentYear">Current Studying Year</label>
+            <input
+              type="number"
+              className="form-control"
+              id="currentYear"
+              name="currentYear"
+              value={formData.currentYear}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="idCard">ID Card of the Institute</label>
+            <input
+              type="file"
+              className="form-control"
+              id="idCard"
+              name="idCard"
+              onChange={handleFileChange}
+              required
+            />
+          </div>
+          <div className="buttons my-3 d-flex flex-column">
+            <button type="submit" className="btn btn-success my-2">
+              Save
+            </button>
+            <button type="reset" className="btn btn-danger my-2">
+              Clear
+            </button>
+            {loading && <Spinner />}
+          </div>
+        </form>
+      )}
     </>
   );
 };

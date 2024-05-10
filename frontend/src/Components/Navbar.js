@@ -6,6 +6,7 @@ import SignInModal from "./Modals/SignInModal";
 import SignUpModal from "./Modals/SignUpModal";
 import { useAuth } from "../Contexts/authContext";
 import { decodeToken } from "../Utils/auth";
+import PopupAlert from "../Components/Alerts/PopupAlert";
 
 function Navbar() {
   const [showSignInModal, setShowSignInModal] = useState(false);
@@ -14,7 +15,11 @@ function Navbar() {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertSettings, setAlertSettings] = useState({
+    type: "warning",
+    message: "alert message",
+  });
   const [userName, setUserName] = useState("");
   const { signOut } = useAuth();
   const navigate = useNavigate();
@@ -96,9 +101,32 @@ function Navbar() {
   const replacedImgUrl = profpic?.replace(/\\/g, "/");
   const imageUrl = `../../../backend/${replacedImgUrl}`;
   const filename = imageUrl?.substring(imageUrl.lastIndexOf("/") + 1);
+  const handleDonate=()=>{
+    const token = localStorage.getItem("token");
 
+    if(!token){
+      setShowAlert(true);
+      setAlertSettings({
+        type: "failure",
+        message: "Sign in before Donation",
+      });
+    }
+    else{
+      navigate("/donate")
+    }
+  }
+  const handleCloseAlert = () => {
+    setShowAlert(false);
+  };
   return (
     <>
+    {showAlert && (
+        <PopupAlert
+          type={alertSettings.type}
+          message={alertSettings.message}
+          onClose={handleCloseAlert} // Pass function reference here
+        />
+      )}
       {!isAdminDash && (
         <div className="navbar1">
           <div className="navbar1-left my-1 ">
@@ -219,14 +247,12 @@ function Navbar() {
                 Contact Us
               </Link>
             </li>
-            <li className="my-1">
-              <Link
-                className="text-decoration-none text-white mx-2 "
-                to="/donate"
+            <button
+                className=" btn btn-link m-0 p-0 text-decoration-none text-white mx-2 "
+                onClick={handleDonate}
               >
                 Donate Us
-              </Link>
-            </li>
+              </button>
             <li className="my-1">
               <Link
                 className="text-decoration-none text-white mx-2 "

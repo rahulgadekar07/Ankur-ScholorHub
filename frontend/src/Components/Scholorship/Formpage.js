@@ -10,26 +10,15 @@ import IncomeDetails from "./IncomeDetails";
 const Formpage = () => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const [alertShown, setAlertShown] = useState(false);
-  // if(!token&& !alertShown){
-  //   setAlertShown(true);
-  //     alert("Please Sign in before apply");
-  //     navigate("/");
-  // }
+  
+ 
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [bgcolor1,setbgcolor1]=useState(false)
   const [bgcolor2,setbgcolor2]=useState(false)
   const [bgcolor3,setbgcolor3]=useState(false)
   const [bgcolor4,setbgcolor4]=useState(false)
 
-  useEffect(() => {
-    if (!token && !alertShown) {
-      setAlertShown(true);
-      alert("Please Sign in before apply");
-      navigate("/");
-    }
-  }, [token, alertShown, navigate]);
-
+ 
   const [activeSection, setActiveSection] = useState("personal-details"); // State to track active section
 
   const handleSectionClick = (section) => { 
@@ -39,9 +28,10 @@ const Formpage = () => {
 
   // Render the corresponding component based on activeSection
    
-
+  
   return (
     <div className="flex text-center ">
+       
 
       <h1 className="my-4 ">Application Form</h1>
 

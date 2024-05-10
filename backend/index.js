@@ -11,6 +11,7 @@ const scholarshipRoutes=require('./Routes/scholorshipRoutes');
 const adminRoutes=require('./Routes/adminRoutes');
 const quizRoutes=require('./Routes/quizRoutes');
 const salesItemRoutes=require('./Routes/salesItemRoutes')
+const paymentRoutes=require("./Routes/paymentRoutes")
 const cors=require('cors');
 
 const app = express();
@@ -53,6 +54,7 @@ app.use('/scholarship', scholarshipRoutes);
 app.use('/admin', adminRoutes);
 app.use('/quiz', quizRoutes);
 app.use('/sales',salesItemRoutes );
+app.use('/payment',paymentRoutes );
 
 
 app.post('/api/send-email', async (req, res) => {

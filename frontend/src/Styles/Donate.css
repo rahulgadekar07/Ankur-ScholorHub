@@ -1,0 +1,86 @@
+.donate-container {
+    padding: 50px;
+  }
+  
+  .donate-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  .donate-header p {
+    font-size: 1.2rem;
+    color: #666;
+  }
+  
+  .donate-image-container {
+    margin-top: 20px;
+  }
+  
+  .donate-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  
+  .donate-form-container {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+  }
+  
+  .donate-form-container h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-group label {
+    font-size: 1.2rem;
+    color: #333;
+  }
+  
+  .form-control {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .btn-primary {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .btn-primary:hover {
+    background-color: #0056b3;
+  }
+  
+  @media (max-width: 768px) {
+    .donate-container {
+      padding: 20px;
+    }
+  
+    .donate-header h1 {
+      font-size: 2rem;
+    }
+  
+    .donate-header p {
+      font-size: 1rem;
+    }
+  
+    .donate-form-container h2 {
+      font-size: 1.5rem;
+    }
+  }
+  
