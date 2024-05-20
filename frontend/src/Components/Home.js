@@ -117,39 +117,22 @@ const Home = () => {
           onMouseLeave={() => document.getElementById("marquee").start()}
         >
           <marquee
-            id="marquee"
-            behavior="scroll"
-            direction="up"
-            scrollamount="7"
-          >
-            <div className="marquee-item">
-              <p className="my-2">
-                This is marquee 1 Lorem ipsum, dolor sit amet consectetur
-                adipisicing elit. Architecto necessitatibus fugit ipsam
-                pariatur. Quibusdam perferendis eaque nemo inventore, nihil,
-                libero velit, officiis cumque sint adipisci sunt et accusantium
-                vel provident.
-              </p>
-            </div>
-            <div className="marquee-item">
-              <p className="my-2">
-                This is marquee 2 Lorem ipsum, dolor sit amet consectetur
-                adipisicing elit. Architecto necessitatibus fugit ipsam
-                pariatur. Quibusdam perferendis eaque nemo inventore, nihil,
-                libero velit, officiis cumque sint adipisci sunt et accusantium
-                vel provident.
-              </p>
-            </div>
-            <div className="marquee-item">
-              <p className="my-2">
-                This is marquee 3 Lorem ipsum, dolor sit amet consectetur
-                adipisicing elit. Architecto necessitatibus fugit ipsam
-                pariatur. Quibusdam perferendis eaque nemo inventore, nihil,
-                libero velit, officiis cumque sint adipisci sunt et accusantium
-                vel provident.
-              </p>
-            </div>
-          </marquee>
+  id="marquee"
+  behavior="scroll"
+  direction="up"
+  scrollamount="7"
+>
+  <div className="marquee-item">
+    <p className="my-2">Form acceptance for scholarships has started. Apply now!</p>
+  </div>
+  <div className="marquee-item">
+    <p className="my-2">Please donate to support our cause. Every contribution counts!</p>
+  </div>
+  <div className="marquee-item">
+    <p className="my-2">Volunteers needed for our upcoming event. Join us to make a difference!</p>
+  </div>
+</marquee>
+
         </div>
 
         <div className="maincontent">

@@ -1,6 +1,8 @@
+//salesItemController.js
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const razorpay = require('razorpay');
 
 // Configure Multer to store files in a specific directory
 const storage = multer.diskStorage({
@@ -147,9 +149,62 @@ const editProduct = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+
+// Initialize Razorpay with your API keys
+const rzp = new razorpay({
+  key_id: 'rzp_test_GWCh8fO2Clvot3',
+  key_secret: 'wuimrKCSsmfjhAMEJ2dI0Ywo'
+});
+
+// Modified checkout controller
+const checkout = async (req, res) => {
+  try {
+    // Extract cart details from request body
+    const { cart, userId } = req.body;
+    if (!userId) {
+      throw new Error('User ID is missing');
+    }
+
+    // Calculate total amount from the cart
+    const totalAmount = cart.reduce((total, product) => {
+      return total + parseFloat(product.price);
+    }, 0);
+
+    // Create Razorpay order
+    const order = await rzp.orders.create({
+      amount: totalAmount * 100, // Amount is in paise (currency subunits)
+      currency: 'INR',
+      receipt: 'receipt#1',
+      payment_capture: 1 // Automatically capture payment after order creation
+    });
+
+    // Process checkout and store data in database using service function
+    const orderId = await salesItemServices.insertOrder({
+      user_id: userId,
+      total_amount: totalAmount,
+      status: 'pending',
+      razorpay_order_id: order.id // Add Razorpay order ID to order details
+    });
+
+    // Return Razorpay order details to frontend
+    if (orderId) {
+      res.status(200).json({ message: 'Checkout successful', order });
+    } else {
+      throw new Error('Failed to process checkout');
+    }
+  } catch (error) {
+    // Return an error response
+    console.error("Error during checkout:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+
 module.exports = {
   addItem,
   getProductsByCategory,
   getProductsById,
   editProduct,
+  checkout
 };

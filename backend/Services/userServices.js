@@ -89,11 +89,29 @@ async function updateProfilePic(userId, profilePicPath) {
     throw error; // Rethrow the error to be handled by the caller
   }
 }
+// Service function for submitting feedback
+async function submitFeedback(userId, name, email, subject, message) {
+  try {
+    // Assuming you have a table called 'feedback'
+    const sql = "INSERT INTO feedback (userId, name, email, subject, message) VALUES (?, ?, ?, ?, ?)";
+    const [result] = await db
+      .promise()
+      .query(sql, [userId, name, email, subject, message]);
+
+    // Return the result or handle it as needed
+    return result;
+  } catch (error) {
+    console.error("Error submitting feedback:", error);
+    throw error; // Rethrow the error to be handled by the caller
+  }
+}
+
 
 // Export service functions
 module.exports = {
   createUser,
   findUserByEmail,
+  submitFeedback,
   getUserById,
   updateProfilePic, // Export the updateProfilePic function
 };

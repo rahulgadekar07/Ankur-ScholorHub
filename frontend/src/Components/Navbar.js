@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from "react";
-import "../Styles/Navbar.css";
-import { Link, useLocation } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import SignInModal from "./Modals/SignInModal";
-import SignUpModal from "./Modals/SignUpModal";
-import { useAuth } from "../Contexts/authContext";
-import { decodeToken } from "../Utils/auth";
-import PopupAlert from "../Components/Alerts/PopupAlert";
+import React, { useState,useEffect } from 'react';
+import '../Styles/Navbar.css';
+import { Link, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import SignInModal from './Modals/SignInModal';
+import SignUpModal from './Modals/SignUpModal';
+import { useAuth } from '../Contexts/authContext';
+import { decodeToken } from '../Utils/auth';
+import PopupAlert from '../Components/Alerts/PopupAlert';
+import ConfirmBox from '../Components/Alerts/ConfirmBox';
 
 function Navbar() {
   const [showSignInModal, setShowSignInModal] = useState(false);
@@ -17,61 +18,59 @@ function Navbar() {
   const [error, setError] = useState(null);
   const [showAlert, setShowAlert] = useState(false);
   const [alertSettings, setAlertSettings] = useState({
-    type: "warning",
-    message: "alert message",
+    type: 'warning',
+    message: 'alert message',
   });
-  const [userName, setUserName] = useState("");
+  const [userName, setUserName] = useState('');
   const { signOut } = useAuth();
   const navigate = useNavigate();
+  const [showConfirmBox, setShowConfirmBox] = useState(false);
 
   const location = useLocation(); // Get current location
   const isAdminDash =
-    location.pathname === "/admindash" || location.pathname === "/adminappform";
+    location.pathname === '/admindash' || location.pathname === '/adminappform';
 
   useEffect(() => {
     // Check if the user is already authenticated based on the token stored in local storage
 
     const fetchUserData = async () => {
       try {
-        // console.log("Fetching user data..."); // Log 1: Fetching initiated
-
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem('token');
         if (!token) {
-          throw new Error("User is not authenticated");
+          throw new Error('User is not authenticated');
         }
         const decodedToken = decodeToken(token);
         const userId = decodedToken.userId;
-        const response = await fetch("http://localhost:5000/user/getUserData", {
-          method: "GET",
+        const response = await fetch('http://localhost:5000/user/getUserData', {
+          method: 'GET',
           headers: {
             Authorization: `Bearer ${token},userId=${userId}`,
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
         });
 
         if (!response.ok) {
-          throw new Error("Failed to fetch user data");
+          throw new Error('Failed to fetch user data');
         }
 
         const userData = await response.json();
-        // console.log("Data fetched:", userData); // Log 2: Fetched data
         setUserData(userData);
         setLoading(false);
       } catch (error) {
-        console.error("Error fetching data:", error); // Log 3: Error encountered
+        console.error('Error fetching data:', error);
 
         setError(error.message);
         setLoading(false);
       }
     };
 
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
     if (token) {
       setAuthenticated(true);
 
       const decodedToken = decodeToken(token);
       if (decodedToken) {
-        setUserName(decodedToken.email ?? "");
+        setUserName(decodedToken.email ?? '');
         // Assuming the token contains the user's ID
       }
     }
@@ -86,45 +85,51 @@ function Navbar() {
     setShowSignUpModal(!showSignUpModal);
   };
 
-  const handleSignOut = () => {
-    let conf = window.confirm("Are you sure to Logout?");
-    if (conf) {
-      // Clear the token from local storage and set authenticated to false
-      localStorage.removeItem("token");
+  const handleLogoutConfirm = (confirmed) => {
+    if (confirmed) {
+      localStorage.removeItem('token');
       signOut();
       setAuthenticated(false);
-      navigate("/");
-      setUserName("");
+      navigate('/');
+      setUserName('');
     }
+    setShowConfirmBox(false);
   };
-  const profpic = userData?.profpic;
-  const replacedImgUrl = profpic?.replace(/\\/g, "/");
-  const imageUrl = `../../../backend/${replacedImgUrl}`;
-  const filename = imageUrl?.substring(imageUrl.lastIndexOf("/") + 1);
-  const handleDonate=()=>{
-    const token = localStorage.getItem("token");
 
-    if(!token){
+  const handleSignOut = () => {
+    setShowConfirmBox(true);
+  };
+
+  const handleDonate = () => {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
       setShowAlert(true);
       setAlertSettings({
-        type: "failure",
-        message: "Sign in before Donation",
+        type: 'failure',
+        message: 'Sign in before Donation',
       });
+    } else {
+      navigate('/donate');
     }
-    else{
-      navigate("/donate")
-    }
-  }
+  };
+
   const handleCloseAlert = () => {
     setShowAlert(false);
   };
+
+  const profpic = userData?.profpic;
+  const replacedImgUrl = profpic?.replace(/\\/g, '/');
+  const imageUrl = `../../../backend/${replacedImgUrl}`;
+  const filename = imageUrl?.substring(imageUrl.lastIndexOf('/') + 1);
+
   return (
     <>
-    {showAlert && (
+      {showAlert && (
         <PopupAlert
           type={alertSettings.type}
           message={alertSettings.message}
-          onClose={handleCloseAlert} // Pass function reference here
+          onClose={handleCloseAlert}
         />
       )}
       {!isAdminDash && (
@@ -141,7 +146,7 @@ function Navbar() {
                     className="rounded-5"
                     src={`http://localhost:5000/profile_images/${filename}`}
                     alt="Profile Picture"
-                    style={{ height: "40px", width: "40px" }}
+                    style={{ height: '40px', width: '40px' }}
                   />
                 )}
                 <button
@@ -198,7 +203,7 @@ function Navbar() {
           </div>
         </div>
       )}
-      <div className={`container1 ${isAdminDash ? "d-none" : ""}`}>
+      <div className={`container1 ${isAdminDash ? 'd-none' : ''}`}>
         <div className="logodiv">
           <img className="logo1 my-1 " src="/Logo.jpg" alt="error" />
         </div>
@@ -207,7 +212,7 @@ function Navbar() {
             <h1 className="">अंकुर विद्यार्थी फाउंडेशन</h1>
 
             <span>
-              {" "}
+              {' '}
               <b>र. वि. नं. महा /३५६/२०२०/</b>E-Mail:
               ankur.vidyarthi.foundation@gmail.com
             </span>
@@ -223,7 +228,7 @@ function Navbar() {
           <img className="logo1 my-1 " src="/Logo.jpg" alt="error" />
         </div>
       </div>
-      <div className={`navbar2 ${isAdminDash ? "d-none" : ""}`}>
+      <div className={`navbar2 ${isAdminDash ? 'd-none' : ''}`}>
         <div className="my-2">
           <ul>
             <li className="my-1">
@@ -248,11 +253,11 @@ function Navbar() {
               </Link>
             </li>
             <button
-                className=" btn btn-link m-0 p-0 text-decoration-none text-white mx-2 "
-                onClick={handleDonate}
-              >
-                Donate Us
-              </button>
+              className=" btn btn-link m-0 p-0 text-decoration-none text-white mx-2 "
+              onClick={handleDonate}
+            >
+              Donate Us
+            </button>
             <li className="my-1">
               <Link
                 className="text-decoration-none text-white mx-2 "
@@ -287,6 +292,12 @@ function Navbar() {
             </div>
           </div>
         </div>
+      )}
+      {showConfirmBox && (
+        <ConfirmBox
+          message="Are you sure you want to logout?"
+          onConfirm={handleLogoutConfirm}
+        />
       )}
     </>
   );

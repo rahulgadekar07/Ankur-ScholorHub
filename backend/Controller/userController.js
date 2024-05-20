@@ -146,12 +146,32 @@ async function uploadProfilePic(req, res) {
     res.status(500).json({ error: "Error uploading profile picture" });
   }
 }
+// Controller function for submitting feedback
+async function submitFeedback(req, res) {
+  try {
+    const { userId, name, email, subject, message } = req.body;
 
+    // You can validate the userId if necessary
+    if (!userId) {
+      return res.status(400).json({ error: "User ID is required" });
+    }
+
+    // Assuming you have a database table called 'feedback' to store feedback
+    const feedback = await userService.submitFeedback(userId, name, email, subject, message);
+
+    // Handle successful submission
+    res.status(201).json({ message: "Feedback submitted successfully", feedback });
+  } catch (error) {
+    console.error("Error submitting feedback:", error);
+    res.status(500).json({ error: "Error submitting feedback" });
+  }
+}
 // Export controller functions
 module.exports = {
   signUp,
   signIn,
   getUserData,
   uploadProfilePic,
+  submitFeedback,
   upload, // Export the upload middleware for use in routes
 };

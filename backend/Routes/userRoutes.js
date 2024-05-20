@@ -11,8 +11,8 @@ const router = express.Router();
 // Define routes for user-related endpoints
 router.post('/signup', userController.signUp);
 router.post('/signin', userController.signIn);
-router.get('/getUserData', userController.getUserData); // Corrected route
-
+router.get('/getUserData', userController.getUserData); 
+router.post('/submit-feedback', userController.submitFeedback); 
 router.post('/upload-profile-pic', upload.single('profilePic'), userController.uploadProfilePic);
 
 

@@ -1,3 +1,4 @@
+//salesItemServices.js
 const db = require("../Config/database");
 
 const addItem = async (
@@ -209,6 +210,24 @@ const editProduct = async (
     throw error;
   }
 };
+// Modified insertOrder service function
+const insertOrder = async (orderDetails) => {
+  try {
+    // Insert order details into the orders table
+    const result = await db.promise().execute('INSERT INTO orders (user_id, total_amount, status, razorpay_order_id) VALUES (?, ?, ?, ?)', [
+      orderDetails.user_id,
+      orderDetails.total_amount,
+      orderDetails.status,
+      orderDetails.razorpay_order_id // Add Razorpay order ID to the query parameters
+    ]);
+    
+    // Return the inserted order ID
+    return result.insertId;
+  } catch (error) {
+    console.error('Error inserting order:', error);
+    throw new Error('Failed to insert order');
+  }
+};
 
 module.exports = {
   addItem,
@@ -216,4 +235,5 @@ module.exports = {
   getProductsById,
   editProduct,
   getProductsByProductId,
+  insertOrder
 };

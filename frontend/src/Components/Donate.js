@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import "../Styles/Donate.css"; // CSS file for styling
 import { decodeToken } from "../Utils/auth";
+import PopupAlert from '../Components/Alerts/PopupAlert';
+
 const Donate = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -9,6 +11,13 @@ const Donate = () => {
   const token = localStorage.getItem("token");
   const decodedToken = decodeToken(token);
   const userId = decodedToken.userId;
+
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertSettings, setAlertSettings] = useState({
+    type: 'warning',
+    message: 'alert message',
+  });
+
   const handleSubmit = async (e) => {
     e.preventDefault();
   
@@ -54,7 +63,11 @@ const Donate = () => {
                 throw new Error("Failed to process payment");
               }
               // Handle successful payment
-              alert("Donation successful!"); // Show alert for successful donation
+              setShowAlert(true);
+              setAlertSettings({
+                type: 'success',
+                message: 'Donation is Successfull.! Thank You Very Much',
+              });// Show alert for successful donation
               setName("")
               setAmount("")
               setEmail("")
@@ -72,9 +85,18 @@ const Donate = () => {
       console.error("Error:", error);
     }
   };
-  
+  const handleCloseAlert = () => {
+    setShowAlert(false);
+  };
   return (
     <div className="donate-container">
+      {showAlert && (
+        <PopupAlert
+          type={alertSettings.type}
+          message={alertSettings.message}
+          onClose={handleCloseAlert}
+        />
+      )}
       <div className="row">
         <div className="col-md-6 donate-left">
           <div className="donate-header">
