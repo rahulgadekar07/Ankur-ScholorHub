@@ -132,6 +132,24 @@ const rejectApplication = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+// Controller function to get all donors with total donation amount
+const getAllDonors = async (req, res) => {
+  try {
+    const donors = await adminService.getAllDonors(); // Call service function to get all donors
+    let totalDonation = 0;
+
+    // Calculate total donation amount
+    donors.forEach(donor => {
+      totalDonation += donor.amount;
+    });
+
+    // Return donors and total donation amount in the response
+    res.status(200).json({ donors, totalDonation });
+  } catch (error) {
+    console.error('Error fetching donors:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
 module.exports = {
   adminLogin,
   adminSignup,
@@ -139,5 +157,6 @@ module.exports = {
   removeUser,
   getAllApplications,
   approveApplication,
-  rejectApplication
+  rejectApplication,
+  getAllDonors
 }

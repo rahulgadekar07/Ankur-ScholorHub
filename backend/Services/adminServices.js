@@ -177,11 +177,24 @@ const rejectApplication = async (applicationId, status, replyMessage) => {
     throw error; // Rethrow the error to be handled by the caller
   }
 };
+
+// Service function to get all donors
+const getAllDonors = async () => {
+  try {
+    // Query to fetch all donors from the database
+    const donors = await db.promise().query('SELECT * FROM donations');
+
+    return donors;
+  } catch (error) {
+    throw new Error('Error fetching donors');
+  }
+};
 module.exports = {
   adminSignup,
   adminLogin,
   getAllUsers,
   removeUser,
   getAllApplications,
+  getAllDonors,
   approveApplication,rejectApplication
 };

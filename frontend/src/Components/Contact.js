@@ -79,7 +79,7 @@ console.log(decodedToken)
             setShowAlert(true);
             setAlertSettings({
               type: "success",
-              message: "Feedback Submitted successfully...!",
+              message: "Feedback Submitted successfully ...!",
             });
             setFormData({
               name: "",

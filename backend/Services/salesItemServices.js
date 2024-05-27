@@ -213,19 +213,30 @@ const editProduct = async (
 // Modified insertOrder service function
 const insertOrder = async (orderDetails) => {
   try {
-    // Insert order details into the orders table
-    const result = await db.promise().execute('INSERT INTO orders (user_id, total_amount, status, razorpay_order_id) VALUES (?, ?, ?, ?)', [
-      orderDetails.user_id,
-      orderDetails.total_amount,
-      orderDetails.status,
-      orderDetails.razorpay_order_id // Add Razorpay order ID to the query parameters
-    ]);
+    console.log('Inserting order with details:', orderDetails);
     
-    // Return the inserted order ID
-    return result.insertId;
+    // Execute the insert query
+    const [result] = await db.promise().execute(
+      'INSERT INTO orders (user_id, total_amount, status, razorpay_order_id) VALUES (?, ?, ?, ?)',
+      [
+        orderDetails.user_id,
+        orderDetails.total_amount,
+        orderDetails.status,
+        orderDetails.razorpay_order_id
+      ]
+    );
+
+    console.log('Database insert result:', result);
+
+    // Check if the result contains an insertId
+    if (result && result.insertId) {
+      return result.insertId;
+    } else {
+      throw new Error('Failed to retrieve insertId from the database result');
+    }
   } catch (error) {
     console.error('Error inserting order:', error);
-    throw new Error('Failed to insert order');
+    throw new Error('Failed to insert order: ' + error.message);
   }
 };
 

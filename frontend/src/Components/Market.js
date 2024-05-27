@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShoppingCart, faTrash } from "@fortawesome/free-solid-svg-icons";
 import "../Styles/Market.css";
 import { decodeToken } from "../Utils/auth";
-
 import PopupAlert from "../Components/Alerts/PopupAlert";
 import ConfirmBox from "../Components/Alerts/ConfirmBox";
 
@@ -17,18 +16,12 @@ const Market = () => {
     type: "warning",
     message: "alert message",
   });
+  const [address, setAddress] = useState("");
+  const [razorpayOrderId, setRazorpayOrderId] = useState(null);
+  const [showConfirmBox, setShowConfirmBox] = useState(false);
 
   const token = localStorage.getItem("token");
   const decodedToken = decodeToken(token);
-  const [showConfirmBox, setShowConfirmBox] = useState(false);
-
-  const handleCategoryChange = (event) => {
-    setCategory(event.target.value);
-  };
-
-  const handleCloseAlert = () => {
-    setShowAlert(false);
-  };
 
   useEffect(() => {
     fetchProducts();
@@ -40,11 +33,17 @@ const Market = () => {
     };
   }, []);
 
+  const handleCategoryChange = (event) => {
+    setCategory(event.target.value);
+  };
+
+  const handleCloseAlert = () => {
+    setShowAlert(false);
+  };
+
   const fetchProducts = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:5000/sales/products?category=${category}`
-      );
+      const response = await fetch(`http://localhost:5000/sales/products?category=${category}`);
       if (!response.ok) {
         throw new Error("Failed to fetch products");
       }
@@ -92,9 +91,9 @@ const Market = () => {
     try {
       const orderData = {
         cart,
-        userId: decodedToken.userId, // Assuming you have the decoded token with user ID
+        userId: decodedToken.userId,
       };
-  
+
       const response = await fetch("http://localhost:5000/sales/checkout", {
         method: "POST",
         headers: {
@@ -102,52 +101,91 @@ const Market = () => {
         },
         body: JSON.stringify(orderData),
       });
-  
+
       if (!response.ok) {
         throw new Error("Failed to create order");
       }
-  
-      const options = {
-        key: 'rzp_test_GWCh8fO2Clvot3',
-        amount: getTotalPrice() * 100,
-        // Other Razorpay options...
-        handler: function (response) {
-          const payment_id = response.razorpay_payment_id;
-          orderData.payment_id = payment_id;
-  
-          // Update the order with payment_id on the backend
-          fetch("http://localhost:5000/payment/checkout", {
+
+      const { order } = await response.json();
+      setRazorpayOrderId(order.id);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const handleAddressSubmit = () => {
+    if (!address) {
+      setShowAlert(true);
+      setAlertSettings({
+        type: "warning",
+        message: "Please enter your address.",
+      });
+      return;
+    }
+
+    const options = {
+      key: 'rzp_test_GWCh8fO2Clvot3',
+      amount: getTotalPrice() * 100,
+      currency: "INR",
+      name: "Your Company Name",
+      description: "Test Transaction",
+      order_id: razorpayOrderId,
+      handler: async (response) => {
+        const payment_id = response.razorpay_payment_id;
+        const orderData = {
+          cart,
+          userId: decodedToken.userId,
+          address,
+          payment_id,
+          razorpay_order_id: razorpayOrderId,
+        };
+
+        try {
+          const paymentResponse = await fetch("http://localhost:5000/sales/checkout", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify(orderData),
-          })
-            .then((response) => {
-              if (!response.ok) {
-                throw new Error("Failed to process payment");
-              }
-              // Handle successful payment
-              setShowAlert(true);
-              setAlertSettings({
-                type: 'success',
-                message: 'Payment is Successfull! Thank You.',
-              });
-              setCart([]); // Clear the cart
-            })
-            .catch((error) => {
-              console.error("Error processing payment:", error);
-            });
-        },
-      };
-  
-      const paymentObject = new window.Razorpay(options);
-      paymentObject.open();
-    } catch (error) {
-      console.error("Error:", error);
-    }
+          });
+
+          if (!paymentResponse.ok) {
+            throw new Error("Failed to process payment");
+          }
+
+          setShowAlert(true);
+          setAlertSettings({
+            type: "success",
+            message: "Payment Successful! Thank You.",
+          });
+          setCart([]);
+          setShowCart(false);
+        } catch (error) {
+          console.error("Error processing payment:", error);
+          setShowAlert(true);
+          setAlertSettings({
+            type: "error",
+            message: "Payment failed. Please try again.",
+          });
+        }
+      },
+      prefill: {
+        name: "Rahul Gadekar",
+        email: "your.email@example.com",
+        contact: "9999999999",
+      },
+      notes: {
+        address,
+      },
+      theme: {
+        color: "#F37254",
+      },
+    };
+
+    const rzp1 = new window.Razorpay(options);
+    rzp1.open();
   };
-  
+
   const toggleCartModal = () => {
     setShowCart((prev) => !prev);
   };
@@ -255,57 +293,72 @@ const Market = () => {
           >
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">Shopping Cart</h5>
+                <h5 className="modal-title">Cart</h5>
                 <button
                   type="button"
-                  className="close"
+                  className="btn-close"
                   onClick={toggleCartModal}
-                >
-                  <span aria-hidden="true">&times;</span>
-                </button>
+                  aria-label="Close"
+                ></button>
               </div>
               <div className="modal-body">
-              {cart.length === 0 ? (
-                    <p>Your cart is empty</p>
-                  ) : (
-                    <>
-                      {cart.map((product, index) => (
-                        <div key={index} className="cart-item">
-                          <div className="d-flex justify-content-between align-items-center">
-                            <div>
-                              <strong>{product.name}</strong> - ₹
-                              {Number(product.price).toFixed(2)}
-                            </div>
-                            <button
-                              className="btn btn-danger btn-sm my-1"
-                              onClick={() => handleRemoveFromCart(index)}
-                            >
-                              <FontAwesomeIcon icon={faTrash} />
-                            </button>
-                          </div>
+                {cart.length === 0 ? (
+                  <p>Your cart is empty.</p>
+                ) : (
+                  <ul className="list-group">
+                    {cart.map((product, index) => (
+                      <li
+                        key={index}
+                        className="list-group-item d-flex justify-content-between align-items-center"
+                      >
+                        <div>
+                          <p className="mb-0">{product.name}</p>
+                          <p className="mb-0">₹{product.price}</p>
                         </div>
-                      ))}
-                      <p className="total">
-                        Total: ₹{Number(getTotalPrice()).toFixed(2)}
-                      </p>
-                    </>
-                  )}
+                        <button
+                          className="btn btn-danger btn-sm"
+                          onClick={() => handleRemoveFromCart(index)}
+                        >
+                          <FontAwesomeIcon icon={faTrash} />
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
               <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={toggleCartModal}
-                >
-                  Close
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={handleCheckout}
-                >
-                  Checkout
-                </button>
+                {cart.length > 0 && (
+                  <div className="container-fluid">
+                    <div className="row">
+                      <div className="col-md-12">
+                        <div className="form-group">
+                          <label htmlFor="address" className="form-label">
+                            Delivery Address:
+                          </label>
+                          <input
+                            type="text"
+                            id="address"
+                            className="form-control"
+                            value={address}
+                            onChange={(e) => setAddress(e.target.value)}
+                            required
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="row">
+                      <div className="col-md-12 mt-2">
+                        <p>Total: ₹{getTotalPrice()}</p>
+                        <button
+                          className="btn btn-success"
+                          onClick={handleAddressSubmit}
+                        >
+                          Proceed to Payment
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -316,4 +369,3 @@ const Market = () => {
 };
 
 export default Market;
-

@@ -9,4 +9,5 @@ router.get("/getAllApplications",adminController.getAllApplications);
 router.delete("/removeuser/:userId", adminController.removeUser);
 router.patch("/approveApplication/:applicationId",adminController.approveApplication) ;
 router.patch("/rejectApplication/:selectedApplicationId",adminController.rejectApplication) ;
+router.get('/getAllDonors', adminController.getAllDonors);
 module.exports = router;

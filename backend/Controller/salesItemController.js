@@ -157,49 +157,63 @@ const rzp = new razorpay({
   key_secret: 'wuimrKCSsmfjhAMEJ2dI0Ywo'
 });
 
-// Modified checkout controller
 const checkout = async (req, res) => {
   try {
-    // Extract cart details from request body
+    console.log('Checkout request body:', req.body);
+    
     const { cart, userId } = req.body;
     if (!userId) {
       throw new Error('User ID is missing');
     }
 
-    // Calculate total amount from the cart
+    console.log('Cart:', cart);
+    if (!Array.isArray(cart) || cart.length === 0) {
+      throw new Error('Cart is invalid or empty');
+    }
+
+    cart.forEach(product => {
+      if (isNaN(parseFloat(product.price))) {
+        throw new Error(`Invalid product price: ${product.price}`);
+      }
+    });
+
     const totalAmount = cart.reduce((total, product) => {
       return total + parseFloat(product.price);
     }, 0);
 
-    // Create Razorpay order
+    console.log('Creating Razorpay order with amount:', totalAmount * 100);
     const order = await rzp.orders.create({
       amount: totalAmount * 100, // Amount is in paise (currency subunits)
       currency: 'INR',
       receipt: 'receipt#1',
       payment_capture: 1 // Automatically capture payment after order creation
     });
+    console.log('Razorpay order created:', order);
 
-    // Process checkout and store data in database using service function
+    console.log('Inserting order into database with details:', {
+      user_id: userId,
+      total_amount: totalAmount,
+      status: 'pending',
+      razorpay_order_id: order.id
+    });
     const orderId = await salesItemServices.insertOrder({
       user_id: userId,
       total_amount: totalAmount,
       status: 'pending',
-      razorpay_order_id: order.id // Add Razorpay order ID to order details
+      razorpay_order_id: order.id
     });
+    console.log('Order inserted with ID:', orderId);
 
-    // Return Razorpay order details to frontend
     if (orderId) {
       res.status(200).json({ message: 'Checkout successful', order });
     } else {
       throw new Error('Failed to process checkout');
     }
   } catch (error) {
-    // Return an error response
     console.error("Error during checkout:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: `Internal Server Error: ${error.message}` });
   }
 };
-
 
 module.exports = {
   addItem,

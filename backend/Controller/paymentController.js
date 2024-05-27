@@ -8,7 +8,6 @@ const razorpay = new Razorpay({
   key_secret: 'wuimrKCSsmfjhAMEJ2dI0Ywo'
 });
 
-// Controller function to handle donation request
 const Donate = async (req, res) => {
   try {
     // Extract donation data from request body
@@ -23,10 +22,10 @@ const Donate = async (req, res) => {
     });
         
     // Process donation and store data in database using service function
-    const donation = await paymentService.makeDonation(name, email, amount, order.id, userId);
+    const donationResult = await paymentService.makeDonation(name, email, amount, order.id, userId);
     
-    // Return Razorpay order details to frontend
-    if (donation.success) {
+    // Check if donation was successful
+    if (donationResult.success) {
       try {
         // Send email
         const emailSent = await sendEmail(email, "Thank You for Your Donation!", text);
@@ -48,6 +47,7 @@ const Donate = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 
 module.exports = {
     Donate

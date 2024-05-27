@@ -30,6 +30,7 @@ const Donate = () => {
     };
   
     try {
+      // Create a Razorpay order
       const response = await fetch("http://localhost:5000/payment/donate", {
         method: "POST",
         headers: {
@@ -42,10 +43,16 @@ const Donate = () => {
         throw new Error("Failed to create order");
       }
   
+      const responseData = await response.json();
+      const orderId = responseData.order.id;
+  
       const options = {
         key: 'rzp_test_GWCh8fO2Clvot3',
         amount: amount * 100,
-        // Other Razorpay options...
+        currency: "INR",
+        name: "Ankur Vidyarthi Foundation",
+        description: "Donation for Education",
+        order_id: orderId,
         handler: function (response) {
           const payment_id = response.razorpay_payment_id;
           orderData.payment_id = payment_id;
@@ -67,11 +74,11 @@ const Donate = () => {
               setAlertSettings({
                 type: 'success',
                 message: 'Donation is Successfull.! Thank You Very Much',
-              });// Show alert for successful donation
+              });
               setName("")
               setAmount("")
               setEmail("")
-    
+  
             })
             .catch((error) => {
               console.error("Error processing payment:", error);
@@ -85,6 +92,9 @@ const Donate = () => {
       console.error("Error:", error);
     }
   };
+  
+  
+  
   const handleCloseAlert = () => {
     setShowAlert(false);
   };
