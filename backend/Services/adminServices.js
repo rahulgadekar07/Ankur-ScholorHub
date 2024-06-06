@@ -153,7 +153,7 @@ const rejectApplication = async (applicationId, status, replyMessage) => {
     const useremail=res[0].email;
     if (result && res) {
       const text =
-        "Your Application is Rejected..! Kindly Contact to Office for further Enquiries.."+replyMessage;
+        "Your Application is Rejected..! Kindly Contact to Office for further Enquiries..\n Reason:- "+replyMessage;
       try {
         const emailSent = await sendEmail(
           useremail,

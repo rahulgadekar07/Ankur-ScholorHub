@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { decodeToken } from "../../Utils/auth";
 import { useNavigate } from "react-router-dom";
 import PopupAlert from "../../Components/Alerts/PopupAlert";
+import ConfirmBox from '../Alerts/ConfirmBox';
 
 const PersonalDetails = (props) => {
   const [applicationSubmitted, setApplicationSubmitted] = useState(false);
@@ -11,6 +12,8 @@ const PersonalDetails = (props) => {
     type: "warning",
     message: "alert message",
   });
+  const [showConfirmBox, setShowConfirmBox] = useState(false);
+
   const navigate = useNavigate();
   // Update email value in state when signing in with a new account
   // Initialize default email using decoded token
@@ -77,13 +80,16 @@ const PersonalDetails = (props) => {
   const handleFileChange = (e) => {
     setFormData({ ...formData, aadharCard: e.target.files[0] });
   };
+const handleConfirmBox=(e)=>{
+  e.preventDefault();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    let conf = window.confirm(
-      "Are you Sure you want to Save ? Once Saved you wont be able to Edit the details"
-    );
-    if (conf) {
+  setShowConfirmBox(true)
+}
+
+  const handleSubmit = async (confirmed) => {
+    if(confirmed){
+   
+   
       console.log("Form Data before submission: ", formData);
       const form = new FormData();
       form.append("userId", decodedToken.userId);
@@ -94,6 +100,7 @@ const PersonalDetails = (props) => {
       form.append("gender", formData.gender);
       form.append("aadharCard", formData.aadharCard);
       console.log(formData);
+      
       try {
         const response = await fetch(
           "http://localhost:5000/scholarship/applyPd",
@@ -105,11 +112,14 @@ const PersonalDetails = (props) => {
         console.log(response);
         if (response.ok) {
           console.log("Personal details saved successfully");
-          props.setbgcolor1(true);
+         
+          setAlertSettings({
+            type: "success",
+            message: "Personal Details Saved Successfully",
+          });
+          setShowAlert(true);
           setApplicationSubmitted(true); // Update applicationSubmitted when the form is successfully submitted
 
-          alert("Personal Details Saved SuccessFully");
-          props.setActiveSection("address-details");
           // Add logic to handle successful submission
         } else {
           console.error("Failed to save personal details");
@@ -120,6 +130,8 @@ const PersonalDetails = (props) => {
         // Add logic to handle error
       }
     }
+    
+    setShowConfirmBox(false)
   };
   const handleCloseAlert = () => {
     setShowAlert(false);
@@ -128,6 +140,12 @@ const PersonalDetails = (props) => {
   };
   return (
     <>
+    {showConfirmBox && (
+        <ConfirmBox
+          message="Are you Sure you want to Save ? Once Saved you wont be able to Edit the details"
+          onConfirm={handleSubmit}
+        />
+      )}
       {showAlert && (
         <PopupAlert
           type={alertSettings.type}
@@ -140,7 +158,7 @@ const PersonalDetails = (props) => {
 
       <div className="pdetails">
         {!showAlert && (
-          <form className="d-flex flex-column" onSubmit={handleSubmit}>
+          <form className="d-flex flex-column" onSubmit={handleConfirmBox}>
             <div className="form-group my-2">
               <label htmlFor="fullname">Name:</label>
               <input

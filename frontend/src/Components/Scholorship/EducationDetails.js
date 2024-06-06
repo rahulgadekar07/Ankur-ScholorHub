@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { decodeToken } from "../../Utils/auth";
 import { useNavigate } from "react-router-dom";
 import Spinner from "../Alerts/Spinner";
-
 import PopupAlert from "../../Components/Alerts/PopupAlert";
+import ConfirmBox from '../Alerts/ConfirmBox';
 
 const EducationDetails = (props) => {
   const token = localStorage.getItem("token");
@@ -12,6 +12,8 @@ const EducationDetails = (props) => {
   let emailtosend = decodedToken.email;
   const [loading, setLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [showConfirmBox, setShowConfirmBox] = useState(false);
+
   const [alertSettings, setAlertSettings] = useState({
     type: "warning",
     message: "alert message",
@@ -65,14 +67,14 @@ const EducationDetails = (props) => {
     });
   };
   console.log("Email to send:", emailtosend);
-
-  const handleSubmit = async (e) => {
+  const handleConfirmBox=(e)=>{
     e.preventDefault();
+  
+    setShowConfirmBox(true)
+  }
+  const handleSubmit = async (confirm) => {
 
-    let conf = window.confirm(
-      "Are you Sure you want to Save ? Once Saved you wont be able to Edit the details"
-    );
-    if (conf) {
+    if (confirm) {
       setLoading(true);
 
       // Append userId to the formData
@@ -83,6 +85,7 @@ const EducationDetails = (props) => {
         formDataToSend.append(key, formData[key]);
       }
       try {
+        
         const response = await fetch(
           "http://localhost:5000/scholarship/applyEd",
           {
@@ -93,9 +96,11 @@ const EducationDetails = (props) => {
         console.log("Formdata:- ", formData);
         if (response.ok) {
           setLoading(false);
-          alert("Education details saved successfully");
-
-          props.setbgcolor4(true);
+          setAlertSettings({
+            type: "success",
+            message: "Scholorship Application Saved Successfully",
+          });
+          setShowAlert(true);
 
           // Optionally, reset the form
           setFormData({
@@ -105,7 +110,6 @@ const EducationDetails = (props) => {
             currentYear: "",
             idCard: null,
           });
-          navigate("/");
         } else {
           setLoading(false);
 
@@ -122,10 +126,18 @@ const EducationDetails = (props) => {
   const handleCloseAlert = () => {
     setShowAlert(false);
     props.setActiveSection("address-details");
-    props.setbgcolor3(true);
+    props.setbgcolor4(true);
+    navigate("/");
+
   };
   return (
     <>
+    {showConfirmBox && (
+        <ConfirmBox
+          message="Are you Sure you want to Save ? Once Saved you wont be able to Edit the details"
+          onConfirm={handleSubmit}
+        />
+      )}
       {showAlert && (
         <PopupAlert
           type={alertSettings.type}
@@ -138,7 +150,7 @@ const EducationDetails = (props) => {
       {!showAlert && (
         <form
           className="education-details-form d-flex flex-column "
-          onSubmit={handleSubmit}
+          onSubmit={handleConfirmBox}
         >
           <div className="form-group">
             <label htmlFor="qualification">Qualification</label>
@@ -181,15 +193,20 @@ const EducationDetails = (props) => {
           </div>
           <div className="form-group">
             <label htmlFor="currentYear">Current Studying Year</label>
-            <input
-              type="number"
-              className="form-control"
+            <select
+              className="form-select"
               id="currentYear"
               name="currentYear"
               value={formData.currentYear}
               onChange={handleChange}
               required
-            />
+            >
+              <option value="">Select Year</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+            </select>
           </div>
           <div className="form-group">
             <label htmlFor="idCard">ID Card of the Institute</label>

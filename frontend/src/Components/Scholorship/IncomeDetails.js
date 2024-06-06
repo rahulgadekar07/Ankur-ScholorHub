@@ -2,16 +2,22 @@ import React, { useEffect, useState } from "react";
 import { decodeToken } from "../../Utils/auth";
 import { useNavigate } from "react-router-dom";
 import PopupAlert from "../../Components/Alerts/PopupAlert";
+import ConfirmBox from '../Alerts/ConfirmBox';
 
 const IncomeDetails = (props) => {
   const token = localStorage.getItem("token");
   const decodedToken = decodeToken(token);
   const navigate = useNavigate();
   const [showAlert, setShowAlert] = useState(false);
+  const [showConfirmBox, setShowConfirmBox] = useState(false);
+
   const [alertSettings, setAlertSettings] = useState({
     type: "warning",
     message: "alert message",
   });
+  const [incomeError, setIncomeError] = useState("");
+  const [isSaveDisabled, setIsSaveDisabled] = useState(false);
+
   const checkIncomeDetails = async () => {
     try {
       const userId = decodedToken.userId;
@@ -60,6 +66,16 @@ const IncomeDetails = (props) => {
       ...formData,
       [name]: value,
     });
+
+    if (name === "annualIncome") {
+      if (parseFloat(value) > 300000) {
+        setIncomeError("Income cannot exceed ₹300,000");
+        setIsSaveDisabled(true);
+      } else {
+        setIncomeError("");
+        setIsSaveDisabled(false);
+      }
+    }
   };
 
   const handleFileChange = (e) => {
@@ -69,13 +85,14 @@ const IncomeDetails = (props) => {
       incomeCertificate: file,
     });
   };
-
-  const handleSubmit = async (e) => {
-    let conf = window.confirm(
-      "Are you Sure you want to Save ? Once Saved you wont be able to Edit the details"
-    );
-    if (conf) {
-      e.preventDefault();
+  const handleConfirmBox=(e)=>{
+    e.preventDefault();
+  
+    setShowConfirmBox(true)
+  }
+  const handleSubmit = async (confirm) => {
+    
+    if (confirm) {
       const formDataToSend = new FormData();
       formDataToSend.append("userId", decodedToken.userId);
       for (const key in formData) {
@@ -91,9 +108,11 @@ const IncomeDetails = (props) => {
           }
         );
         if (response.ok) {
-          alert("Income details saved successfully");
-          props.setbgcolor3(true);
-          props.setActiveSection("education-details");
+          setAlertSettings({
+            type: "success",
+            message: "Income Details Saved Successfully",
+          });
+          setShowAlert(true);
           // Reset the form after successful submission
           setFormData({
             parentName: "",
@@ -111,19 +130,28 @@ const IncomeDetails = (props) => {
         alert("Error saving income details");
       }
     }
+
   };
+
   const handleCloseAlert = () => {
     setShowAlert(false);
     props.setActiveSection("education-details");
-    props.setbgcolor3(true)
+    props.setbgcolor3(true);
   };
+
   return (
     <>
+    {showConfirmBox && (
+        <ConfirmBox
+          message="Are you Sure you want to Save ? Once Saved you wont be able to Edit the details"
+          onConfirm={handleSubmit}
+        />
+      )}
       {showAlert && (
         <PopupAlert
           type={alertSettings.type}
           message={alertSettings.message}
-          onClose={handleCloseAlert} // Pass function reference here
+          onClose={handleCloseAlert}
         />
       )}
       <h2>Income Details:</h2>
@@ -131,7 +159,7 @@ const IncomeDetails = (props) => {
       {!showAlert && (
         <form
           className="income-details-form d-flex flex-column"
-          onSubmit={handleSubmit}
+          onSubmit={handleConfirmBox}
         >
           {/* Parent Information */}
           <div className="form-group">
@@ -196,11 +224,10 @@ const IncomeDetails = (props) => {
 
           {/* Income Information */}
           <label htmlFor="annualIncome" className="my-1">
-            (₹) Annual Income
+             <b>(₹) Annual Income</b>
           </label>
           <div className="form-group d-flex my-2">
             <div className="input-group ms-2">
-              {/* Add margin-left for spacing */}
               <span className="input-group-text">₹</span>
               <input
                 type="number"
@@ -211,10 +238,12 @@ const IncomeDetails = (props) => {
                 onChange={handleChange}
                 aria-label="Annual Income (in rupees)"
                 placeholder="Enter Annual Income"
+                required
               />
               <span className="input-group-text">.00</span>
             </div>
           </div>
+          {incomeError && <div className="text-danger my-2 ">{incomeError}</div>}
 
           {/* Income Certificate */}
           <div className="form-group">
@@ -230,7 +259,7 @@ const IncomeDetails = (props) => {
 
           {/* Form Buttons */}
           <div className="buttons my-3 d-flex flex-column">
-            <button type="submit" className="btn btn-success my-2">
+            <button type="submit" className="btn btn-success my-2" disabled={isSaveDisabled}>
               Save
             </button>
             <button type="reset" className="btn btn-danger my-1">

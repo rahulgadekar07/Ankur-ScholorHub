@@ -51,7 +51,7 @@ const ManageScholarship = () => {
 
   const handleApprove = async (applicationId) => {
     try {
-      setLoading(true)
+      setLoading(true);
       const response = await fetch(`http://localhost:5000/admin/approveApplication/${applicationId}`, {
         method: 'PATCH',
         headers: {
@@ -60,17 +60,16 @@ const ManageScholarship = () => {
         body: JSON.stringify({ status: 'approved', replyMessage: 'Scholarship Application Approved' }),
       });
       if (!response.ok) {
+        setLoading(false);
         throw new Error('Failed to approve application');
-        setLoading(false)
       }
-      setLoading(false)
+      setLoading(false);
 
       alert('Application approved successfully...! Notification Email Sent to User..');
       fetchApplications();
     } catch (error) {
       console.error('Error approving application:', error);
-      setLoading(false)
-
+      setLoading(false);
     }
   };
 
@@ -81,7 +80,12 @@ const ManageScholarship = () => {
   };
 
   const submitReject = async () => {
-    setLoading(true)
+    if (replyMessage.trim() === '') {
+      alert('Please enter a reason for rejection.');
+      return;
+    }
+
+    setLoading(true);
     try {
       const response = await fetch(`http://localhost:5000/admin/rejectApplication/${selectedApplicationId}`, {
         method: 'PATCH',
@@ -91,18 +95,17 @@ const ManageScholarship = () => {
         body: JSON.stringify({ status: 'rejected', replyMessage }),
       });
       if (!response.ok) {
+        setLoading(false);
         throw new Error('Failed to reject application');
-        setLoading(false)
       }
       fetchApplications();
-      setLoading(false)
-      alert("Application Rejected Successfully..! Notification Email Sent to User..")
+      setLoading(false);
+      alert('Application Rejected Successfully..! Notification Email Sent to User..');
 
       setModalIsOpen(false);
     } catch (error) {
       console.error('Error rejecting application:', error);
-      setLoading(false)
-
+      setLoading(false);
     }
   };
 
@@ -110,7 +113,7 @@ const ManageScholarship = () => {
     <div className="container">
       <h1 className="my-4">Manage Scholarship Applications</h1>
       <table className="table table-striped table-bordered">
-        <thead className='text-center justify-content-center '>
+        <thead className="text-center justify-content-center">
           <tr>
             <th>Application ID</th>
             <th>User ID</th>
@@ -120,15 +123,15 @@ const ManageScholarship = () => {
             <th>Action</th>
           </tr>
         </thead>
-        <tbody className='text-center'>
-          {applications.map(application => (
+        <tbody className="text-center">
+          {applications.map((application) => (
             <tr key={application.id}>
               <td>{application.id}</td>
               <td>{application.userId}</td>
               <td>{application.status}</td>
               <td>{application.created_at}</td>
               <td>{application.replyMessage}</td>
-              <td className='d-flex flex-column  '> 
+              <td className="d-flex flex-column">
                 <button
                   className="btn btn-info btn-sm my-1"
                   disabled={isVerifyDisabled(application.status)}
@@ -169,12 +172,13 @@ const ManageScholarship = () => {
             rows="3"
             value={replyMessage}
             onChange={(e) => setReplyMessage(e.target.value)}
+            required
           />
-          <button className="btn btn-secondary my-2 mx-2 " onClick={() => setModalIsOpen(false)}>Close</button>
-          <button className="btn btn-danger my-2 mx-2  " onClick={submitReject}>Reject</button>
+          <button className="btn btn-secondary my-2 mx-2" onClick={() => setModalIsOpen(false)}>Close</button>
+          <button className="btn btn-danger my-2 mx-2" onClick={submitReject}>Reject</button>
         </div>
       </Modal>
-      {loading && <Spinner/>}
+      {loading && <Spinner />}
     </div>
   );
 };

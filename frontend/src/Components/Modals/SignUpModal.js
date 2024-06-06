@@ -8,84 +8,103 @@ const SignUpModal = (props) => {
     name: "",
     email: "",
     password: "",
-    cpassword: ""
+    cpassword: "",
   });
   const [loading, setLoading] = useState(false);
 
   const [error_message, setErrorMessage] = useState({
     flag: false,
-    message: ""
+    message: "",
   });
 
-
   const handleSubmit = async (e) => {
-
     e.preventDefault();
-    setLoading(true)
+    setLoading(true);
     console.log("Form data:", formData); // Log form data
     setErrorMessage({
       flag: false,
-      message: ""
+      message: "",
     });
-  
+
     if (formData.password !== formData.cpassword) {
       setErrorMessage({
         flag: true,
-        message: "Passwords do not match"
+        message: "Passwords do not match",
       });
-      setLoading(false)
+      setLoading(false);
       return;
     }
-  
+    // Check if name contains only letters
+    const nameRegex = /^(?=.*[A-Za-z])[A-Za-z]+(?:\s[A-Za-z]+)*$/;
+    if (!nameRegex.test(formData.name)) {
+      setErrorMessage({
+        flag: true,
+        message: "Name should only contain letters and no extra spaces allowed",
+      });
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await fetch("http://localhost:5000/user/signup", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
-  
+
       if (response.ok) {
         console.log("Sign-up successful!");
-        setLoading(false)
+        setLoading(false);
 
         await props.toggleSignUpModal(false);
         alert("Welcome..!! Now You Can Login");
       } else {
         const responseData = await response.json();
-        setLoading(false)
+        setLoading(false);
 
         console.error("Sign-up failed:", responseData.error);
         if (response.status === 500) {
           console.error("Internal Server Error");
           setErrorMessage({
             flag: true,
-            message: "Internal Server Error. Please try again later."
+            message: "Internal Server Error. Please try again later.",
           });
-        } else if (response.status === 400 && responseData.error === 'Email already exists') {
+        } else if (
+          response.status === 400 &&
+          responseData.error === "Email already exists"
+        ) {
           console.error("Email already exists");
           setErrorMessage({
             flag: true,
-            message: "The provided email address is already registered. Please use a different email."
+            message:
+              "The provided email address is already registered. Please use a different email.",
           });
+          setLoading(false);
+
         } else {
           console.error("Sign-up failed:", responseData.error);
           setErrorMessage({
             flag: true,
-            message: "Failed to sign up. Please check your input and try again."
+            message:
+              "Failed to sign up. Please check your input and try again.",
           });
+          setLoading(false);
+
         }
       }
     } catch (error) {
       console.error("Error:", error);
       setErrorMessage({
         flag: true,
-        message: "Failed to sign up. Please check your internet connection and try again."
+        message:
+        "Failed to sign up. Please check your input and try again.",
       });
+      setLoading(false);
     }
   };
-  
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -94,8 +113,10 @@ const SignUpModal = (props) => {
     <div>
       <h2 className="text-center">Sign Up</h2>
       {loading && <Spinner />}
-      {error_message.flag && <Erroralert error_message={error_message.message} />}
-     
+      {error_message.flag && (
+        <Erroralert error_message={error_message.message} />
+      )}
+
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label htmlFor="name" className="form-label">
@@ -109,6 +130,7 @@ const SignUpModal = (props) => {
             value={formData.name}
             onChange={handleChange}
             aria-describedby="emailHelp"
+            required
           />
         </div>
         <div className="mb-3">
@@ -122,6 +144,7 @@ const SignUpModal = (props) => {
             name="email"
             value={formData.email}
             onChange={handleChange}
+            required
           />
         </div>
         <div className="mb-3">
@@ -154,7 +177,6 @@ const SignUpModal = (props) => {
           Sign Up
         </button>
       </form>
-      
     </div>
   );
 };

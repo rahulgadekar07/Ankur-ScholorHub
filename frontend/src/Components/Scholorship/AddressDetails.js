@@ -2,11 +2,14 @@ import React, { useState, useEffect } from "react";
 import { decodeToken } from "../../Utils/auth";
 import { useNavigate } from "react-router-dom";
 import PopupAlert from "../../Components/Alerts/PopupAlert";
+import ConfirmBox from '../Alerts/ConfirmBox';
 
 const AddressDetails = (props) => {
   const token = localStorage.getItem("token");
   const decodedToken = decodeToken(token);
   const [sameAsPermanent, setSameAsPermanent] = useState(false);
+  const [showConfirmBox, setShowConfirmBox] = useState(false);
+
   const [currentAddress, setCurrentAddress] = useState({
     address: "",
     state: "",
@@ -196,12 +199,14 @@ const AddressDetails = (props) => {
       taluka: "",
     });
   };
-  const handleSubmit = async (e) => {
+  const handleConfirmBox=(e)=>{
     e.preventDefault();
-    let conf = window.confirm(
-      "Are you Sure you want to Save ? Once Saved you wont be able to Edit the details"
-    );
-    if (conf) {
+  
+    setShowConfirmBox(true)
+  }
+  const handleSubmit = async (confirmed) => {
+  
+    if (confirmed) {
       console.log(currentAddress, permanentAddress);
       try {
         const response = await fetch(
@@ -221,9 +226,12 @@ const AddressDetails = (props) => {
 
         if (response.ok) {
           console.log("Address details saved successfully");
-          alert("Personal Details Saved SuccessFully");
-          props.setbgcolor2(true);
-          props.setActiveSection("income-details");
+          setAlertSettings({
+            type: "success",
+            message: "Address Details Saved Successfully",
+          });
+          setShowAlert(true);
+         
           // Add logic for successful submission
         } else {
           console.error("Failed to save address details");
@@ -237,6 +245,13 @@ const AddressDetails = (props) => {
   };
   return (
     <>
+    {showConfirmBox && (
+        <ConfirmBox
+          message="Are you Sure you want to Save ? Once Saved you wont be able to Edit the details"
+
+          onConfirm={handleSubmit}
+        />
+      )}
       {showAlert && (
         <PopupAlert
           type={alertSettings.type}
@@ -248,7 +263,7 @@ const AddressDetails = (props) => {
       <hr />
       <div className="d-flex align-content-center">
         {!showAlert && (
-          <form className="row g-3" onSubmit={handleSubmit}>
+          <form className="row g-3" onSubmit={handleConfirmBox}>
             <div className="col-12">
               <label htmlFor="inputAddress" className="form-label">
                 <b>Permanent Address</b>
