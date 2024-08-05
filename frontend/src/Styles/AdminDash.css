@@ -1,0 +1,65 @@
+/* General styles */
+/* AdminDash.css */
+.heading1 {
+  background-color: darkblue; /* Dark blue background */
+  color: gold; /* White text color */
+  padding: 15px 20px; /* Increased padding for better spacing */
+  font-size: 28px; /* Larger font size */
+  text-align: center; /* Center align text */
+  border-top-left-radius: 10px; /* Rounded corners */
+  border-top-right-radius: 10px; /* Rounded corners */
+}
+
+.menu-item {
+  padding: 15px 20px; /* Increased padding for better touch responsiveness */
+  margin: 10px 0; /* Reduced vertical margin for better spacing */
+  font-size: 15px; /* Slightly smaller font size */
+  font-family: 'Poppins', sans-serif; /* Modern font family */
+  cursor: pointer;
+  color: white;
+  transition: background-color 0.3s ease; /* Smooth transition effect */
+}
+#adminh3{
+  color: gold;
+}
+.menu-item:hover {
+  background-color: #737cb0; /* Darker background on hover */
+  border-radius: 5px; /* Rounded corners on hover */
+  color: gold;
+  font-weight: bold;
+}
+
+.active {
+  color: gold; /* Orange color for active menu items */
+  font-weight: bold;
+}
+
+/* Specific styles for individual components */
+.menu1 {
+  border: 2px solid #2c3e50; /* Match border color with heading background */
+  border-bottom-left-radius: 10px; /* Rounded corners */
+  border-bottom-right-radius: 10px; /* Rounded corners */
+  width: 20vw;
+  height: 80vh;
+  margin: 20px;
+  background-color: #34495e; /* Darker background color */
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3); /* Soft shadow effect */
+  overflow-y: auto; /* Enable vertical scroll if content exceeds height */
+}
+
+.aside {
+  border: 2px solid #2980b9; /* Dark blue border color */
+  border-radius: 10px; /* Slightly rounded corners */
+  width: calc(75vw - 40px); /* Adjust width to accommodate margins */
+  margin: 20px;
+  padding: 20px;
+  background-color: #ffffff; /* White background */
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3); /* Soft shadow effect */
+  overflow-y: auto; /* Enable vertical scroll if content exceeds height */
+}
+
+.adhr {
+  border: none;
+  border-top: 1px solid #ffffff; /* White line color */
+  margin: 10px 0; /* Adjust margin for better spacing */
+}

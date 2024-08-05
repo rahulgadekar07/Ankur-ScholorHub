@@ -1,0 +1,32 @@
+/* Formpage.css */
+.scholorMenu{
+    border: 2px solid black;
+   background-color: antiquewhite;
+    margin:0px 20px;
+    margin-bottom: 100px;
+    margin-top: 30px;
+    padding: 10px;
+    border-radius: 20px;
+}
+.head{
+    height: 35%;
+    border-radius: 10px 10px 0px 0px;
+    
+}
+.section1{
+    border: 2px solid black;
+    height: 120px;
+    width: 120px;
+    border-radius: 50%;
+    padding: 5px;
+    cursor: pointer;
+    
+}
+.section1saved{
+    background-color: rgb(3, 159, 3);
+    
+}
+.fsize{
+    font-size: 50px;
+
+}

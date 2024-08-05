@@ -1,0 +1,151 @@
+/* DisplayQuiz.css */
+
+.quiz-container {
+  background-color: #fab677;
+  color: #000000;
+  padding: 20px;
+  border-radius: 10px;
+  margin: 20px auto;
+  width: 80%;
+}
+
+.quiz-container h1 {
+  text-align: center;
+}
+
+.quiz-container h2 {
+  margin-bottom: 20px;
+}
+
+.quiz-container ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.quiz-container li {
+  margin-bottom: 10px;
+}
+
+.quiz-container label {
+  display: block;
+  position: relative;
+  padding-left: 30px;
+  cursor: pointer;
+}
+
+/* Custom radio button */
+.quiz-container input[type="radio"] {
+  display: none; /* Hide the default radio button */
+}
+
+.quiz-container label::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 20px; /* Adjust size as needed */
+  height: 20px; /* Adjust size as needed */
+  border: 2px solid #30981d; /* Border color */
+  border-radius: 50%; /* Make it round */
+  background-color: #fff; /* Background color */
+}
+
+/* Show custom radio button when selected */
+.quiz-container input[type="radio"]:checked + label::before {
+  background-color: #34a520; /* Change background color when selected */
+}
+
+/* Add indicator dot when selected */
+.quiz-container input[type="radio"]:checked + label::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px; /* Size of the dot */
+  height: 10px; /* Size of the dot */
+  border-radius: 50%; /* Make it round */
+  /* background-color: #fff; Color of the dot */
+}
+
+.quiz-container .btn-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.quiz-container .btn {
+  width: 45%;
+}
+
+.quiz-container .btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.quiz-container .btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+.quiz-container .btn-secondary {
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+
+.quiz-container .btn-secondary:hover {
+  background-color: #5a6268;
+  border-color: #545b62;
+}
+
+.question-list-container {
+  display: flex;
+  justify-content: space-around;
+}
+
+.question-item {
+  width: 30px;
+  height: 30px;
+  background-color: #ebeff3;
+  color: #0e0101;
+  border: 1.5px solid #30981d;
+  text-align: center;
+  line-height: 30px;
+  border-radius: 50%;
+  margin: 2px;
+  cursor: pointer;
+}
+
+.question-item.answered {
+  background-color: #28a745;
+}
+
+/* Heartbeat animation for timer text */
+.timer {
+  font-weight: bold;
+  height: 20px;
+}
+
+.timer.less-than-20 {
+  animation: heartbeat 1s infinite;
+  transform-origin: center;
+  display: inline-block; /* Ensure the timer behaves as an inline block */
+  padding: 2px; /* Add padding to create space around the timer */
+  width: auto; /* Allow the timer to adjust its width dynamically */
+  color: red;
+}
+
+@keyframes heartbeat {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+

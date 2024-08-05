@@ -1,0 +1,86 @@
+.content1 {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch; /* Ensure child divs stretch to match heights */
+    height: 30vh;
+    margin-bottom: 100px;
+}
+
+.newscontent {
+    max-width: 30vw; /* Limit maximum width */
+    overflow: hidden; /* Hide overflowing content */
+  }
+  
+  .marquee-item {
+    margin-bottom: 20px; /* Add spacing between marquee items */
+    padding: 10px; /* Add padding to marquee items */
+    background-color: #f9f9f9; /* Add background color */
+    border-radius: 5px; /* Add rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add shadow effect */
+  }
+  
+  /* Adjust marquee speed and behavior */
+  marquee {
+    height: 100%;
+    width: 100%;
+    padding-right: 20px; /* Add padding to prevent text from sticking to the edge */
+    animation-play-state: running; /* Ensure animation is running by default */
+  }
+  
+  .newscontent:hover marquee {
+    animation-play-state: paused; /* Pause animation on hover */
+    cursor: pointer;
+  }
+  
+
+.maincontent {
+    flex: 1; /* Distribute remaining space equally */
+    height: auto; /* Remove fixed height */
+    padding-left: 10px; /* Add padding for better spacing */
+}
+
+#btn1 {
+    padding: 3px 10px;
+    border: 1px solid green;
+    font-size: 20px;
+    text-decoration: none;
+    list-style: none;
+    color: black;
+    transition: background-color 0.5s, color 0.5s;
+    border-radius: 10px;
+}
+
+#btn2 {
+    padding: 3px 10px;
+    border: 1px solid blue;
+    font-size: 20px;
+    border-radius: 10px;
+    transition: background-color 0.5s, color 0.5s;
+}
+#btn1:hover{
+    background-color: green;
+    color: antiquewhite;
+}
+#btn2:hover{
+    background-color: blue;
+    color: antiquewhite;
+}
+.map1 {
+    border: 2px solid crimson;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow */
+}
+.map1:hover {
+    border-color: #ff6347; /* Change border color on hover */
+    transform: scale(1.03); /* Scale up the map on hover */
+    transition: all 0.3s ease; /* Add smooth transition */
+}
+.map1.loading::after {
+    content: "Loading..."; /* Display loading text */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #555;
+}
+

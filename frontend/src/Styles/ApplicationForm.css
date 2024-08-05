@@ -1,0 +1,8 @@
+@media print {
+    body {
+        size: A4; /* Set the page size */
+        margin: 300px 30 px; /* Set margins */
+    }
+
+    /* Add more print styles here */
+}

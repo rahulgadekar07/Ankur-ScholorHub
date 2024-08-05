@@ -1,0 +1,154 @@
+.container111 {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 2.5rem;
+  color: #333;
+}
+
+.filters {
+  margin-bottom: 20px;
+}
+
+.filter {
+  margin-bottom: 10px;
+}
+
+.products {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.product-card {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+.product-image {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.product-details {
+  margin-top: 10px;
+}
+
+.product-name {
+  margin-bottom: 5px;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.product-category,
+.product-description {
+  margin-bottom: 5px;
+  color: #666;
+}
+
+.product-price {
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #007bff;
+}
+
+.add-to-cart-button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.add-to-cart-button:hover {
+  background-color: #0056b3;
+}
+
+.modal-dialog {
+  max-width: 900px;
+  margin: 50px auto;
+}
+
+.modal-content {
+  border-radius: 20px;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+  background-color: #fff;
+}
+
+.modal-header {
+  padding: 20px;
+  border-bottom: 1px solid #ccc;
+}
+
+.modal-title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.modal-footer {
+  border-top: 1px solid #ccc;
+  padding: 20px;
+}
+
+.close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 2rem;
+  color: #333;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.close:hover {
+  color: #ff0000;
+}
+
+.close:focus {
+  outline: none;
+}
+
+.total {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+}
+.heartbeat {
+  font-size: 2em;
+  color: red;
+  text-align: center;
+  animation: heartbeat 1.5s infinite;
+  position: relative;
+  display: inline-block;
+  padding: 20px;
+  text-align: center;
+}
+
+
+
+@keyframes heartbeat {
+  0%, 100% {
+      transform: scale(1);
+  }
+  50% {
+      transform: scale(1.2);
+  }
+}

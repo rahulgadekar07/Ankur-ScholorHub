@@ -1,0 +1,64 @@
+/* NewsStrip.css */
+
+.news-strip {
+    position: relative;
+    overflow: hidden;
+    background-color: #ffe6e6; /* Light red background */
+    color: #b30000; /* Red text color */
+    /* padding: 5px 0; Reduced padding */
+    font-family: Arial, sans-serif;
+    font-size: 14px; /* Reduced font size */
+    font-weight: bold;
+    border: 1px solid #b30000; /* Red border */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Slight shadow */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .news-content {
+    display: inline-block;
+    white-space: nowrap;
+    animation: scroll 12s linear infinite; /* Increased speed */
+  }
+  
+  .news-strip:hover .news-content {
+    animation-play-state: paused; /* Stop animation on hover */
+  }
+  
+  @keyframes scroll {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+  
+  /* Gradient overlays for a more professional look */
+  .news-strip::before,
+  .news-strip::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 50px;
+    height: 100%;
+    z-index: 1;
+  }
+  
+  .news-strip::before {
+    left: 0;
+    background: linear-gradient(to right, #ffe6e6, transparent);
+  }
+  
+  .news-strip::after {
+    right: 0;
+    background: linear-gradient(to left, #ffe6e6, transparent);
+  }
+  
+  /* Style for the link */
+  .news-link {
+    color: #b30000;
+    text-decoration: underline;
+  }
+  

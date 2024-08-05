@@ -1,0 +1,46 @@
+.profpic img{
+    height: 200px;
+    width: 200px;
+    border-radius: 50%;
+    margin: 10px;
+    border: 1.5px dotted darkblue;
+}
+/* Add these classes to your CSS file */
+
+.animate__fadeInDown {
+    --animate-duration: 4s;
+    animation-name: fadeInDown;
+    animation-duration: var(--animate-duration);
+  }
+  
+  @keyframes fadeInDown {
+    0% {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate__fadeInUp {
+    --animate-duration: 2s;
+    animation-name: fadeInUp;
+    animation-duration: var(--animate-duration);
+  }
+  
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .disabled-link {
+    pointer-events: none; /* Disable pointer events */
+    opacity: 0.5; /* Adjust opacity to make it look disabled */
+  }
