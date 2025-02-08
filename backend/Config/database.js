@@ -7,9 +7,9 @@ const connection = mysql.createConnection({
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
   database: process.env.DB_NAME || 'ankur',
-  ssl: {
-    ca: fs.readFileSync(process.env.CA)
-  }
+  // ssl: {
+  //   ca: fs.readFileSync(process.env.CA)
+  // }
 });
 
 // Connect to the database

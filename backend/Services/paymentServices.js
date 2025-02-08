@@ -7,7 +7,7 @@ const makeDonation = async (name, email, amount, payment_id, userId) => {
     const recentDonationQuery = `
       SELECT COUNT(*) AS count
       FROM donations
-      WHERE userId = ? AND created_at >= NOW() - INTERVAL 2 MINUTE
+      WHERE user_Id = ? AND created_at >= NOW() - INTERVAL 2 MINUTE
     `;
     const [rows] = await db.promise().query(recentDonationQuery, [userId]);
     const recentDonationCount = rows[0].count;
@@ -16,7 +16,7 @@ const makeDonation = async (name, email, amount, payment_id, userId) => {
       // If a recent donation exists, return without inserting a new record
       // Insert the donation record into the database
       const insertQuery = `
-    INSERT INTO donations (userId, name, email, amount, payment_id, created_at)
+    INSERT INTO donations (user_Id, name, email, amount, payment_id, created_at)
     VALUES (?, ?, ?, ?, ?, NOW())
   `;
       await db
